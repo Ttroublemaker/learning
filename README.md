@@ -1,4 +1,4 @@
-## 资源收藏，用于个人学习与分享
+## 资源收藏，用于个人学习与分享/搬运工
 
 ## TypeScript学习：
   1：[TypeScript 入门教程](https://github.com/xcatliu/typescript-tutorial/blob/master/README.md)
@@ -16,3 +16,5 @@
   
 ### 每日学习类
   1：[前端面试每日 3+1（每日三问）](https://github.com/haizlin/fe-interview)
+  
+  2：[Daily-Interview-Question](https://github.com/Advanced-Frontend/Daily-Interview-Question)
