@@ -3,7 +3,7 @@
 ## TypeScript学习：
   1：[TypeScript 入门教程](https://github.com/xcatliu/typescript-tutorial/blob/master/README.md)
 ### vue类
-  1：[Vue-admin一个后台前端解决方案](https://github.com/PanJiaChen/vue-element-admin/blob/master/README.zh-CN.md) /[官网](https://panjiachen.github.io/vue-element-admin-site/zh/)
+  1：[Vue-admin一个后台前端解决方案](https://github.com/PanJiaChen/vue-element-admin/blob/master/README.zh-CN.md)/[官网](https://panjiachen.github.io/vue-element-admin-site/zh/)
   
   2：[Vue 开发必须知道的 36 个技巧](https://juejin.im/post/5d9d386fe51d45784d3f8637)
   
