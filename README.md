@@ -15,7 +15,7 @@
   1：[个人技术收藏集](https://gitee.com/panjiachen/awesome-bookmarks)@[花裤衩](https://github.com/PanJiaChen)
   
 ### 配置类
-  1：[webpack](https://github.com/wallstreetcn/webpack-and-spa-guide)
+  1：[Webpack 4 和单页应用入门](https://github.com/wallstreetcn/webpack-and-spa-guide)
   
 ### 每日学习类
   1：[前端面试每日 3+1（每日三问）](https://github.com/haizlin/fe-interview)
