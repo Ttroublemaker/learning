@@ -17,7 +17,7 @@
 ### 配置类
   1：[Webpack 4 和单页应用入门](https://github.com/wallstreetcn/webpack-and-spa-guide)
   
-  2：[阮一峰教程demo](https://github.com/ruanyf/webpack-demos)
+  2：[Webpack 阮一峰教程demo](https://github.com/ruanyf/webpack-demos)
   
 ### 每日学习类
   1：[前端面试每日 3+1（每日三问）](https://github.com/haizlin/fe-interview)
