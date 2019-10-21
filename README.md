@@ -20,7 +20,7 @@
   2：[Webpack 阮一峰教程demo](https://github.com/ruanyf/webpack-demos)
   
 ### 小程序
-  1：[微信小程序官方文档]（https://mp.weixin.qq.com/cgi-bin/wx）
+  1：[微信小程序官方文档](https://mp.weixin.qq.com/cgi-bin/wx)
   
 ### 每日学习类
   1：[前端面试每日 3+1（每日三问）](https://github.com/haizlin/fe-interview)
