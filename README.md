@@ -14,7 +14,7 @@
 ### 外部参考工具/网站集
   1：[个人技术收藏集](https://gitee.com/panjiachen/awesome-bookmarks)@[花裤衩](https://github.com/PanJiaChen)
   
-### 配置类
+### Webpack配置类
   1：[Webpack 4 和单页应用入门](https://github.com/wallstreetcn/webpack-and-spa-guide)
   
   2：[Webpack 阮一峰教程demo](https://github.com/ruanyf/webpack-demos)
@@ -31,4 +31,4 @@
   
   4：[JavaScript 进阶问题列表](https://github.com/lydiahallie/javascript-questions/blob/master/zh-CN/README-zh_CN.md)
   
-  5：前端面试秘籍](https://github.com/yisainan/web-interview)
+  5：[前端面试秘籍](https://github.com/yisainan/web-interview)
