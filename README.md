@@ -17,7 +17,7 @@
 ### Webpack配置类
   1：[Webpack 4 和单页应用入门](https://github.com/wallstreetcn/webpack-and-spa-guide)
   
-  2：[Webpack 阮一峰教程demo](https://github.com/ruanyf/webpack-demos)
+  2：[深入浅出webpack](https://github.com/gwuhaolin/dive-into-webpack)
   
 ### 小程序
   1：[微信小程序官方文档](https://mp.weixin.qq.com/cgi-bin/wx)
