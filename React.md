@@ -19,7 +19,7 @@ map（带key）
 1）bind this（三种形式，使用类时：构造函数内绑定this、class fields、回调中使用箭头函数） 
 缺图 TODO
 
-2）关于event参数（重要）
+2）关于event参数（重要）  
 缺图 TODO  
 参考之后章节  
 
@@ -32,9 +32,11 @@ map（带key）
 受控组件和非受控组件  
 使 React 的 state 成为表单元素的“唯一数据源”=>受控组件  
 
+<hr>
+
 ## 2. 组件使用
 
-#### 1.：setState（非常重要）
+#### 1：setState（非常重要）
 1）不可变值(注意)
    ```
    // 不要直接修改 state ，使用不可变值 
@@ -45,37 +47,39 @@ map（带key）
 ```
 缺图 TODO  
  
-2）可能是异步更新（三种情况）
+2）可能是异步更新（三种情况）  
 缺图 TODO  
  
-3）可能会被合并
+3）可能会被合并  
 缺图 TODO  
 
 #### 2：组件生命周期（重要、会画）
-http://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/
+http://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/  
 缺图 TODO  
  
-可以关注下shouldComponentUpdate，其他的无需关注
+可以关注下shouldComponentUpdate，其他的无需关注  
 缺图 TODO  
  
 父子组件生命周期和vue完全一样
 
+<hr>
+
 ## 3. 高级特性
-1：函数组件 
-2：非受控组件 
-3：Portals 
-4：context
-5：异步组件
-6：性能优化
-7：高阶组件HOC
-8：Render Props
+1.函数组件   
+2.非受控组件   
+3.Portals   
+4.context  
+5.异步组件  
+6.性能优化  
+7.高阶组件HOC  
+8.Render Props  
 
 #### 1：函数组件
-1.纯函数，输出props，输出JSX
-2.没有实例，没有周期，没有state。但是hooks 可以给函数组件引入状态和生命周期等
+1.纯函数，输出props，输出JSX  
+2.没有实例，没有周期，没有state。但是hooks 可以给函数组件引入状态和生命周期等  
 
 #### 2：非受控组件
-在大多数情况下，我们推荐使用受控组件来处理表单数据。在一个受控组件中，表单数据是由 React 组件来管理的。另一种替代方案是使用非受控组件，这时表单数据将交由 DOM 节点来处理。
+在大多数情况下，我们推荐使用受控组件来处理表单数据。在一个受控组件中，表单数据是由 React 组件来管理的。另一种替代方案是使用非受控组件，这时表单数据将交由 DOM 节点来处理。  
 Ref、defaultValue、defaultChecked、React.createRef()
 
 ###### 使用场景：
@@ -100,9 +104,9 @@ React.Suspense
 #### 6：React 性能优化（针对React，性能优化是重点）
 性能优化对React更加重要  
 1）shouldComponentUpdate  
-1、React默认：父组件更新，则子组件无条件更新，默认返回true
-2、SCU一定要每次都用吗？不一定，需要才优化
-3、当用户输入不规范时，直接操作state，如this.state.list.push(xx)，SCU将不再有效果，故SCU必须配合不可变值书写
+1.React默认：父组件更新，则子组件无条件更新，默认返回true
+2.SCU一定要每次都用吗？不一定，需要才优化
+3.当用户输入不规范时，直接操作state，如this.state.list.push(xx)，SCU将不再有效果，故SCU必须配合不可变值书写
  
 2）PureComponent/React.memo  
 PureComponent，SCU中实现了浅比较（只比较第一层）
@@ -111,22 +115,23 @@ Memo,函数组件中的PureComponent
 
 3）不可变值immutable.js（了解）  
 彻底拥抱不可变值
-基于共享数据（不是深拷贝），速度快
+基于共享数据（不是深拷贝），速度快  
 缺图 TODO
 
 #### 7：关于组件公共逻辑的抽离
-1.Mixin，已被React弃用
-2.高阶组件 HOC
-注意透传所有props
+1.Mixin，已被React弃用  
+2.高阶组件 HOC  
+注意透传所有props  
 缺图 TODO
  
-3.Render Props 
+3.Render Props   
 参考官网
 
 ###### 对比：
-HOC：模式简单，但会增加组件层级
+HOC：模式简单，但会增加组件层级  
 Render Props：代码简洁，学习成本较高
 
+<hr>
 
 ## 4. 扩展
 #### Redux的使用（常考）
@@ -151,10 +156,10 @@ redux-thunk
 #### React-router
 面试考点不多
 路由模式，同Vue
-路由配置（动态路由、懒加载），同Vue
+路由配置（动态路由、懒加载），同Vue  
 缺图 TODO
  
-
+ <hr>
 
 ## 5. React 原理
 #### 1：牢记不可变值  
@@ -174,7 +179,7 @@ Vue2.x、Vue3.0、React 三者实现vdom细节都不同
 JSX等同于Vue模板
 Vue模板非html
 JSX也不是js
-(babel网站中可以编译试一试)
+(babel网站中可以编译试一试)  
 缺图 TODO
  
 React.createElement 即h函数，返回vnode
