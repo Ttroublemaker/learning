@@ -247,31 +247,31 @@ h5 history需要后端配置，无论请求什么地址，后端都返回index.h
 
 1：面试为何会考察原理？  
 2：面试中如何考察？以何种方式？   
-    考察重点、而非细节  
-    和使用相关联的原理，如VDOM、模板渲染  
-    整体流程是否全面、热门技术是否有深度  
+考察重点、而非细节  
+和使用相关联的原理，如VDOM、模板渲染  
+整体流程是否全面、热门技术是否有深度  
 3：Vue原理包括哪些  
-    组件化/响应式/vnode和diff/模板编译/渲染过程/前端路由  
+组件化/响应式/vnode和diff/模板编译/渲染过程/前端路由  
 
-### 1：如何理解MVVM模型  
-M：model  
-V：view  
+#### 1：如何理解MVVM模型  
+M：model  数据模型
+V：view  UI视图
 VM：view-mode 连接M和V  
 缺图 // TODO  
  
 
-### 2： 监听data变化的核心API（重点）
-3： 如何监听对象变化（重点）  
-4： 如何监听数组变化（重点）  
+#### 2： 监听data变化的核心API（重点）
+#### 3： 如何监听对象变化（重点）  
+#### 4： 如何监听数组变化（重点）  
 
 核心API：Object.defineProperty 有缺陷  
 vue3：Proxy 兼容性不好，且无法polyfill  
-
-监听对象、监听数组、复杂对象，深度监听  
-几个缺点  
 1）深度监听，需要递归到底，一次性计算量大  
 2）无法监听新增属性、删除属性（新增了Vue.set/ Vue.delete API）  
-3）无法原生监听数组，需要特殊处理  
+3）无法原生监听数组，需要特殊处理   
+
+监听对象、监听数组、复杂对象，深度监听  
+
 ```
 // 触发更新视图  
 function updateView () {
@@ -302,7 +302,7 @@ function defineReactive (target, key, value) {
       if (newValue !== value) {
         // 深度监听
         observer(newValue)
-        // 设置新值, 注意，value 一直在闭包中，此处设置完之后，再 get 时也是			会获取最新的值
+        // 设置新值, 注意，value 一直在闭包中，此处设置完之后，再 get 时也是会获取最新的值
         value = newValue
         // 触发更新视图
         updateView()
@@ -345,8 +345,8 @@ observer(data)
 data.nums.push(4) // 监听数组
 ```
 
-3： 虚拟DOM（重要）
-缺图 // TODO
+#### 5： 虚拟DOM（重要）
+缺图 // TODO  
  
 
  
@@ -357,13 +357,13 @@ data.nums.push(4) // 监听数组
 缺图 // TODO
  
 
-### 4： diff算法(重点)
+#### 6： diff算法(重点)
 缺图 // TODO
  
  
  
  
-三个主要的diff 算法（不要纠结细节）
+三个主要的diff 算法（不要纠结细节）  
 缺图 // TODO
  
  
@@ -373,8 +373,8 @@ data.nums.push(4) // 监听数组
  
 
 
-### 5：模板编译
-缺图 // TODO
+#### 7：模板编译
+缺图 // TODO  
  
  
  
@@ -387,21 +387,25 @@ data.nums.push(4) // 监听数组
  
  
 
-### 6：组件渲染、更新过程
+#### 8：组件渲染、更新过程
 
 1）初次渲染过程
- 
-执行render函数会触发getter（针对模板中使用到的数据）？
-何时触发依赖收集呢？
+解析模板为render函数（或者在开发环境已完成，vue-loader）    
+触发响应式，监听data属性getter setter  
+执行render函数。生成vnode，然后patch(elem,vnode)  
+（执行render函数会触发getter（针对模板中使用到的数据），从而进行依赖收集）
 
 2）更新过程
- 
+ 修改data，触发setter(此前在getter中已经被监听)  
+ 重新执行render函数，生成newVnode  
+ patch(vnode, newVnode)  
 
-### 7：异步渲染
+#### 9：异步渲染
 
 $nextTick 汇总data修改，一次性更新视图，减少DOM操作次数，提高性能
 
-组件渲染/更新过程（重要）
+组件渲染/更新过程（重要）  
+缺图 TODO
  
  
 
@@ -409,222 +413,218 @@ $nextTick 汇总data修改，一次性更新视图，减少DOM操作次数，提
 
 
 
-### 8： 前端路由原理
+#### 10： 前端路由原理
 
-稍微复杂的SPA，都需要前端路由，Vue-router是vue全家桶标配之一，属于”和日常使用相关联的原理”，面试常考。
+稍微复杂的SPA，都需要前端路由，Vue-router是vue全家桶标配之一，属于"和日常使用相关联的原理"，面试常考。
 
-路由模式
-1：hash
-2：H5 history
+路由模式  
+1：hash  
+2：H5 history  
 
 hash 模式
- 
-hash 的特点
-hash变化会触发网页跳转，即浏览器的前进后退
-hash变化不会刷新页面，SPA必需的特点
-hash永远不会提交到server端
- 
+形如：http://ai.huawei.com/nlp/aila_conference/#/home  
+location.hash  #/home 
+hash 的特点  
+1. hash变化会触发网页跳转，即浏览器的前进后退  
+2. hash变化不会刷新页面，SPA必需的特点  
+3. hash永远不会提交到server端  
+缺图 TODO  
 
-H5 history 模式
-用url规范的路由，但跳转时不刷新页面
-histroy.pushState：
-打开一个新的路由【注意】用 pushState 方式，浏览器不会刷新页面
-window.onpopstate：
-监听浏览器前进、后退
- 
- 
- 
+H5 history 模式  
+用url规范的路由，但跳转时不刷新页面  
+histroy.pushState：  
+打开一个新的路由【注意】用 pushState 方式，浏览器不会刷新页面  
+window.onpopstate：  
+监听浏览器前进、后退  
+缺图 TODO
 
 Vue原理总结：组件化、响应式 、vdom和diff 、模板编译、渲染过程、前端路由 
 
 
-面试真题演练：
-1：v-show和v-if 的区别
-	v-show 通过css display 控制显示和隐藏
-	v-if组件真正的渲染和销毁，而不是显示和隐藏
-	频繁切换显示状态用v-show，否则v-if
-	
-2：为何在v-for中使用key
-	必须使用key，且不能是index和random
-	Diff算法中通过tag和key来判断是否是sameNode
-	减少渲染次数，提升渲染性能
-key是为Vue中的vnode标记的唯一id,通过这个key,我们的diff操作可以更准确、更快速
-准确: 如果不加key,那么vue会选择复用节点(Vue的就地更新策略),导致之前节点的状态被保留下来,会产生一系列的bug.
-快速: key的唯一性可以被Map数据结构充分利用,相比于遍历查找的时间复杂度O(n),Map的时间复杂度仅仅为O(1).
+## 面试真题演练：
+#### 1：v-show和v-if 的区别
+1. v-show 通过css display 控制显示和隐藏  
+2. v-if组件真正的渲染和销毁，而不是显示和隐藏  
+3. 频繁切换显示状态用v-show，否则v-if  
 
-3：描述vue组件生命周期（如包括父子组件呢？）
-	单组件生命周期图会画
-	父子组件生命周期关系（最好知道为什么？）
+#### 2：为何在v-for中使用key  
+1. 必须使用key，且不能是index和random  
+2. Diff算法中通过tag和key来判断是否是sameNode  
+3. 减少渲染次数，提升渲染性能  
+key是为Vue中的vnode标记的唯一id，通过这个key，我们的diff操作可以更准确、更快速  
+准确: 如果不加key,那么vue会选择复用节点(Vue的就地更新策略),导致之前节点的状态被保留下来,会产生一系列的bug  
+快速: key的唯一性可以被Map数据结构充分利用,相比于遍历查找的时间复杂度O(n),Map的时间复杂度仅仅为O(1)  
 
-4：vue组件如何通讯（常见）
-	父子组件props 和this.$emit
-	自定义事件event.$on/event.$off/event.$emit/event.$once，事件总线
-	vuex
+#### 3：描述vue组件生命周期（如包括父子组件呢？）
+1. 单组件生命周期图会画  
+2. 父子组件生命周期关系（最好知道为什么）  
 
-5：描述组件渲染和更新过程
-会画和描述流程图
+#### 4：vue组件如何通讯（常见）
+1. 父子组件props 和 $emit  
+2. 自定义事件event.$on/event.$off/event.$emit/event.$once，事件总线  
+3. vuex  
 
-6：双向数据绑定v-model的实现原理
-v-model本质就是一个语法糖，可以看成是value + input方法的语法糖。可以通过model属性的prop和event属性来进行自定义。原生的v-model，会根据标签的不同生成不同的事件和属性。
+#### 5：描述组件渲染和更新过程
+会画和描述流程图  
+
+#### 6：双向数据绑定v-model的实现原理
+v-model本质就是一个语法糖，可以看成是value + input方法的语法糖。可以通过model属性的prop和event属性来进行自定义。原生的v-model，会根据标签的不同生成不同的事件和属性。  
 
 text 和 textarea 元素使用 value 属性和 input 事件；
 checkbox 和 radio 使用 checked 属性和 change 事件；
 select 字段将 value 作为 prop 并将 change 作为事件。
- 
+缺图 TODO
 
  
 
 
-7：对MVVM的理解
-会画模型图
-MVVM是Model-View-ViewModel缩写，Model层代表数据模型，View代表UI组件，ViewModel是View和Model层的桥梁，数据会绑定到viewModel层并自动将数据渲染到页面中，视图变化的时候会通知viewModel层更新数据。
+#### 7：对MVVM的理解
+会画模型图  
+MVVM是Model-View-ViewModel缩写，Model层代表数据模型，View代表UI组件，ViewModel是View和Model层的桥梁，数据会绑定到viewModel层并自动将数据渲染到页面中，视图变化的时候会通知viewModel层更新数据。  
 
+#### 8：computed有何特点
+具有缓存性，data不变不会重新计算  
+缓存性，提高了性能  
 
-8：computed有何特点
-具有缓存性，data不变不会重新计算
-缓存性，提高了性能
+#### 9：为何组件data必须是一个函数
+定义组件时，组件实际上是一个类，使用组件时，将对组件实例化，这些实例用的都是同一个构造函数。如果data不是一个函数，那么所有的组件实例将引用同一个data，造成状态共享  
 
-9：为何组件data必须是一个函数
-定义组件时，组件实际上是一个类，使用组件时，将对组件实例化，这些实例用的都是同一个构造函数。如果data不是一个函数，那么所有的组件实例将引用同一个data，造成状态共享
+#### 10：ajax请求应该放在哪个生命周期
+mounted里，js是单线程，ajax是异步获取数据，放在mounted之前没有用，只会让逻辑更加混乱  
 
-10：ajax请求应该放在哪个生命周期
-mounted里，js是单线程，ajax是异步获取数据，放在mounted之前没有用，只会让逻辑更加混乱。
+#### 11：如何将组件所有props传递给子组件
+`<User v-bind="$props" />` 
 
-11：如何将组件所有props传递给子组件
-<User v-bind=”$props” /> 
-
-12: 实现自己的v-model 
+#### 12: 实现自己的v-model 
 一个组件上的 v-model 默认会利用名为 value 的 prop 和名为 input 的事件，但是像单选框、复选框等类型的输入控件可能会将 value attribute 用于不同的目的。model 选项可以用来避免这样的冲突
+缺图 TODO  
+
+#### 13：多个组件有相同逻辑，如何抽离
+Mixin以及mixin的一些缺点  
+
+#### 14：何时使用异步组件
+加载大组件、路由异步加载   
+
+#### 15：何时需要使用keep-alive（可优化性能）
+缓存组件、不需要重复渲染  
+多个静态tab页的切换  
+主要是有include、exclude、max三个属性；前两个属性允许keep-alive有条件的进行缓存；max可以定义组件最大的缓存个数，如果超过了这个个数的话，在下一个新实例创建之前，就会将以缓存组件中最久没有被访问到的实例销毁掉。两个生命周期activated/deactivated，用来得知当前组件是否处于活跃状态。  
+
+#### 15：何时需要使用beforeDestroy
+1. 解绑自定义事件event.$off  
+2. 清除定时器  
+3. 解绑自定义的DOM事件，如window scroll click等（模板中的事件会自动解绑）  
+
+#### 16：什么是作用域插槽
+缺图 TODO
  
+有时让插槽内容能够访问子组件中才有的数据。绑定在 <slot> 元素上的 attribute 被称为插槽 prop  
 
-13：多个组件有相同逻辑，如何抽离
-Mixin以及mixin的一些缺点
+#### 17：vuex中action 和mutation 有何区别
+action 中处理异步，mutation 不可以，action 不能直接操作State  
+mutation 做原子操作，专注于修改State，理论上是修改State的唯一途径  
+action 可以整合多个mutation  
 
-14：何时使用异步组件
-加载大组件、路由异步加载
+#### 18：vue-router常见的路由模式
+hash模式（默认） onhashchange  
+H5 history (需要服务端支持) history.pushState /onpopstate  
 
-15：何时需要使用keep-alive（可优化性能）
-缓存组件、不需要重复渲染
-多个静态tab页的切换
-主要是有include、exclude、max三个属性；前两个属性允许keep-alive有条件的进行缓存；max可以定义组件最大的缓存个数，如果超过了这个个数的话，在下一个新实例创建之前，就会将以缓存组件中最久没有被访问到的实例销毁掉。两个生命周期activated/deactivated，用来得知当前组件是否处于活跃状态。
+#### 19：如何配置vue-router 异步加载
+```
+new Vue({
+  //...
+  components:{
+    'my-component':()=>important('./my-async-component')  
+  }
+})
+```
 
+#### 20：请用vnode描述一个DOM结构
+参考Vnode章节  
 
-15：何时需要使用beforeDestroy
-解绑自定义事件event.$off
-清除定时器
-解绑自定义的DOM事件，如window scroll click等
-（模板中的事件会自动解绑）
+#### 21：监听data 变化的核心api
+Object.defineProperty  
+深度监听、监听数组  
+有何缺点  
+参考相关章节  
 
-16：什么是作用域插槽
- 
- 
-有时让插槽内容能够访问子组件中才有的数据。绑定在 <slot> 元素上的 attribute 被称为插槽 prop
+#### 22：vue如何监听数组变化
+Object.defineProperty不能监听数组变化   
+重新定义原型，重写push pop 等共6个方法，实现监听  
+Proxy可以原生监听数组变化  
 
-17：vuex中action 和mutation 有何区别
-action 中处理异步，mutation 不可以。action 不能直接操作State
-mutation 做原子操作，专注于修改State，理论上是修改State的唯一途径
-action 可以整合多个mutation
-
-18：vue-router常见的路由模式
-hash模式（默认） onhashchange
-H5 history (需要服务端支持)   history.pushState /onpopstate
-
-19：如何配置vue-router 异步加载
- 
-
-20：请用vnode描述一个DOM结构
-参考Vnode章节
-
-21：监听data 变化的核心api
-Object.defineProperty
-深度监听、监听数组
-有何缺点
-参考相关章节
-
-22：vue如何监听数组变化
-Object.defineProperty不能监听数组变化
-重新定义原型，重写push pop 等共6个方法，实现监听
-Proxy可以原生监听数组变化
-
-23：请描述响应式原理
-监听data变化+组件渲染和更新流程
-组合回答即可
+#### 23：请描述响应式原理
+监听data变化+组件渲染和更新流程，组合回答即可    
 Vue在初始化数据时，会使用Object.defineProperty重新定义data中的所有属性，当页面使用对应属性时，首先会进行依赖收集(收集当前组件的watcher)如果属性发生变化会通知相关依赖进行更新操作(发布订阅)。
 
+#### 24：diff 算法的时间复杂度
+O(n^3)=>O(n) 优化的思路  
 
+#### 25：简述diff 算法过程
+参考相关章节  
+核心：  
+patch(elem,vnode)和patch(vnode,newVnode)  
+patchVnode 和addVnodes和removeVnodes  
+updateChildren(key的重要性)  
 
-24：diff 算法的时间复杂度
-O(n^3)=>O(n) 优化的思路
+#### 26：vue为何是异步渲染，$nextTick何用
+异步渲染（以及合并data修改），以提高渲染性能  
+$nextTick在DOM更新完之后，触发回调  
 
-25：简述diff 算法过程
-参考相关章节
-核心：
-patch(elem,vnode)和patch(vnode,newVnode)
-patchVnode 和addVnodes和removeVnodes
-updateChildren(key的重要性)
+#### 27：再说一下computed和watch
+computed本质是一个具备缓存的watcher，依赖的属性发生变化就会更新视图。适用于计算比较消耗性能的计算场景。当表达式过于复杂时，在模板中放入过多逻辑会让模板难以维护，可以将复杂的逻辑放入计算属性中处理。  
 
-26：vue为何是异步渲染，$nextTick何用
-异步渲染（以及合并data修改），以提高渲染性能
-$nextTick在DOM更新完之后，触发回调
-
-27：再说一下Computed和Watch
-Computed本质是一个具备缓存的watcher，依赖的属性发生变化就会更新视图。适用于计算比较消耗性能的计算场景。当表达式过于复杂时，在模板中放入过多逻辑会让模板难以维护，可以将复杂的逻辑放入计算属性中处理。
-
-Watch没有缓存性，更多的是观察的作用，可以监听某些数据执行回调。当我们需要深度监听对象中的属性时，可以打开deep：true选项，这样便会对对象中的每一项进行监听。
+watch没有缓存性，更多的是观察的作用，可以监听某些数据执行回调。当我们需要深度监听对象中的属性时，可以打开deep：true选项，这样便会对对象中的每一项进行监听。 
 
 使用Watch的深度监听可能会带来性能问题，优化的话可以使用字符串形式监听，如果没有写到组件中，也就是使用vm.$watch来设置监听的时候，这个vm.$watch是会返回一个取消观察函数，调用这个函数就可以手动注销监听了。
 
-28：Vue事件绑定原理说一下
-
-原生事件绑定是通过addEventListener绑定给真实元素的，组件事件绑定是通过Vue自定义的$on实现的。
-
-换句话说：Vue支持 2 种事件类型，原生 DOM 事件和自定义事件。
-
+#### 28：Vue事件绑定原理说一下
+原生事件绑定是通过addEventListener绑定给真实元素的，组件事件绑定是通过Vue自定义的$on实现的。  
+换句话说：Vue支持 2 种事件类型，原生 DOM 事件和自定义事件。  
 普通DOM和组件上挂了.native修饰符之后，最终调用的还是原生的addEventListener()方法
-组件上，Vue实例上事件会调用原型上的$on、$emit、$off、$once等方法。
+组件上，Vue实例上事件会调用原型上的$on、$emit、$off、$once等方法。  
 
+#### 29：Vue常见的性能优化
+1. 合理使用v-show/v-if  
+2. 合理使用computed  
+3. v-for时加key，避免和v-if同时使用如果需要使用v-for给每项元素绑定事件时使用事件代理  
+4. 自定义事件、DOM事件及时销毁（避免内存泄漏）  
+5. 使用路由懒加载、异步组件  
+6. 合理使用keep-alive  
+7. 防抖节流  
+8. 第三方模块按需引入  
+9. 长列表滚动到可视区域动态加载  
+10. data层级不要太深（深度监听需要一次性遍历完成，造成遍历过多）  
+11. 使用vue-loader 在开发环境做模板编译 vue-runtime 版本  
+12. webpack层面（参考webpack相关章节）  
+13. 前端通用性能优化，如图片懒加载  
 
-29：Vue常见的性能优化
-合理使用v-show/v-if
-合理使用computed
-v-for时加key，避免和v-if同时使用如果需要使用v-for给每项元素绑定事件时使用事件代理
-自定义事件、DOM事件及时销毁（避免内存泄漏）
-使用路由懒加载、异步组件
-合理使用keep-alive
-防抖节流
-第三方模块按需引入
-长列表滚动到可视区域动态加载
-data层级不要太深（深度监听需要一次性遍历完成，造成遍历过多）
-使用vue-loader 在开发环境做模板编译 vue-runtime 版本
-webpack层面（待补充）
-前端通用性能优化，如图片懒加载
-
-Vue3
-面试会考察候选人对新技术的关注程度
-自行了解
+## Vue3
+面试会考察候选人对新技术的关注程度  
 升级内容：
-全部用ts重写（响应式，vdom，模板编译等）
-性能提升，代码量减少（tree shakeing 打包后的包体积）
-调整了部分API
-Proxy
+全部用ts重写（响应式，vdom，模板编译等）  
+性能提升，代码量减少（tree shakeing 打包后的包体积）  
+调整了部分API  
+Proxy  
 
-Proxy 实现响应式
+#### Proxy 实现响应式  
+缺图 TODO
+
  
 
- 
+#### Reflect 作用
+和proxy能力一一对应  
+替代Object的工具函数 
+标准化、 规范化、函数式（如下：）  
+缺图 TODO
 
-Reflect 作用
-和proxy能力一一对应
-替代Object的工具函数
-标准化、 规范化、函数式（如下：）
- 
-与Object.defineProperty 深度递归的区别是Proxy只在get时递归，不会一次性递归，而Object.defineProperty则是一次性递归完成
+与Object.defineProperty 深度递归的区别是Proxy只在get时递归，不会一次性递归，而Object.defineProperty则是一次性递归完成  
 
-Proxy特点
-深度监听，性能更好
-可监听 新增、删除属性
-可监听数组变化
-无法兼容所有浏览器，无法polyfill(缺点)
+#### Proxy特点
+深度监听，性能更好  
+可监听 新增、删除属性  
+可监听数组变化  
+无法兼容所有浏览器，无法polyfill(缺点)  
 
 
 
