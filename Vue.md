@@ -203,69 +203,70 @@ mixin和组件可能出现多对多的关系，复杂度高（维护火葬场）
 可以不深入，但必须知道  
 熟悉基本用法，了解使用场景，最好能和自己的项目经验结合起来  
 
-4）扩展
-Vuex使用
-面试考点并不多(熟悉vue后,vuex没有难度)
-基本概念，基本使用和API必须要掌握
-可能会考察state的数据结构设计（后面补充）
+<hr>
 
-Vuex基本概念
-state
-getters
-action
-mutation
+## 扩展
+### Vuex使用  
+面试考点并不多(熟悉vue后,vuex没有难度)  
+基本概念，基本使用和API必须要掌握  
+可能会考察state的数据结构设计（后面补充）  
 
-用于vue组件
-dispatch
-commit
-mapState
-mapGetter
-mapActions
-mapMutations
-理解流程（重要）。只能在actions里进行异步操作，mutations进行同步操作，state只能通过mutations进行修改，不能直接修改
+Vuex基本概念  
+state  
+getters  
+action  
+mutation  
+
+用于vue组件  
+dispatch  
+commit  
+mapState  
+mapGetter  
+mapActions  
+mapMutations  
+理解流程（重要）。只能在actions里进行异步操作，mutations进行同步操作，state只能通过mutations进行修改，不能直接修改  
+缺图 // TODO  
+
+### Vue-router使用
+面试考点并不多  
+路由模式（hash、h5 history）  
+路由配置（动态路由、路由懒加载）  
+h5 history需要后端配置，无论请求什么地址，后端都返回index.html  
+动态路由  
+缺图 // TODO  
+
+
+## Vue原理(大厂必考) 原理≠源码
+
+1：面试为何会考察原理？  
+2：面试中如何考察？以何种方式？   
+考察重点、而非细节  
+和使用相关联的原理，如VDOM、模板渲染  
+整体流程是否全面、热门技术是否有深度  
+3：Vue原理包括哪些  
+组件化/响应式/vnode和diff/模板编译/渲染过程/前端路由  
+
+### 1：如何理解MVVM模型  
+M：model  
+V：view  
+VM：view-mode 连接M和V  
+缺图 // TODO  
  
 
-Vue-router使用
-面试考点并不多
-路由模式（hash、h5 history）
-路由配置（动态路由、路由懒加载）
-h5 history需要后端配置，无论请求什么地址，后端都返回index.html
-动态路由
- 
+### 2： 监听data变化的核心API（重点）
+3： 如何监听对象变化（重点）  
+4： 如何监听数组变化（重点）  
 
+核心API：Object.defineProperty 有缺陷  
+vue3：Proxy 兼容性不好，且无法polyfill  
 
-5）Vue原理(大厂必考) 原理≠源码
-
-
-1：面试为何会考察原理？
-2：面试中如何考察？以何种方式？ 
-考察重点、而非细节
-和使用相关联的原理，如VDOM、模板渲染
-整体流程是否全面、热门技术是否有深度
-3：Vue原理包括哪些
- 
-
-
-1：如何理解MVVM模型
-M：model
-V：view
-VM：view-mode 连接M和V
- 
- 
-
-2： 监听data变化的核心API（重点）
-3： 如何监听对象变化（重点）
-4： 如何监听数组变化（重点）
-
-核心API：Object.defineProperty 有缺陷
-vue3：Proxy 兼容性不好，且无法polyfill
-
-监听对象、监听数组、复杂对象，深度监听
-几个缺点
-1）深度监听，需要递归到底，一次性计算量大
-2）无法监听新增属性、删除属性（新增了Vue.set/ Vue.delete API）
-3）无法原生监听数组，需要特殊处理
-// 触发更新视图
+监听对象、监听数组、复杂对象，深度监听  
+几个缺点  
+1）深度监听，需要递归到底，一次性计算量大  
+2）无法监听新增属性、删除属性（新增了Vue.set/ Vue.delete API）  
+3）无法原生监听数组，需要特殊处理  
+```
+// 触发更新视图  
 function updateView () {
   console.log('视图更新')
 }
@@ -335,10 +336,10 @@ observer(data)
 // delete data.name // 删除属性，监听不到 —— 所有已 Vue.delete
 // data.info.address = '上海' // 深度监听
 data.nums.push(4) // 监听数组
-
+```
 
 3： 虚拟DOM（重要）
-
+缺图 // TODO
  
 
  
@@ -346,18 +347,17 @@ data.nums.push(4) // 监听数组
  
 
 会用vdom描述html结构，如下：
- 
+缺图 // TODO
  
 
-4： diff算法(重点)
- 
+### 4： diff算法(重点)
+缺图 // TODO
  
  
  
  
 三个主要的diff 算法（不要纠结细节）
-  
-
+缺图 // TODO
  
  
  
@@ -366,21 +366,21 @@ data.nums.push(4) // 监听数组
  
 
 
-5：模板编译
+### 5：模板编译
+缺图 // TODO
+ 
+ 
+ 
+ 
+
+
  
  
  
  
  
 
-
- 
- 
- 
- 
- 
-
-6：组件渲染、更新过程
+### 6：组件渲染、更新过程
 
 1）初次渲染过程
  
@@ -390,7 +390,7 @@ data.nums.push(4) // 监听数组
 2）更新过程
  
 
-7：异步渲染
+### 7：异步渲染
 
 $nextTick 汇总data修改，一次性更新视图，减少DOM操作次数，提高性能
 
@@ -402,7 +402,7 @@ $nextTick 汇总data修改，一次性更新视图，减少DOM操作次数，提
 
 
 
-8： 前端路由原理
+### 8： 前端路由原理
 
 稍微复杂的SPA，都需要前端路由，Vue-router是vue全家桶标配之一，属于”和日常使用相关联的原理”，面试常考。
 
