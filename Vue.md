@@ -30,17 +30,19 @@ v-if和v-show的区别：v-if 控制组件渲染与销毁，v-show设置display
 v-if和v-show的使用场景：频繁切换用v-show(v-if渲染代价更大)，切换不频繁或者只判断一次的使用v-if  
 
 #### 7：循环（列表）渲染 v-for 
-##### 1：key的重要性，key不能乱写，最好是唯一id  
+1. key的重要性，key不能乱写，最好是唯一id    
 key是为Vue中vnode标记的唯一id，通过这个key,我们的diff操作可以更准确、更快速  
 准确: 如果不加key，那么vue会选择复用节点(Vue的就地更新策略)，导致之前节点的状态被保留下来，会产生一系列的bug  
 快速: key的唯一性可以被Map数据结构充分利用，相比于遍历查找的时间复杂度O(n)，Map的时间复杂度仅仅为O(1)  
-##### 2：v-for 和v-if 不能一起使用  
+
+2. v-for 和v-if 不能一起使用    
 v-for的优先级高过v-if，所以会对循环体内的每一项使用v-if进行判断，因此哪怕我们只渲染出一小部分用户的元素，也得在每次重渲染的时候遍历整个列表，不论活跃用户是否发生了变化，从而导致不必要的计算。通常可以使用computed对数据先进行过滤
 
 #### 8：事件
 1：event参数、自定义参数  
 模板中使用$event 表示"原生事件"对象，比如increment(payload,$event)，打印event.currentTarget会发现事件被注册到当前元素上，和react不同，react是合成事件。  
-关注点：1）事件是原生的，2）事件被注册到当前元素上  
+关注点：1）事件是原生的 2）事件被注册到当前元素上
+
 2：事件修饰符，按键修饰符  
 缺图 // TODO
 
@@ -52,7 +54,7 @@ Lazy 具备防抖效果，输入过程中value不会变化，在输完后才变�
 
 <hr>
 
-## Vue组件使用（必会）
+## 2. Vue组件使用（必会）
 
 #### 1：props和$emit
 1：父=>子 props v-bind:name="name" 或者 :name="name"  
@@ -75,7 +77,7 @@ Vue生命周期经历哪些阶段：
 至少知道created和mounted的区别  
 beforeDestroy 里注意解除事件监听、定时器等  
 
-#### 生命周期经历的阶段和钩子函数
+###### 生命周期经历的阶段和钩子函数
 
 1：实例化vue(组件)对象：  
 new Vue()
@@ -135,7 +137,7 @@ data，computed都执行了。属性已经赋值，但没有动态创建template
  
 <hr>
 
-## Vue高级特性
+## 3. Vue高级特性
 
 不是每个都很常用，但是用到时必须知道  
 考察候选人对vue的掌握是否全面，且是否有深度  
@@ -166,13 +168,15 @@ data，computed都执行了。属性已经赋值，但没有动态创建template
 
 #### 3：slot 插槽
 1）基本使用   
-内容派发 备选（默认）内容 <slot></slot>  
+内容派发 备选（默认）内容 <slot></slot>
+
 2）作用域插槽    
 父组件中的插槽内容访问子组件中的数据    
 `<span> <slot v-bind:user="user"> {{ user.lastName }} </slot> </span>`
-`<current-user> <template v-slot:default="slotProps"> {{ slotProps.user.firstName }} </template> </current-user>`    
+`<current-user> <template v-slot:default="slotProps"> {{ slotProps.user.firstName }} </template> </current-user>`      
 缩写：  
-`<current-user v-slot:default="slotProps"> {{ slotProps.user.firstName }} </current-user>`    
+`<current-user v-slot:default="slotProps"> {{ slotProps.user.firstName }} </current-user>`   
+
 3）具名插槽  
  缺图 // TODO
 
@@ -196,8 +200,8 @@ vue常见的性能优化手段之一
 #### 7：mixin
 1）多个组件有相同的逻辑，抽离出来  
 mixins：[mixinOne，mixinTwo...]  
-1. 同名钩子函数将合并为一个数组，因此都将被调用。另外，混入对象的钩子将在组件自身钩子之前调用  
-2. 当组件和混入对象含有同名选项时，这些选项将以恰当的方式进行“合并”。比如，数据对象在内部会进行递归合并，并在发生冲突时以组件数据优先  
+同名钩子函数将合并为一个数组，因此都将被调用。另外，混入对象的钩子将在组件自身钩子之前调用    
+当组件和混入对象含有同名选项时，这些选项将以恰当的方式进行“合并”。比如，数据对象在内部会进行递归合并，并在发生冲突时以组件数据优先    
 
 2）mixin并非完美的解决方案，会有一些问题  
 变量来源不明确，不利于阅读  
@@ -213,7 +217,7 @@ mixin和组件可能出现多对多的关系，复杂度高（维护火葬场）
 
 <hr>
 
-## 扩展
+## 4. 扩展
 #### Vuex使用  
 面试考点并不多(熟悉vue后，vuex没有难度)  
 基本概念，基本使用和API必须要掌握  
@@ -245,7 +249,7 @@ h5 history需要后端配置，无论请求什么地址，后端都返回index.h
 
 <hr>
 
-## Vue原理(大厂必考) 原理≠源码
+## 5. Vue原理(大厂必考) 原理≠源码
 
 1：面试为何会考察原理？  
 2：面试中如何考察？以何种方式？   
@@ -256,9 +260,9 @@ h5 history需要后端配置，无论请求什么地址，后端都返回index.h
 组件化/响应式/vnode和diff/模板编译/渲染过程/前端路由  
 
 #### 1：如何理解MVVM模型  
-M：model  数据模型
-V：view  UI视图
-VM：view-mode 连接M和V  
+M：model  数据模型  
+V：view  UI视图  
+VM：view-mode 连接M和V    
 缺图 // TODO  
  
 
@@ -390,22 +394,19 @@ data.nums.push(4) // 监听数组
  
 
 #### 8：组件渲染、更新过程
-
-1）初次渲染过程
-解析模板为render函数（或者在开发环境已完成，vue-loader）    
-触发响应式，监听data属性getter setter  
-执行render函数。生成vnode，然后patch(elem,vnode)  
+1）初次渲染过程  
+1. 解析模板为render函数（或者在开发环境已完成，vue-loader）    
+2. 触发响应式，监听data属性getter setter  
+3. 执行render函数。生成vnode，然后patch(elem,vnode)  
 （执行render函数会触发getter（针对模板中使用到的数据），从而进行依赖收集）
 
-2）更新过程
- 修改data，触发setter(此前在getter中已经被监听)  
- 重新执行render函数，生成newVnode  
- patch(vnode, newVnode)  
+2）更新过程  
+ 1. 修改data，触发setter(此前在getter中已经被监听)  
+ 2. 重新执行render函数，生成newVnode  
+ 3. patch(vnode, newVnode)  
 
 #### 9：异步渲染
-
 $nextTick 汇总data修改，一次性更新视图，减少DOM操作次数，提高性能
-
 组件渲染/更新过程（重要）  
 缺图 TODO
  
@@ -416,20 +417,19 @@ $nextTick 汇总data修改，一次性更新视图，减少DOM操作次数，提
 
 
 #### 10： 前端路由原理
-
 稍微复杂的SPA，都需要前端路由，Vue-router是vue全家桶标配之一，属于"和日常使用相关联的原理"，面试常考。
 
-路由模式  
+###### 路由模式  
 1：hash  
 2：H5 history  
 
 hash 模式
 形如：http://ai.huawei.com/nlp/aila_conference/#/home  
-location.hash  #/home 
+location.hash => #/home 
 hash 的特点  
-1. hash变化会触发网页跳转，即浏览器的前进后退  
-2. hash变化不会刷新页面，SPA必需的特点  
-3. hash永远不会提交到server端  
+1.hash变化会触发网页跳转，即浏览器的前进后退  
+2.hash变化不会刷新页面，SPA必需的特点  
+3.hash永远不会提交到server端  
 缺图 TODO  
 
 H5 history 模式  
@@ -442,8 +442,9 @@ window.onpopstate：
 
 Vue原理总结：组件化、响应式 、vdom和diff 、模板编译、渲染过程、前端路由 
 
+<hr>
 
-## 面试真题演练：
+## 6. 面试真题演练：
 #### 1：v-show和v-if 的区别
 1. v-show 通过css display 控制显示和隐藏  
 2. v-if组件真正的渲染和销毁，而不是显示和隐藏  
