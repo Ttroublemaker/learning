@@ -44,8 +44,8 @@ v-for的优先级高过v-if，所以会对循环体内的每一项使用v-if进�
 关注点：1）事件是原生的 2）事件被注册到当前元素上
 
 2：事件修饰符，按键修饰符  
-![](./imgs/vue/event.png)
-![](./imgs/vue/按键修饰符.png)
+![](imgs/vue/event.jpg)
+![](imgs/vue/按键修饰符.jpg)
 
 #### 9：表单
 v-model  
