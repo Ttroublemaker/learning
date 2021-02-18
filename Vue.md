@@ -6,7 +6,7 @@
 ### 2：指令、动态属性 
 ### 3：v-html：会有XSS风险、会覆盖子组件
 ### 4：computed和watch
-1：computed 有缓存，data不变化则不会重新计算,取决于依赖项是否变化
+1：computed 有缓存，data不变化则不会重新计算,取决于依赖项是否变化  
 2：watch如何深度监听
 watch:{
   name:{
@@ -15,63 +15,63 @@ watch:{
     },
     deep:true
   }
-}
-3：watch 监听引用类型，拿不到oldVal， 因为引用类型是指针赋值，新值旧值指向同一个地址
+}  
+3：watch 监听引用类型，拿不到oldVal， 因为引用类型是指针赋值，新值旧值指向同一个地址  
 
 ### 5：class和style
-使用动态属性 对象语法 数组语法
-使用驼峰写法
+使用动态属性 对象语法 数组语法  
+使用驼峰写法  
 
 ### 6：条件渲染
-v-if/v-else-if/v-else 用法，可以使用变量，也可以使用===表达式
-v-if和v-show的区别：v-if 控制组件渲染与销毁，v-show设置display
-v-if和v-show的使用场景：频繁切换用v-show(v-if渲染代价更大)，切换不频繁或者只判断一次的使用v-if
+v-if/v-else-if/v-else 用法，可以使用变量，也可以使用===表达式  
+v-if和v-show的区别：v-if 控制组件渲染与销毁，v-show设置display  
+v-if和v-show的使用场景：频繁切换用v-show(v-if渲染代价更大)，切换不频繁或者只判断一次的使用v-if  
 
 ### 7：循环（列表）渲染 v-for 
-1：key的重要性，key不能乱写，最好是唯一id
-key是为Vue中vnode标记的唯一id,通过这个key,我们的diff操作可以更准确、更快速
-准确: 如果不加key,那么vue会选择复用节点(Vue的就地更新策略),导致之前节点的状态被保留下来,会产生一系列的bug.
-快速: key的唯一性可以被Map数据结构充分利用,相比于遍历查找的时间复杂度O(n),Map的时间复杂度仅仅为O(1).
-2：v-for 和v-if 不能一起使用
+1：key的重要性，key不能乱写，最好是唯一id  
+key是为Vue中vnode标记的唯一id,通过这个key,我们的diff操作可以更准确、更快速  
+准确: 如果不加key,那么vue会选择复用节点(Vue的就地更新策略),导致之前节点的状态被保留下来,会产生一系列的bug  
+快速: key的唯一性可以被Map数据结构充分利用,相比于遍历查找的时间复杂度O(n),Map的时间复杂度仅仅为O(1)  
+2：v-for 和v-if 不能一起使用  
 V-for的优先级高过v-if，所以会对循环体内的每一项使用v-if进行判断，因此哪怕我们只渲染出一小部分用户的元素，也得在每次重渲染的时候遍历整个列表，不论活跃用户是否发生了变化，从而导致不必要的计算。通常可以使用computed对数据先进行过滤
 
 ### 8：事件
-1：event参数、自定义参数
-模板中使用$event 表示"原生事件"对象 比如increment(payload,$event)，打印event.currentTarget会发现事件被注册到当前元素上，和react不同，react是合成事件
-关注点：1）事件是原生的，2）事件被注册到当前元素上
-2：事件修饰符，按键修饰符
+1：event参数、自定义参数  
+模板中使用$event 表示"原生事件"对象 比如increment(payload,$event)，打印event.currentTarget会发现事件被注册到当前元素上，和react不同，react是合成事件。  
+关注点：1）事件是原生的，2）事件被注册到当前元素上。  
+2：事件修饰符，按键修饰符  
 缺图 // TODO
 
 ### 9：表单
-v-model
-常见表单项 textarea checkbox radio select
-修饰符 lazy number trim
-Lazy 具备防抖效果，输入过程中value不会变化，在输完后才变化
+v-model  
+常见表单项 textarea checkbox radio select  
+修饰符 lazy number trim  
+Lazy 具备防抖效果，输入过程中value不会变化，在输完后才变化  
 
 <hr>
 
 ## Vue组件使用（必会）
 
 ### 1：props和$emit
-1：父=>子 props v-bind:name="name" 或者 :name="name" :
-2：子=>父 $emit 父组件中使用@userEvent="userMethod"监听自定义事件
+1：父=>子 props v-bind:name="name" 或者 :name="name"  
+2：子=>父 $emit 父组件中使用@userEvent="userMethod"监听自定义事件  
 
 ### 2：组件间通讯、自定义事件
-1：父=>子 props  
-2：子=>父 $emit 
-3：自定义事件（事件总线 ），eventBus = new Vue(), 常用于兄弟组件、远距离组件等, $on、 $off 、$once、$emit需要时注意及时解绑自定义事件
-4：vuex
-5：inject  provide
-6：获取父子组件实例 $parent、$children、$refs 获取实例的方式调用组件的属性或者方法
+1：父=>子 props   
+2：子=>父 $emit  
+3：自定义事件（事件总线 ），eventBus = new Vue(), 常用于兄弟组件、远距离组件等, $on、 $off 、$once、$emit需要时注意及时解绑自定义事件  
+4：vuex  
+5：inject  provide  
+6：获取父子组件实例 $parent、$children、$refs 获取实例的方式调用组件的属性或者方法  
 
 ### 3：组件生命周期（必考，可能涉及父子组件）
-Vue生命周期经历哪些阶段：
-总体来说：初始化、运行中、销毁
-详细来说：开始创建、初始化数据、编译模板、挂载Dom、渲染→更新→渲染、销毁等一系列过程
+Vue生命周期经历哪些阶段：  
+总体来说：初始化、运行中、销毁  
+详细来说：开始创建、初始化数据、编译模板、挂载Dom、渲染→更新→渲染、销毁等一系列过程  
 
-详见下页图，必须会画
-至少知道created和mounted的区别
-beforeDestroy 里注意解除事件监听、定时器等
+详见下页图，必须会画  
+至少知道created和mounted的区别  
+beforeDestroy 里注意解除事件监听、定时器等  
 
 #### 生命周期经历的阶段和钩子函数
 
@@ -84,121 +84,124 @@ beforeDestroy 里注意解除事件监听、定时器等
 在实例初始化之后，数据观测 (data observer) 和 event/watcher 事件配置之前被调用。:
 即此时vue（组件）对象被创建了，但是vue对象的属性还没有绑定，如data属性，computed属性还没有绑定，即没有值。
 
-4： 挂载数据（属性赋值）
+4：挂载数据（属性赋值）
 包括 属性和computed的运算
 
-5： Created函数：
+5：Created函数：
 vue对象的属性有值了，但是DOM还没有生成，$el属性还不存在。
 此时有数据了，但是还没有真实的DOM，即：
 data，computed都执行了。属性已经赋值，但没有动态创建template属性对应的HTML元素，所以，此时如果更改数据不会触发updated函数
 
-6： 检查
-1）检查是否有el属性
-检查vue配置，即new Vue{}里面的el项是否存在，有就继续检查template项。没有则等到手动绑定调用vm.$mount()
+6：检查
+1）检查是否有el属性  
+检查vue配置，即new Vue{}里面的el项是否存在，有就继续检查template项。没有则等到手动绑定调用vm.$mount()  
 2）检查是否有template属性
 检查配置中的template项，如果没有template进行填充被绑定区域，则被绑定区域的el对象的outerHTML（即整个#app DOM对象，包括<div id=”app” >和</div>标签）都作为被填充对象替换掉填充区域，即：如果vue对象中有 template属性，那么，template后面的HTML会替换$el对应的内容。如果有render属性，那么render就会替换template。
 即：优先关系时： render  >  template > el
 
-7：  beforeMount函数：
+7：beforeMount函数：
 模板编译(template)、数据挂载(把数据显示在模板里)之前执行的钩子函数
 此时 this.$el有值，但是数据还没有挂载到页面上。即此时页面中的{{}}里的变量还没有被数据替换
 
 8：模板编译：用vue对象的数据（属性）替换模板中的内容
 
-9： Mounted函数：
+9：Mounted函数：
 模板编译完成，数据挂载完毕，此时已经把数据挂载到了页面上，页面上能够看到正确的数据了。
 一般来说，我们在此处发送异步请求（ajax，fetch，axios等），获取服务器上的数据，显示在DOM里。
 
-10： beforeUpdate函数：
+10：beforeUpdate函数：
 组件更新之前执行的函数，只有数据更新后，才能调用（触发）beforeUpdate，注意：此数据一定是在模板上出现的数据，否则，不会，也没有必要触发组件更新（因为数据不出现在模板里，就没有必要再次渲染）
 数据更新了，但是，vue（组件）对象对应的dom中的内部（innerHTML）没有变，所以叫作组件更新前
 
-11： updated函数：
+11：updated函数：
 组件更新之后执行的函数，vue（组件）对象对应的dom中的内部（innerHTML）改变了
 
-12：  activated函数：keep-alive组件激活时调用
+12：activated函数：keep-alive组件激活时调用
 
-13：  deactivated函数：keep-alive组件停用时调用
+13：deactivated函数：keep-alive组件停用时调用
 
-14：  beforeDestroy：vue（组件）对象销毁之前
+14：beforeDestroy：vue（组件）对象销毁之前
 注意解除事件监听、定时器等
 
-15：  destroyed：vue组件销毁后
+15：destroyed：vue组件销毁后
 
 
 缺图 // TODO
  
  
- 
+<hr>
+
 ## Vue高级特性
 
 不是每个都很常用，但是用到时必须知道
 考察候选人对vue的掌握是否全面，且是否有深度
 考察做过的项目是否有深度和复杂度（至少能用到高级特性）
 
-1：自定义 v-model
-2：$nextTick
-3：refs
-4：slot
-5：动态/异步组件
-6：keep-alive
-7：mixin
+1：自定义 v-model  
+2：$nextTick  
+3：refs  
+4：slot  
+5：动态/异步组件  
+6：keep-alive  
+7：mixin  
 
-1：自定义 v-model
- 
+### 1：自定义 v-model  
+缺图 // TODO
 
 
-
-2：$nextTick
- 
-异步渲染，$nextTick 待Dom渲染后再回调
-页面渲染时会将data的修改做整合，多次data修改只会渲染一次
-nextTick批量异步更新策略，一句话概括在下次DOM更新循环结束之后执行延迟回调。它主要是为了解决：例如一个data中的数据它的改变会导致视图的更新，而在某一个很短的时间被改变了很多次，假如是1000次，每一次的改变如果都都将促发数据中的setter并按流程跑下来直到修改真实DOM，那DOM就会被更新1000次，这样的做法肯定是非常低效的。
+### 2：$nextTick
+异步渲染，$nextTick 待Dom渲染后再回调  
+页面渲染时会将data的修改做整合，多次data修改只会渲染一次  
+nextTick批量异步更新策略，一句话概括: 在下次DOM更新循环结束之后执行延迟回调  
+它主要是为了解决：  
+例如一个data中的数据它的改变会导致视图的更新，而在某一个很短的时间被改变了很多次，假如是1000次，每一次的改变如果都都将促发数据中的setter并按流程跑下来直到修改真实DOM，那DOM就会被更新1000次，这样的做法肯定是非常低效的。
 
 而在目前浏览器平台并没有实现nextTick方法，所以Vue.js 源码中分别用 Promise、setTimeout、setImmediate 等方式定义了一个异步方法nextTick，它接收的是一个回调函数，多次调用nextTick会将传入的回调函数存入队列中，当当前栈的任务都执行完毕之后才来执行这个队列中刚刚存储的那些回调函数，并且通过这个异步方法清空当前队列
 
-3：slot 插槽
-1）基本使用  
+### 3：slot 插槽
+1）基本使用   
 内容派发 备选（默认）内容 <slot></slot>
-2）作用域插槽
-父组件中的插槽内容访问子组件中的数据
+2）作用域插槽  
+父组件中的插槽内容访问子组件中的数据  
 <span> <slot v-bind:user="user"> {{ user.lastName }} </slot> </span>
-<current-user> <template v-slot:default="slotProps"> {{ slotProps.user.firstName }} </template> </current-user>
+<current-user> <template v-slot:default="slotProps"> {{ slotProps.user.firstName }} </template> </current-user>  
 缩写：
-<current-user v-slot:default="slotProps"> {{ slotProps.user.firstName }} </current-user>
-3）具名插槽
- 
+<current-user v-slot:default="slotProps"> {{ slotProps.user.firstName }} </current-user>  
+3）具名插槽  
+ 缺图 // TODO
 
 
-4：动态组件
-<component v-bind:is="currentTabComponent"></component>
+### 4：动态组件
+<component v-bind:is="currentTabComponent"></component>  
 必须使用动态写法(:is)，适用于根据数据动态渲染的常见，组件类型不确定 可以用v-if语法。
 
-5：异步组件（重要）
-1：Import()函数
-2：按需加载，异步加载大组件
- 
+### 5：异步组件（重要）
+1：Import()函数  
+2：按需加载，异步加载大组件  
+缺图 // TODO
 
-6：keep-alive
-缓存组件
-频繁切换，不需要重复渲染
-vue常见的性能优化手段之一
+### 6：keep-alive
+缓存组件  
+频繁切换，不需要重复渲染  
+vue常见的性能优化手段之一  
 
-想保持这些组件的状态，以避免反复重渲染导致的性能问题
+想保持这些组件的状态，以避免反复重渲染导致的性能问题  
 
-7：mixin
-1）多个组件有相同的逻辑，抽离出来
-mixins：[mixinOne，mixinTwo...]
-同名钩子函数将合并为一个数组，因此都将被调用。另外，混入对象的钩子将在组件自身钩子之前调用
-当组件和混入对象含有同名选项时，这些选项将以恰当的方式进行“合并”。比如，数据对象在内部会进行递归合并，并在发生冲突时以组件数据优先。
-2）mixin并非完美的解决方案，会有一些问题
-变量来源不明确，不利于阅读
-多mixin时，容易造成命名冲突
-mixin和组件可能出现多对多的关系，复杂度高（维护火葬场）
-3）vue3中的composition API旨在解决这些问题
-高级特性
-可以不深入，但必须知道
-熟悉基本用法，了解使用场景，最好能和自己的项目经验结合起来
+### 7：mixin
+1）多个组件有相同的逻辑，抽离出来  
+mixins：[mixinOne，mixinTwo...]  
+同名钩子函数将合并为一个数组，因此都将被调用。另外，混入对象的钩子将在组件自身钩子之前调用  
+当组件和混入对象含有同名选项时，这些选项将以恰当的方式进行“合并”。比如，数据对象在内部会进行递归合并，并在发生冲突时以组件数据优先  
+2）mixin并非完美的解决方案，会有一些问题  
+变量来源不明确，不利于阅读  
+多mixin时，容易造成命名冲突  
+mixin和组件可能出现多对多的关系，复杂度高（维护火葬场）  
+3）vue3中的composition API旨在解决这些问题  
+
+### 总结：
+高级特性  
+可以不深入，但必须知道  
+熟悉基本用法，了解使用场景，最好能和自己的项目经验结合起来  
 
 4）扩展
 Vuex使用
