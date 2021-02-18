@@ -30,22 +30,22 @@ v-if和v-show的区别：v-if 控制组件渲染与销毁，v-show设置display
 v-if和v-show的使用场景：频繁切换用v-show(v-if渲染代价更大)，切换不频繁或者只判断一次的使用v-if  
 
 #### 7：循环（列表）渲染 v-for 
-1. key的重要性，key不能乱写，最好是唯一id    
+1: key的重要性，key不能乱写，最好是唯一id    
 key是为Vue中vnode标记的唯一id，通过这个key,我们的diff操作可以更准确、更快速  
 准确: 如果不加key，那么vue会选择复用节点(Vue的就地更新策略)，导致之前节点的状态被保留下来，会产生一系列的bug  
 快速: key的唯一性可以被Map数据结构充分利用，相比于遍历查找的时间复杂度O(n)，Map的时间复杂度仅仅为O(1)  
 
-2. v-for 和v-if 不能一起使用    
+2: v-for 和v-if 不能一起使用    
 v-for的优先级高过v-if，所以会对循环体内的每一项使用v-if进行判断，因此哪怕我们只渲染出一小部分用户的元素，也得在每次重渲染的时候遍历整个列表，不论活跃用户是否发生了变化，从而导致不必要的计算。通常可以使用computed对数据先进行过滤
 
 #### 8：事件
-1：event参数、自定义参数  
+1: event参数、自定义参数  
 模板中使用$event 表示"原生事件"对象，比如increment(payload,$event)，打印event.currentTarget会发现事件被注册到当前元素上，和react不同，react是合成事件。  
 关注点：1）事件是原生的 2）事件被注册到当前元素上
 
-2：事件修饰符，按键修饰符  
-![](imgs/vue/event.jpg)
-![](imgs/vue/按键修饰符.jpg)
+2: 事件修饰符，按键修饰符  
+![事件修饰符](imgs/vue/事件修饰符.jpg)
+![按键修饰符](imgs/vue/按键修饰符.jpg)
 
 #### 9：表单
 v-model  
@@ -63,8 +63,8 @@ Lazy 具备防抖效果，输入过程中value不会变化，在输完后才变�
 
 #### 2：组件间通讯、自定义事件
 1：父=>子 props   
-2：子=>父 $emit  
-3：自定义事件（事件总线 ），eventBus = new Vue(), 常用于兄弟组件、远距离组件等, $on、 $off 、$once、$emit需要时注意及时解绑自定义事件  
+2：子=>父 $emit     
+3：自定义事件（事件总线 ），eventBus = new Vue(), 常用于兄弟组件、远距离组件等, $on、$off、$once、$emit需要时注意及时解绑自定义事件  
 4：vuex  
 5：inject  provide  
 6：获取父子组件实例 $parent、$children、$refs 获取实例的方式调用组件的属性或者方法  
@@ -77,6 +77,9 @@ Vue生命周期经历哪些阶段：
 详见下页图，必须会画  
 至少知道created和mounted的区别  
 beforeDestroy 里注意解除事件监听、定时器等  
+![生命周期](imgs/vue/生命周期.jpg)
+![父子生命周期](imgs/vue/父子生命周期.jpg)
+![父子生命周期2](imgs/vue/父子生命周期2.jpg)
 
 ###### 生命周期经历的阶段和钩子函数
 
@@ -100,7 +103,8 @@ data，computed都执行了。属性已经赋值，但没有动态创建template
 
 6：检查  
 1）检查是否有el属性  
-检查vue配置，即new Vue{}里面的el项是否存在，有就继续检查template项。没有则等到手动绑定调用vm.$mount()  
+检查vue配置，即new Vue{}里面的el项是否存在，有就继续检查template项。没有则等到手动绑定调用vm.$mount();  
+
 2）检查是否有template属性
 检查配置中的template项，如果没有template进行填充被绑定区域，则被绑定区域的el对象的outerHTML（即整个#app DOM对象，包括`<div id="app" >`和`</div>`标签）都作为被填充对象替换掉填充区域，即：如果vue对象中有 template属性，那么，template后面的HTML会替换$el对应的内容。如果有render属性，那么render就会替换template。
 即：优先关系时： render  >  template > el
@@ -132,10 +136,6 @@ data，computed都执行了。属性已经赋值，但没有动态创建template
 
 15：destroyed：vue组件销毁后
 
-
-缺图 // TODO
- 
- 
 <hr>
 
 ## 3. Vue高级特性
@@ -153,33 +153,33 @@ data，computed都执行了。属性已经赋值，但没有动态创建template
 7：mixin  
 
 #### 1：自定义 v-model  
-缺图 // TODO
+![自定义 v-model](imgs/vue/自定义v-model.jpg)
 
 
 #### 2：$nextTick
 异步渲染，$nextTick 待DOM渲染后再回调  
 页面渲染时会将data的修改做整合，多次data修改只会渲染一次  
-1）nextTick批量异步更新策略，一句话概括:   
+1: nextTick批量异步更新策略，一句话概括:   
 在下次DOM更新循环结束之后执行延迟回调  
 
-2）它主要是为了解决：  
+2: 它主要是为了解决：  
 例如一个data中的数据它的改变会导致视图的更新，而在某一个很短的时间被改变了很多次，假如是1000次，每一次的改变如果都都将促发数据中的setter并按流程跑下来直到修改真实DOM，那DOM就会被更新1000次，这样的做法肯定是非常低效的。
 
-3）而在目前浏览器平台并没有实现nextTick方法，所以Vue.js 源码中分别用 Promise、setTimeout、setImmediate 等方式定义了一个异步方法nextTick，它接收的是一个回调函数，多次调用nextTick会将传入的回调函数存入队列中，当当前栈的任务都执行完毕之后才来执行这个队列中刚刚存储的那些回调函数，并且通过这个异步方法清空当前队列
+3: 而在目前浏览器平台并没有实现nextTick方法，所以Vue.js 源码中分别用 Promise、setTimeout、setImmediate 等方式定义了一个异步方法nextTick，它接收的是一个回调函数，多次调用nextTick会将传入的回调函数存入队列中，当当前栈的任务都执行完毕之后才来执行这个队列中刚刚存储的那些回调函数，并且通过这个异步方法清空当前队列
 
 #### 3：slot 插槽
-1）基本使用   
-内容派发 备选（默认）内容 <slot></slot>
+1: 基本使用   
+内容派发 备选（默认）内容 `<slot></slot>`
 
-2）作用域插槽    
+2: 作用域插槽    
 父组件中的插槽内容访问子组件中的数据    
 `<span> <slot v-bind:user="user"> {{ user.lastName }} </slot> </span>`
 `<current-user> <template v-slot:default="slotProps"> {{ slotProps.user.firstName }} </template> </current-user>`      
 缩写：  
 `<current-user v-slot:default="slotProps"> {{ slotProps.user.firstName }} </current-user>`   
 
-3）具名插槽  
- 缺图 // TODO
+3: 具名插槽  
+![具名插槽](imgs/vue/具名插槽.jpg)
 
 
 #### 4：动态组件
@@ -189,7 +189,7 @@ data，computed都执行了。属性已经赋值，但没有动态创建template
 #### 5：异步组件（重要）
 1：import()函数  
 2：按需加载，异步加载大组件  
-缺图 // TODO
+![异步组件](imgs/vue/异步组件.jpg)
 
 #### 6：keep-alive
 缓存组件  
@@ -199,17 +199,17 @@ vue常见的性能优化手段之一
 想保持这些组件的状态，以避免反复重渲染导致的性能问题  
 
 #### 7：mixin
-1）多个组件有相同的逻辑，抽离出来  
+1: 多个组件有相同的逻辑，抽离出来  
 mixins：[mixinOne，mixinTwo...]  
 同名钩子函数将合并为一个数组，因此都将被调用。另外，混入对象的钩子将在组件自身钩子之前调用    
 当组件和混入对象含有同名选项时，这些选项将以恰当的方式进行“合并”。比如，数据对象在内部会进行递归合并，并在发生冲突时以组件数据优先    
 
-2）mixin并非完美的解决方案，会有一些问题  
+2: mixin并非完美的解决方案，会有一些问题  
 变量来源不明确，不利于阅读  
 多mixin时，容易造成命名冲突  
 mixin和组件可能出现多对多的关系，复杂度高（维护火葬场）  
 
-3）vue3中的composition API旨在解决这些问题  
+3: vue3中的composition API旨在解决这些问题  
 
 ### 总结：
 高级特性  
@@ -238,7 +238,7 @@ mapGetter
 mapActions  
 mapMutations  
 理解流程（重要），只能在actions里进行异步操作，mutations进行同步操作，state只能通过mutations进行修改，不能直接修改  
-缺图 // TODO  
+![vuex](imgs/vue/vuex.jpg) 
 
 #### Vue-router使用
 面试考点并不多  
@@ -246,7 +246,7 @@ mapMutations
 路由配置（动态路由、路由懒加载）  
 h5 history需要后端配置，无论请求什么地址，后端都返回index.html  
 动态路由  
-缺图 // TODO  
+![动态路由](imgs/vue/动态路由.jpg) 
 
 <hr>
 
@@ -264,7 +264,7 @@ h5 history需要后端配置，无论请求什么地址，后端都返回index.h
 M：model  数据模型  
 V：view  UI视图  
 VM：view-mode 连接M和V    
-缺图 // TODO  
+![mvvm](imgs/vue/数据驱动视图.jpg) 
  
 
 #### 2： 监听data变化的核心API（重点）
@@ -353,46 +353,59 @@ data.nums.push(4) // 监听数组
 ```
 
 #### 5： 虚拟DOM（重要）
-缺图 // TODO  
- 
+vdom 是实现vue和react的重要基石  
+diff算法是vdom中最核心、最关键的部分  
+vdom是一个热门话题，也是面试中的热门问题
 
+有了一定的复杂度，想减少计算次数比较难  
+能否把计算，更多地转移为js计算？因为js执行速度很快  
+vdom用js模拟DOM结构，计算出最小的变更，操作DOM
  
-
- 
+操作DOM非常耗费性能
+以前用jq，可以自行控制DOM操作的时机，手动调整  
+Vue和react是数据驱动视图，如何有效控制DOM操作？
 
 会用vdom描述html结构，如下：
-缺图 // TODO
- 
+![vdom](imgs/vue/vdom.jpg)
+
+vue3重写了vdom的代码，优化了性能  
+但vdom的基本理念不变，面试考点不变
+React和Vue的具体实现也不同，但是基本理念类似
 
 #### 6： diff算法(重点)
-缺图 // TODO
- 
- 
- 
+diff算法是vdom中最核心、最关键的部分
+diff算法能在日常使用vue react 中体现出来（如key的使用）
+diff 算法是前端热门话题，面试宠儿
+
+diff即对比，是一个广泛的概念，如linux diff命令、git diff等  
+两个js对象也可以做diff  
+两棵树做diff，如这里的vdom diff 
+复杂度O(n^3)=>O(n) 
+
+只比较同一层级，不跨级比较  
+tag不同，则直接删掉重建，不再深度比较  
+tag和key，两者都相同，则认为是相同节点，不再做深度比较  
+
+大大降低了复杂度  
  
 三个主要的diff 算法（不要纠结细节）  
-缺图 // TODO
+![patch](imgs/vue/patch.png)
+![patchVnode](imgs/vue/patchVnode.png)
+![updateChildren](imgs/vue/updateChildren.png)
+![updateChildren2](imgs/vue/updateChildren2.png)
  
- 
- 
- 
- 
- 
+细节不重要，updateChildren的过程也不重要，不要深究  
+vdom核心概念很重要：h、vnode、patch、diff、key等  
+vdom存在的价值更加重要：数据驱动视图，控制DOM操作等  
+
+![vnode](imgs/vue/vnode.png)
+![vnode2](imgs/vue/vnode2.png) 
 
 
 #### 7：模板编译
-缺图 // TODO  
- 
- 
- 
- 
-
-
- 
- 
- 
- 
- 
+![模板编译](imgs/vue/模板编译.png) 
+![模板编译2](imgs/vue/模板编译2.png) 
+![模板编译3](imgs/vue/模板编译3.png)  
 
 #### 8：组件渲染、更新过程
 1）初次渲染过程  
@@ -409,13 +422,7 @@ data.nums.push(4) // 监听数组
 #### 9：异步渲染
 $nextTick 汇总data修改，一次性更新视图，减少DOM操作次数，提高性能
 组件渲染/更新过程（重要）  
-缺图 TODO
- 
- 
-
-
-
-
+![nextTick](imgs/vue/nextTick.png)
 
 #### 10： 前端路由原理
 稍微复杂的SPA，都需要前端路由，Vue-router是vue全家桶标配之一，属于"和日常使用相关联的原理"，面试常考。
@@ -431,7 +438,7 @@ hash 的特点
 1.hash变化会触发网页跳转，即浏览器的前进后退  
 2.hash变化不会刷新页面，SPA必需的特点  
 3.hash永远不会提交到server端  
-缺图 TODO  
+![hash](imgs/vue/router-hash.png) 
 
 H5 history 模式  
 用url规范的路由，但跳转时不刷新页面  
@@ -439,7 +446,8 @@ histroy.pushState：
 打开一个新的路由【注意】用 pushState 方式，浏览器不会刷新页面  
 window.onpopstate：  
 监听浏览器前进、后退  
-缺图 TODO
+![history](imgs/vue/router-history.png)
+![history](imgs/vue/router-history2.png)
 
 Vue原理总结：组件化、响应式 、vdom和diff 、模板编译、渲染过程、前端路由 
 
@@ -477,10 +485,7 @@ v-model本质就是一个语法糖，可以看成是value + input方法的语法
 text 和 textarea 元素使用 value 属性和 input 事件；
 checkbox 和 radio 使用 checked 属性和 change 事件；
 select 字段将 value 作为 prop 并将 change 作为事件。
-缺图 TODO
-
- 
-
+![v-model](imgs/vue/v-model.png)
 
 #### 7：对MVVM的理解
 会画模型图  
@@ -501,7 +506,8 @@ mounted里，js是单线程，ajax是异步获取数据，放在mounted之前没
 
 #### 12: 实现自己的v-model 
 一个组件上的 v-model 默认会利用名为 value 的 prop 和名为 input 的事件，但是像单选框、复选框等类型的输入控件可能会将 value attribute 用于不同的目的。model 选项可以用来避免这样的冲突
-缺图 TODO  
+![自定义v-model](imgs/vue/自定义v-model.jpg)
+![自定义v-model](imgs/vue/自定义v-model2.jpg)
 
 #### 13：多个组件有相同逻辑，如何抽离
 Mixin以及mixin的一些缺点  
@@ -520,7 +526,7 @@ Mixin以及mixin的一些缺点
 3. 解绑自定义的DOM事件，如window scroll click等（模板中的事件会自动解绑）  
 
 #### 16：什么是作用域插槽
-缺图 TODO
+![作用域插槽](imgs/vue/作用域插槽.png)
  
 有时让插槽内容能够访问子组件中才有的数据。绑定在 <slot> 元素上的 attribute 被称为插槽 prop  
 
@@ -612,7 +618,8 @@ watch没有缓存性，更多的是观察的作用，可以监听某些数据执
 Proxy  
 
 #### Proxy 实现响应式  
-缺图 TODO
+![proxy](imgs/vue/proxy.png)
+![reactive](imgs/vue/reactive.png)
 
  
 
@@ -620,7 +627,7 @@ Proxy
 和proxy能力一一对应  
 替代Object的工具函数 
 标准化、 规范化、函数式（如下：）  
-缺图 TODO
+![Reflect](imgs/vue/Reflect-demo.png)
 
 与Object.defineProperty 深度递归的区别是Proxy只在get时递归，不会一次性递归，而Object.defineProperty则是一次性递归完成  
 
