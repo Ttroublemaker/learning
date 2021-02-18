@@ -8,6 +8,7 @@
 #### 4：computed和watch
 1：computed 有缓存，data不变化则不会重新计算,取决于依赖项是否变化  
 2：watch如何深度监听
+```
 watch:{  
   name:{  
     handler(oldVal, newVal ){  
@@ -16,6 +17,7 @@ watch:{
     deep:true  
   }  
 }  
+```
 3：watch 监听引用类型，拿不到oldVal， 因为引用类型是指针赋值，新值旧值指向同一个地址  
 
 #### 5：class和style
