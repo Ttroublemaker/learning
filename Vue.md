@@ -6,7 +6,7 @@
 #### 2：指令、动态属性 
 #### 3：v-html：会有XSS风险、会覆盖子组件
 #### 4：computed和watch
-1：computed 有缓存，data不变化则不会重新计算,取决于依赖项是否变化  
+1：computed 有缓存，data不变化则不会重新计算，取决于依赖项是否变化  
 2：watch如何深度监听
 ```
 watch:{  
@@ -26,7 +26,7 @@ watch:{
 
 #### 6：条件渲染
 v-if/v-else-if/v-else 用法，可以使用变量，也可以使用===等判断表达式  
-v-if和v-show的区别：v-if 控制组件渲染与销毁，v-show设置display  
+v-if和v-show的区别：v-if 控制组件渲染与销毁，v-show设置display 控制隐藏和显示
 v-if和v-show的使用场景：频繁切换用v-show(v-if渲染代价更大)，切换不频繁或者只判断一次的使用v-if  
 
 #### 7：循环（列表）渲染 v-for 
@@ -64,7 +64,7 @@ Lazy 具备防抖效果，输入过程中value不会变化，在输完后才变�
 #### 2：组件间通讯、自定义事件
 1：父=>子 props   
 2：子=>父 $emit     
-3：自定义事件（事件总线 ），eventBus = new Vue(), 常用于兄弟组件、远距离组件等, $on、$off、$once、$emit需要时注意及时解绑自定义事件  
+3：自定义事件（事件总线 ），eventBus = new Vue(), 常用于兄弟组件、远距离组件等， $on、$off、$once、$emit需要时注意及时解绑自定义事件  
 4：vuex  
 5：inject  provide  
 6：获取父子组件实例 $parent、$children、$refs 获取实例的方式调用组件的属性或者方法  
@@ -94,7 +94,7 @@ init events 和 init cycle
 此时vue（组件）对象被创建了，但是vue对象的属性还没有绑定，如data属性，computed属性还没有绑定，即没有值。
 
 4：挂载数据（属性赋值）  
-包括 属性和computed的运算
+包括属性和computed的运算
 
 5：created函数：  
 vue对象的属性有值了，但是DOM还没有生成，$el属性还不存在。
@@ -107,7 +107,7 @@ data，computed都执行了。属性已经赋值，但没有动态创建template
 
 2）检查是否有template属性
 检查配置中的template项，如果没有template进行填充被绑定区域，则被绑定区域的el对象的outerHTML（即整个#app DOM对象，包括`<div id="app" >`和`</div>`标签）都作为被填充对象替换掉填充区域，即：如果vue对象中有 template属性，那么，template后面的HTML会替换$el对应的内容。如果有render属性，那么render就会替换template。
-即：优先关系时： render  >  template > el
+即：优先关系是： render  >  template > el
 
 7：beforeMount函数：  
 模板编译(template)、数据挂载(把数据显示在模板里)之前执行的钩子函数
@@ -121,7 +121,7 @@ data，computed都执行了。属性已经赋值，但没有动态创建template
 一般来说，我们在此处发送异步请求（ajax，fetch，axios等），获取服务器上的数据，显示在DOM里。
 
 10：beforeUpdate函数：  
-组件更新之前执行的函数，只有数据更新后，才能调用（触发）beforeUpdate，注意：此数据一定是在模板上出现的数据，否则，不会，也没有必要触发组件更新（因为数据不出现在模板里，就没有必要再次渲染）
+组件更新之前执行的函数，只有数据更新后，才能调用（触发）beforeUpdate，注意：此数据一定是在模板上出现的数据，否则，不会也没有必要触发组件更新（因为数据不出现在模板里，就没有必要再次渲染）
 数据更新了，但是，vue（组件）对象对应的dom中的内部（innerHTML）没有变，所以叫作组件更新前
 
 11：updated函数：
@@ -174,6 +174,7 @@ data，computed都执行了。属性已经赋值，但没有动态创建template
 2: 作用域插槽    
 父组件中的插槽内容访问子组件中的数据    
 `<span> <slot v-bind:user="user"> {{ user.lastName }} </slot> </span>`
+
 `<current-user> <template v-slot:default="slotProps"> {{ slotProps.user.firstName }} </template> </current-user>`      
 缩写：  
 `<current-user v-slot:default="slotProps"> {{ slotProps.user.firstName }} </current-user>`   
@@ -246,6 +247,7 @@ mapMutations
 路由配置（动态路由、路由懒加载）  
 h5 history需要后端配置，无论请求什么地址，后端都返回index.html  
 动态路由  
+
 ![动态路由](imgs/vue/动态路由.jpg) 
 
 <hr>
@@ -261,9 +263,10 @@ h5 history需要后端配置，无论请求什么地址，后端都返回index.h
 组件化/响应式/vnode和diff/模板编译/渲染过程/前端路由  
 
 #### 1：如何理解MVVM模型  
-M：model  数据模型  
+M：model 数据模型  
 V：view  UI视图  
 VM：view-mode 连接M和V    
+数据驱动视图
 ![mvvm](imgs/vue/数据驱动视图.jpg) 
  
 
@@ -361,33 +364,33 @@ vdom是一个热门话题，也是面试中的热门问题
 能否把计算，更多地转移为js计算？因为js执行速度很快  
 vdom用js模拟DOM结构，计算出最小的变更，操作DOM
  
-操作DOM非常耗费性能
-以前用jq，可以自行控制DOM操作的时机，手动调整  
-Vue和react是数据驱动视图，如何有效控制DOM操作？
+操作DOM非常耗费性能  
+以前用jq，可以自行控制DOM操作的时机，手动调整    
+Vue和react是数据驱动视图，如何有效控制DOM操作？  
+Virtual DOM 是用 VNode 这么一个Class 去描述  
 
 会用vdom描述html结构，如下：
 ![vdom](imgs/vue/vdom.jpg)
-
+<br>
 vue3重写了vdom的代码，优化了性能  
 但vdom的基本理念不变，面试考点不变
 React和Vue的具体实现也不同，但是基本理念类似
 
 #### 6： diff算法(重点)
-diff算法是vdom中最核心、最关键的部分
-diff算法能在日常使用vue react 中体现出来（如key的使用）
-diff 算法是前端热门话题，面试宠儿
+diff算法是vdom中最核心、最关键的部分  
+diff算法能在日常使用vue react 中体现出来（如key的使用）  
+diff 算法是前端热门话题，面试宠儿  
 
-diff即对比，是一个广泛的概念，如linux diff命令、git diff等  
-两个js对象也可以做diff  
-两棵树做diff，如这里的vdom diff 
-复杂度O(n^3)=>O(n) 
+diff即对比，是一个广泛的概念，如linux diff命令、git diff等    
+两个js对象也可以做diff    
+两棵树做diff，如这里的vdom diff   
+复杂度O(n^3)=>O(n)   
 
 只比较同一层级，不跨级比较  
 tag不同，则直接删掉重建，不再深度比较  
 tag和key，两者都相同，则认为是相同节点，不再做深度比较  
+大大降低了复杂度   
 
-大大降低了复杂度  
- 
 三个主要的diff 算法（不要纠结细节）  
 ![patch](imgs/vue/patch.png)
 ![patchVnode](imgs/vue/patchVnode.png)
@@ -411,8 +414,8 @@ vdom存在的价值更加重要：数据驱动视图，控制DOM操作等
 1）初次渲染过程  
 1. 解析模板为render函数（或者在开发环境已完成，vue-loader）    
 2. 触发响应式，监听data属性getter setter  
-3. 执行render函数。生成vnode，然后patch(elem,vnode)  
-（执行render函数会触发getter（针对模板中使用到的数据），从而进行依赖收集）
+3. 执行render函数。生成vnode，然后patch(elem,vnode)   
+执行render函数会触发getter（针对模板中使用到的数据），从而进行依赖收集
 
 2）更新过程  
  1. 修改data，触发setter(此前在getter中已经被监听)  
@@ -420,8 +423,9 @@ vdom存在的价值更加重要：数据驱动视图，控制DOM操作等
  3. patch(vnode, newVnode)  
 
 #### 9：异步渲染
-$nextTick 汇总data修改，一次性更新视图，减少DOM操作次数，提高性能
+$nextTick 汇总data修改，一次性更新视图，减少DOM操作次数，提高性能  
 组件渲染/更新过程（重要）  
+
 ![nextTick](imgs/vue/nextTick.png)
 
 #### 10： 前端路由原理
@@ -473,11 +477,13 @@ key是为Vue中的vnode标记的唯一id，通过这个key，我们的diff操作
 
 #### 4：vue组件如何通讯（常见）
 1. 父子组件props 和 $emit  
-2. 自定义事件event.$on/event.$off/event.$emit/event.$once，事件总线  
+2. 自定义事件event.$on/event.$off/event.$emit/event.$once，即事件总线 EventBus  
 3. vuex  
+4. $refs $parent等
 
 #### 5：描述组件渲染和更新过程
-会画和描述流程图  
+会画和描述流程图
+![nextTick](imgs/vue/nextTick.png)
 
 #### 6：双向数据绑定v-model的实现原理
 v-model本质就是一个语法糖，可以看成是value + input方法的语法糖。可以通过model属性的prop和event属性来进行自定义。原生的v-model，会根据标签的不同生成不同的事件和属性。  
@@ -489,7 +495,8 @@ select 字段将 value 作为 prop 并将 change 作为事件。
 
 #### 7：对MVVM的理解
 会画模型图  
-MVVM是Model-View-ViewModel缩写，Model层代表数据模型，View代表UI组件，ViewModel是View和Model层的桥梁，数据会绑定到viewModel层并自动将数据渲染到页面中，视图变化的时候会通知viewModel层更新数据。  
+MVVM是Model-View-ViewModel缩写，Model层代表数据模型，View代表UI组件，ViewModel是View和Model层的桥梁，数据会绑定到viewModel层并自动将数据渲染到页面中，视图变化的时候会通知viewModel层更新数据。
+![mvvm](imgs/vue/数据驱动视图.jpg)
 
 #### 8：computed有何特点
 具有缓存性，data不变不会重新计算  
@@ -506,8 +513,8 @@ mounted里，js是单线程，ajax是异步获取数据，放在mounted之前没
 
 #### 12: 实现自己的v-model 
 一个组件上的 v-model 默认会利用名为 value 的 prop 和名为 input 的事件，但是像单选框、复选框等类型的输入控件可能会将 value attribute 用于不同的目的。model 选项可以用来避免这样的冲突
+
 ![自定义v-model](imgs/vue/自定义v-model.jpg)
-![自定义v-model](imgs/vue/自定义v-model2.jpg)
 
 #### 13：多个组件有相同逻辑，如何抽离
 Mixin以及mixin的一些缺点  
