@@ -267,6 +267,7 @@ M：model 数据模型
 V：view  UI视图  
 VM：view-mode 连接M和V    
 数据驱动视图
+
 ![mvvm](imgs/vue/数据驱动视图.jpg) 
  
 
@@ -370,6 +371,7 @@ Vue和react是数据驱动视图，如何有效控制DOM操作？
 Virtual DOM 是用 VNode 这么一个Class 去描述  
 
 会用vdom描述html结构，如下：
+
 ![vdom](imgs/vue/vdom.jpg)
 <br>
 vue3重写了vdom的代码，优化了性能  
@@ -450,6 +452,7 @@ histroy.pushState：
 打开一个新的路由【注意】用 pushState 方式，浏览器不会刷新页面  
 window.onpopstate：  
 监听浏览器前进、后退  
+
 ![history](imgs/vue/router-history.png)
 ![history](imgs/vue/router-history2.png)
 
@@ -483,6 +486,7 @@ key是为Vue中的vnode标记的唯一id，通过这个key，我们的diff操作
 
 #### 5：描述组件渲染和更新过程
 会画和描述流程图
+
 ![nextTick](imgs/vue/nextTick.png)
 
 #### 6：双向数据绑定v-model的实现原理
@@ -491,11 +495,13 @@ v-model本质就是一个语法糖，可以看成是value + input方法的语法
 text 和 textarea 元素使用 value 属性和 input 事件；
 checkbox 和 radio 使用 checked 属性和 change 事件；
 select 字段将 value 作为 prop 并将 change 作为事件。
+
 ![v-model](imgs/vue/v-model.png)
 
 #### 7：对MVVM的理解
 会画模型图  
 MVVM是Model-View-ViewModel缩写，Model层代表数据模型，View代表UI组件，ViewModel是View和Model层的桥梁，数据会绑定到viewModel层并自动将数据渲染到页面中，视图变化的时候会通知viewModel层更新数据。
+
 ![mvvm](imgs/vue/数据驱动视图.jpg)
 
 #### 8：computed有何特点
