@@ -1,33 +1,45 @@
 # Webpack篇
 webpack已是前端打包构建的不二选择，必考    
-重在配置和使用，不在原理
+重在配置和使用，不在原理  
+地址：https://webpack.docschina.org/concepts/
 
 基本配置  
 高级配置  
 优化打包速度  
-优化产出代码  
-构建流程概述  
+优化产出代码    
 Babel  
 
 ### 1）Webpack基本配置
 必须掌握  
 
 #### 1：拆分配置和merge
+通常将基础配置、开发环境配置和生产环境配置分别进行设置，然后通过merge进行合并，根据scripts命令启用开发或者生产配置，从而构建出项目
 
 ![config-merge](imgs/webpack/config-merge.png)
 
 #### 2：启动本地服务
-webpack-dev-server   
+webpack-dev-server插件   
 devServer 配置项
+```
+var path = require('path');
+module.exports = {
+  //...
+  devServer: {
+    contentBase: path.join(__dirname, 'dist'),
+    compress: true,
+    port: 9000,
+  },
+};
+```
 
 #### 3：处理es6
 babel-loader .babelrc文件 polyfill
 
 #### 4：处理样式
-style-loader css-loader scss-loader postcss-loader(配合autoprefixer添加厂商前缀)
+style-loader css-loader scss-loader等css预处理loader postcss-loader(配合autoprefixer添加厂商前缀)
 
 #### 5：处理图片
-file-loader/url-loader(配合options limit 配置项可以控制是否按吧base64格式产出
+file-loader/url-loader(配合options limit 配置项可以控制是否按吧base64格式产出)
 
 <hr>
 
@@ -35,33 +47,62 @@ file-loader/url-loader(配合options limit 配置项可以控制是否按吧base
 必须掌握  
 
 #### 1：多入口
-entry output
-
+多个entry 
+```
+module.exports = {
+  entry: {
+    main: 'xxx1',
+    index: 'xxx2'
+  },
+  output: {
+    filename: '[name].[contentHash:8].js',
+    path: path.resolve(__dirname, 'dist'),
+  }
+}
+```
 ![多入口](imgs/webpack/multi-entry.png)
 
 #### 2：抽离css文件
-常用于生产环境，开发环境没有必要
+常用于生产环境，开发环境没有必要(减少不必要的处理，使用style-loader即可)
 
 ![抽离css文件](imgs/webpack/css-split.png)
 
 官网中提到的extract-text-webpack-plugin插件要依赖webpack3的版本。
 
 #### 3：抽离公共代码（重要）
-抽离公共代码及第三方代码
+抽离公共代码及第三方代码，splitChunksPlugin（webpack已经内置）
+
 ![抽离公共代码](imgs/webpack/code-split.png)
 
 #### 4：实现异步加载
-
+import(/*webpackChunkName: chunkName */ '待引入的chunk') 魔术注释法进行命名，默认是使用id命名    
 ![实现异步加载](imgs/webpack/async-import.png)
 
 #### 5：处理JSX和vue
+配合使用对应的loader即可
+```
+module: {
+        rules: [
+            {
+                test: /\.(js|jsx)$/,
+                exclude: /(node_modules|bower_components)/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env', '@babel/preset-react']
+                    }
+                }
+            },
+        ]
+    },
+```
 ![处理JSX和vue](imgs/webpack/jsx&vue.png)
 
 
 #### 6：module chunk bundle 的区别
-module:各源文件,在webpack中,一切皆模块  
-chunk:多个模块合并合成的,比如entry import() splitChunk  
-bundle:最终输出文件  
+module：各源文件，在webpack中，一切皆模块  
+chunk：多个模块合并合成的,比如entry、import()、splitChunk  
+bundle：最终输出文件  
 
 <hr>
 
@@ -72,8 +113,8 @@ bundle:最终输出文件
 
 #### 1）优化打包构建速度
 ##### 1：优化babel-loader
-开启缓存，未修改过的es6+代码，就不会重新编译  
-include or exclude(exclude优先级高于前者)
+1）开启缓存，未修改过的es6+代码，就不会重新编译  
+2）限定打包范围 include or exclude(exclude优先级高于前者)
 
 ![优化babel-loader](imgs/webpack/babel-loader-optimization.png)
 
@@ -82,11 +123,16 @@ include or exclude(exclude优先级高于前者)
 
 ![IgnorePlugin](imgs/webpack/ignorePlugin.png)
 
-new Webpack.IgnorePlugin(/\.\/locale/,/moment/)
+```
+new webpack.IgnorePlugin({
+  resourceRegExp: /^\.\/locale$/,
+  contextRegExp: /moment$/,
+});
+```
 moment这个库中，如果引用了./locale/目录的内容，就忽略掉，不会打包进去
 
 ##### 3：noParse
-用了noParse的模块将不会被loaders解析，所以当我们使用的库如果太大，并且其中不包含import require、define的调用，我们就可以使用这项配置来提升性能, 让 Webpack 忽略对部分没采用模块化的文件的递归解析处理。
+用了noParse的模块将不会被loaders解析，所以当我们使用的库如果太大，并且其中不包含import、require、define的调用，我们就可以使用这项配置来提升性能, 让 Webpack 忽略对部分没采用模块化的文件的递归解析处理。
 
 ![noParse](imgs/webpack/noParse.png)
 
@@ -110,10 +156,9 @@ webpack内置Uglify工具压缩js（单进程）
 ![自动刷新](imgs/webpack/auto-fresh.png)
 
 ##### 7：热更新（开发环境）
-不丢失状态
+不丢失状态HMR   
 
 ![HMR](imgs/webpack/HMR.png)
-
 
 ##### 8：DllPlugin 动态链接库插件（开发环境）
 前端框架如vue React，体积大，构建慢  
@@ -128,7 +173,10 @@ DllReferencePlugin---使用dll文件
 
 ![DllReferencePlugin](imgs/webpack/DllReferencePlugin.png)
 
-
+#### 9：缩小文件的搜索范围(配置include exclude alias noParse extensions)
+alias: 当我们代码中出现 import 'vue'时， webpack会采用向上递归搜索的方式去node_modules 目录下找。为了减少搜索范围我们可以直接告诉webpack去哪个路径下查找。也就是别名(alias)的配置。
+include exclude 同样配置include exclude也可以减少webpack loader的搜索转换时间。
+extensions：webpack会根据extensions定义的后缀查找文件(频率较高的文件类型优先写在前面)
 
 再将react.dll.js文件引入html模板中即可（切勿忘记）
 
@@ -137,20 +185,20 @@ DllReferencePlugin---使用dll文件
 合理分包，不重复加载  
 速度更快，内存使用更小（代码执行更快）  
 
-##### 1：小图片base64编码
+##### 1：小图片base64编码 (url-loader)
 ##### 2：bundle加hash （使用contentHash，只有文件变更后才加载新内容）
-##### 3：懒加载
-##### 4：提取公共代码
+##### 3：懒加载(import())
+##### 4：提取公共代码(splitChunksPlugin)
 ##### 5：IngorePlugin
 （忽略第三方包指定目录，让这些指定目录不要被打包进去）
 ##### 6：使用CDN加速（通过配置publicPath）
 ##### 7：使用production模式
-自动开启代码压缩、Vue/React等会自动删掉调试代码（如开发环境的warning  ）
-自动启动tree-shaking  
+自动开启代码压缩、Vue/React等会自动删掉调试代码（如开发环境的warning）,自动启动tree-shaking  
+
 为了学会使用 tree shaking，你必须:  
-使用 ES2015 模块语法（即 import 和 export）
-在项目 package.json 文件中，添加一个 "sideEffects" 入口(注意，任何导入的文件都会受到 tree shaking 的影响。这意味着，如果在项目中使用类似 css-loader 并导入 CSS 文件，则需要将其添加到 side effect 列表中，以免在生产模式中无意中将它删除：)
-引入一个能够删除未引用代码(dead code)的压缩工具(minifier)
+1. 使用 ES2015 模块语法（即 import 和 export）
+2. 在项目 package.json 文件中，添加一个 "sideEffects" 入口(注意，任何导入的文件都会受到 tree shaking 的影响。这意味着，如果在项目中使用类似 css-loader 并导入 CSS 文件，则需要将其添加到 side effect 列表中，以免在生产模式中无意中将它删除)
+3. 引入一个能够删除未引用代码(dead code)的压缩工具(minifier)
 
 备注：ES6 Module和Commonjs区别  
 ES6 Module是静态引入，编译时引入，Commonjs是动态引入，执行时引入，所以只有ES6 Module才能静态分析，实现Tree-Shaking
