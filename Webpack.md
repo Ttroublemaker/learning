@@ -75,7 +75,8 @@ module.exports = {
 ![抽离公共代码](imgs/webpack/code-split.png)
 
 #### 4：实现异步加载
-import(/*webpackChunkName: chunkName */ '待引入的chunk') 魔术注释法进行命名，默认是使用id命名    
+import(/*webpackChunkName: chunkName */ '待引入的chunk') 魔术注释法进行命名，默认是使用id命名 
+   
 ![实现异步加载](imgs/webpack/async-import.png)
 
 #### 5：处理JSX和vue
