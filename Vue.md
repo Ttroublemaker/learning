@@ -26,11 +26,11 @@ watch:{
 
 #### 6：条件渲染
 v-if/v-else-if/v-else 用法，可以使用变量，也可以使用===等判断表达式  
-v-if和v-show的区别：v-if 控制组件渲染与销毁，v-show设置display 控制隐藏和显示
+v-if和v-show的区别：v-if控制组件的渲染与销毁，v-show通过设置display 控制隐藏和显示  
 v-if和v-show的使用场景：频繁切换用v-show(v-if渲染代价更大)，切换不频繁或者只判断一次的使用v-if  
 
 #### 7：循环（列表）渲染 v-for 
-1: key的重要性，key不能乱写，必须唯一，最好是唯一id
+1: key的重要性，key不能乱写，必须唯一，最好是唯一id  
 key是为Vue中vnode标记的唯一id，通过这个key,我们的diff操作可以更准确、更快速  
 准确: 如果不加key，那么vue会选择复用节点(Vue的就地更新策略)，导致之前节点的状态被保留下来，会产生一系列的bug  
 快速: key的唯一性可以被Map数据结构充分利用，相比于遍历查找的时间复杂度O(n)，Map的时间复杂度仅仅为O(1)  
@@ -41,7 +41,9 @@ v-for的优先级高过v-if，所以会对循环体内的每一项使用v-if进�
 #### 8：事件
 1: event参数、自定义参数  
 模板中使用$event 表示"原生事件"对象，比如increment(payload,$event)，打印event.currentTarget会发现事件被注册到当前元素上，和react不同，react是合成事件。  
-关注点：1）事件是原生的 2）事件被注册到当前元素上
+关注点：  
+1）事件是原生的  
+2）事件被注册到当前元素上  
 
 2: 事件修饰符，按键修饰符  
 ![事件修饰符](imgs/vue/事件修饰符.jpg)
@@ -64,7 +66,7 @@ Lazy 具备防抖效果，输入过程中value不会变化，在输完后才变�
 #### 2：组件间通讯、自定义事件
 1：父=>子 props   
 2：子=>父 $emit     
-3：自定义事件（事件总线 ），eventBus = new Vue(), 常用于兄弟组件、远距离组件等， $on、$off、$once、$emit需要时注意及时解绑自定义事件  
+3：自定义事件（事件总线 ），eventBus = new Vue(), 常用于兄弟组件、远距离组件等， $on、$off、$once、$emit。使用时注意及时解绑自定义事件  
 4：vuex  
 5：inject  provide  
 6：获取父子组件实例 $parent、$children、$refs 获取实例的方式调用组件的属性或者方法  
@@ -105,12 +107,12 @@ data，computed都执行了。属性已经赋值，但没有动态创建template
 1）检查是否有el属性  
 检查vue配置，即new Vue{}里面的el项是否存在，有就继续检查template项。没有则等到手动绑定调用vm.$mount();  
 
-2）检查是否有template属性
+2）检查是否有template属性  
 检查配置中的template项，如果没有template进行填充被绑定区域，则被绑定区域的el对象的outerHTML（即整个#app DOM对象，包括`<div id="app" >`和`</div>`标签）都作为被填充对象替换掉填充区域，即：如果vue对象中有 template属性，那么，template后面的HTML会替换$el对应的内容。如果有render属性，那么render就会替换template。
 即：优先关系是： render  >  template > el
 
 7：beforeMount函数：  
-模板编译(template)、数据挂载(把数据显示在模板里)之前执行的钩子函数
+模板编译(template)、数据挂载(把数据显示在模板里)之前执行的钩子函数  
 此时 this.$el有值，但是数据还没有挂载到页面上。即此时页面中的{{ }}里的变量还没有被数据替换
 
 8：模板编译：  
@@ -163,9 +165,9 @@ data，computed都执行了。属性已经赋值，但没有动态创建template
 在下次DOM更新循环结束之后执行延迟回调  
 
 2: 它主要是为了解决：  
-例如一个data中的数据它的改变会导致视图的更新，而在某一个很短的时间被改变了很多次，假如是1000次，每一次的改变如果都都将促发数据中的setter并按流程跑下来直到修改真实DOM，那DOM就会被更新1000次，这样的做法肯定是非常低效的。
+例如一个data中的数据，它的改变会导致视图的更新，而在某一个很短的时间被改变了很多次，假如是1000次，每一次的改变如果都都将促发数据中的setter并按流程跑下来直到修改真实DOM，那DOM就会被更新1000次，这样的做法肯定是非常低效的。
 
-3: 而在目前浏览器平台并没有实现nextTick方法，所以Vue.js 源码中分别用 Promise、setTimeout、setImmediate 等方式定义了一个异步方法nextTick，它接收的是一个回调函数，多次调用nextTick会将传入的回调函数存入队列中，当当前栈的任务都执行完毕之后才来执行这个队列中刚刚存储的那些回调函数，并且通过这个异步方法清空当前队列
+3: 在目前浏览器平台并没有实现nextTick方法，所以Vue.js 源码中分别用 Promise、setTimeout、setImmediate 等方式定义了一个异步方法nextTick，它接收的是一个回调函数，多次调用nextTick会将传入的回调函数存入队列中，当当前栈的任务都执行完毕之后才来执行这个队列中刚刚存储的那些回调函数，并且通过这个异步方法清空当前队列
 
 #### 3：slot 插槽
 1: 基本使用   
@@ -185,17 +187,32 @@ data，computed都执行了。属性已经赋值，但没有动态创建template
 
 #### 4：动态组件
 `<component v-bind:is="currentTabComponent"></component>`    
-必须使用动态写法(:is)，适用于根据数据动态渲染的常见，组件类型不确定 可以用v-if语法。
+必须使用动态写法(:is)，适用于根据数据动态渲染的常见，组件类型不确定，可以用v-if语法。
 
 #### 5：异步组件（重要）
 1：import()函数  
 2：按需加载，异步加载大组件  
+配合魔法注释可以对异步chunk进行自定义命名  
 ![异步组件](imgs/vue/异步组件.jpg)
 
 #### 6：keep-alive
 缓存组件  
 频繁切换，不需要重复渲染  
 vue常见的性能优化手段之一  
+include - 字符串或正则表达，只有匹配的组件会被缓存  
+exclude - 字符串或正则表达式，任何匹配的组件都不会被缓存（优先级高于include）
+```
+<keep-alive include="a">
+  <component>
+    <!-- name 为 a 的组件将被缓存！ -->
+  </component>
+</keep-alive>可以保留它的状态或避免重新渲染
+<keep-alive exclude="a">
+  <component>
+    <!-- 除了 name 为 a 的组件都将被缓存！ -->
+  </component>
+</keep-alive>可以保留它的状态或避免重新渲染
+```
 
 想保持这些组件的状态，以避免反复重渲染导致的性能问题  
 
@@ -239,6 +256,8 @@ mapGetter
 mapActions  
 mapMutations  
 理解流程（重要），只能在actions里进行异步操作，mutations进行同步操作，state只能通过mutations进行修改，不能直接修改  
+必须会画  
+
 ![vuex](imgs/vue/vuex.jpg) 
 
 #### Vue-router使用
@@ -277,7 +296,7 @@ VM：view-mode 连接M和V
 
 核心API：Object.defineProperty 有缺陷  
 vue3：Proxy 兼容性不好，且无法polyfill  
-1）深度监听，需要递归到底，一次性计算量大  
+1）深度监听，需要递归到底，一次性计算量大（嵌套层数尽量少）  
 2）无法监听新增属性、删除属性（新增了Vue.set/ Vue.delete API）  
 3）无法原生监听数组，需要特殊处理   
 
@@ -374,6 +393,7 @@ Virtual DOM 是用 VNode 这么一个Class 去描述
 
 ![vdom](imgs/vue/vdom.jpg)
 <br>
+
 vue3重写了vdom的代码，优化了性能  
 但vdom的基本理念不变，面试考点不变
 React和Vue的具体实现也不同，但是基本理念类似
@@ -444,6 +464,7 @@ hash 的特点
 1.hash变化会触发网页跳转，即浏览器的前进后退  
 2.hash变化不会刷新页面，SPA必需的特点  
 3.hash永远不会提交到server端  
+
 ![hash](imgs/vue/router-hash.png) 
 
 H5 history 模式  
