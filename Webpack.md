@@ -1,7 +1,7 @@
 # Webpack篇
 webpack已是前端打包构建的不二选择，必考    
 重在配置和使用，不在原理  
-地址：https://webpack.docschina.org/concepts/
+[Webpack官网](https://webpack.docschina.org/concepts/)
 
 基本配置  
 高级配置  
@@ -51,11 +51,11 @@ file-loader/url-loader(配合options limit 配置项可以控制是否按吧base
 ```
 module.exports = {
   entry: {
-    main: 'xxx1',
-    index: 'xxx2'
+    main: 'xxx1', // 入口1
+    index: 'xxx2' // 入口2
   },
   output: {
-    filename: '[name].[contentHash:8].js',
+    filename: '[name].[contentHash:8].js', // 使用8位contentHash命名入口chunk
     path: path.resolve(__dirname, 'dist'),
   }
 }
@@ -63,7 +63,7 @@ module.exports = {
 ![多入口](imgs/webpack/multi-entry.png)
 
 #### 2：抽离css文件
-常用于生产环境，开发环境没有必要(减少不必要的处理，使用style-loader即可)
+常用于生产环境，开发环境没有必要(减少不必要的处理，加快构建速度，使用style-loader即可)
 
 ![抽离css文件](imgs/webpack/css-split.png)
 
@@ -71,38 +71,39 @@ module.exports = {
 
 #### 3：抽离公共代码（重要）
 抽离公共代码及第三方代码，splitChunksPlugin（webpack已经内置）
+如果node_modules包过大，还可以对node_modules里较大的包拆分提取出来，避免输出的bundle文件过大  
 
 ![抽离公共代码](imgs/webpack/code-split.png)
 
 #### 4：实现异步加载
-import(/*webpackChunkName: chunkName */ '待引入的chunk') 魔术注释法进行命名，默认是使用id命名 
+import(/*webpackChunkName: chunkName */ '待引入的chunk') 使用魔术注释法进行命名，默认使用id命名 
    
 ![实现异步加载](imgs/webpack/async-import.png)
 
 #### 5：处理JSX和vue
 配合使用对应的loader即可
 ```
-module: {
-        rules: [
-            {
-                test: /\.(js|jsx)$/,
-                exclude: /(node_modules|bower_components)/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ['@babel/preset-env', '@babel/preset-react']
-                    }
-                }
-            },
-        ]
-    },
+const module = {
+  rules: [
+    {
+      test: /\.(js|jsx)$/,
+      exclude: /(node_modules|bower_components)/,
+      use: {
+        loader: 'babel-loader',
+        options: {
+          presets: ['@babel/preset-env', '@babel/preset-react']
+        }
+      }
+    }
+  ]
+};
 ```
 ![处理JSX和vue](imgs/webpack/jsx&vue.png)
 
 
 #### 6：module chunk bundle 的区别
 module：各源文件，在webpack中，一切皆模块  
-chunk：多个模块合并合成的,比如entry、import()、splitChunk  
+chunk：多个模块合并合成的，比如entry、import()、splitChunk  
 bundle：最终输出文件  
 
 <hr>
@@ -133,7 +134,7 @@ new webpack.IgnorePlugin({
 moment这个库中，如果引用了./locale/目录的内容，就忽略掉，不会打包进去
 
 ##### 3：noParse
-用了noParse的模块将不会被loaders解析，所以当我们使用的库如果太大，并且其中不包含import、require、define的调用，我们就可以使用这项配置来提升性能, 让 Webpack 忽略对部分没采用模块化的文件的递归解析处理。
+用了noParse的模块将不会被loaders解析，所以当我们使用的库如果太大，并且其中不包含import、require、define的调用，我们就可以使用这项配置来提升性能， 让 Webpack 忽略对部分没采用模块化的文件的递归解析处理。
 
 ![noParse](imgs/webpack/noParse.png)
 
@@ -145,14 +146,14 @@ moment这个库中，如果引用了./locale/目录的内容，就忽略掉，�
 ##### 5：ParallelUglifyPlugin（多进程压缩js，常用于生产环境）
 webpack内置Uglify工具压缩js（单进程）
 
-项目较大，打包较慢时，开启多进程能提高速度
-项目较小，打包很快，开启多进程会降低速度（进程开销）
+项目较大，打包较慢时，开启多进程能提高速度  
+项目较小，打包很快，开启多进程可能会降低速度（进程开销）  
 所以，按需使用
 
 ![ParallelUglifyPlugin](imgs/webpack/ParallelUglifyPlugin.png)
 
 ##### 6：自动刷新（开发环境）
-无需自行配置，启动webpack-dev-server会自动开启该功能
+启动webpack-dev-server会自动开启该功能
 
 ![自动刷新](imgs/webpack/auto-fresh.png)
 
@@ -167,40 +168,44 @@ webpack内置Uglify工具压缩js（单进程）
 同一版本只构建一次即可，不用每次都重新构建  
 
 webpack 已经内置DllPlugin支持  
-DllPlugin---打包出dll文件  
+DllPlugin---打包出dll文件（类似于第三方库）  
 DllReferencePlugin---使用dll文件  
 
 ![DllPlugin](imgs/webpack/DllPlugin.png)
 
 ![DllReferencePlugin](imgs/webpack/DllReferencePlugin.png)
 
-#### 9：缩小文件的搜索范围(配置include exclude alias noParse extensions)
-alias: 当我们代码中出现 import 'vue'时， webpack会采用向上递归搜索的方式去node_modules 目录下找。为了减少搜索范围我们可以直接告诉webpack去哪个路径下查找。也就是别名(alias)的配置。
-include exclude 同样配置include exclude也可以减少webpack loader的搜索转换时间。
-extensions：webpack会根据extensions定义的后缀查找文件(频率较高的文件类型优先写在前面)
-
 再将react.dll.js文件引入html模板中即可（切勿忘记）
+
+#### 9：缩小文件的搜索范围(配置include exclude alias noParse extensions)
+alias: 当我们代码中出现 import 'vue'时， webpack会采用向上递归搜索的方式去node_modules 目录下找。为了减少搜索范围我们可以直接告诉webpack去哪个路径下查找。也就是别名(alias)的配置。  
+include exclude 同样。配置include exclude也可以减少webpack loader的搜索转换时间。  
+extensions：webpack会根据extensions定义的后缀查找文件(频率较高的文件类型优先写在前面)  
 
 #### 2）优化产出代码（比构建速度更重要）
 体积更小  
 合理分包，不重复加载  
 速度更快，内存使用更小（代码执行更快）  
 
-##### 1：小图片base64编码 (url-loader)
+##### 1：小图片base64编码 (配合url-loader limit配置项)
 ##### 2：bundle加hash （使用contentHash，只有文件变更后才加载新内容）
-##### 3：懒加载(import())
+##### 3：懒加载 import()
 ##### 4：提取公共代码(splitChunksPlugin)
-##### 5：IngorePlugin
-（忽略第三方包指定目录，让这些指定目录不要被打包进去）
+##### 5：IngorePlugin （忽略第三方包指定目录，让这些指定目录不要被打包进去）
 ##### 6：使用CDN加速（通过配置publicPath）
 ##### 7：使用production模式
-自动开启代码压缩、Vue/React等会自动删掉调试代码（如开发环境的warning）,自动启动tree-shaking  
+自动开启代码压缩、Vue/React等会自动删掉调试代码（如开发环境的warning），自动启动tree-shaking  
 
 为了学会使用 tree shaking，你必须:  
 1. 使用 ES2015 模块语法（即 import 和 export）
 2. 在项目 package.json 文件中，添加一个 "sideEffects" 入口(注意，任何导入的文件都会受到 tree shaking 的影响。这意味着，如果在项目中使用类似 css-loader 并导入 CSS 文件，则需要将其添加到 side effect 列表中，以免在生产模式中无意中将它删除)
 3. 引入一个能够删除未引用代码(dead code)的压缩工具(minifier)
-
+```
+// 开启 tree shaking
+ optimization: {
+   usedExports: true,
+ },
+```
 备注：ES6 Module和Commonjs区别  
 ES6 Module是静态引入，编译时引入，Commonjs是动态引入，执行时引入，所以只有ES6 Module才能静态分析，实现Tree-Shaking
 
@@ -211,18 +216,20 @@ ES6 Module是静态引入，编译时引入，Commonjs是动态引入，执行�
 创建函数作用域更少  
 代码可读性更好  
 Scope Hoisting 它可以让webpack打包出来的代码文件更小，运行更快，它可以被称作为 "作用域提升"。
-https://blog.csdn.net/qq_36380426/article/details/107298332
+[Scope Hoisting](https://blog.csdn.net/qq_36380426/article/details/107298332)
 
 ![Scope Hoisting](imgs/webpack/Scope%20Hoisting.png)
 
 <hr>
 
 ### 4）babel 
-https://www.babeljs.cn/setup#installation  
+[babel官网](https://www.babeljs.cn/setup#installation)    
 需要了解基本的配置和使用，考察概率不高，但必须会  
 
 #### 1）环境搭建+基本配置
-环境搭建/.babelrc配置/presets和plugins
+环境搭建  
+.babelrc配置 
+presets和plugins  
 (preset 可以作为 Babel 插件的组合)
 
 备注:  
@@ -231,8 +238,20 @@ Babel默认只转换新的JavaScript语法(如箭头函数)，而不转换新的
 #### 2）babel-polyfill
 NOTE:  
 As of Babel 7.4.0, this package has been deprecated in favor of directly including core-js/stable (to polyfill ECMAScript features) and regenerator-runtime/runtime (needed to use transpiled generator functions)
+```
+With webpack, there are multiple ways to include the polyfills:
 
-![babel-polyfill](imgs/webpack/babel-polyfill.png)
+When used alongside @babel/preset-env,
+
+If useBuiltIns: 'usage' is specified in .babelrc then do not include @babel/polyfill in either webpack.config.
+js entry array nor source. Note, @babel/polyfill still needs to be installed.
+
+If useBuiltIns: 'entry' is specified in .babelrc then include @babel/polyfill at the top of the entry point to your 
+application via require or import as discussed above.
+
+If useBuiltIns key is not specified or it is explicitly set with useBuiltIns: false in your .babelrc, 
+add @babel/polyfill directly to the entry array in your webpack.config.js.
+```
 
 babel-polyfill 存在的问题:  
 ###### 会污染全局环境  
@@ -257,20 +276,23 @@ babel-polyfill 存在的问题:
 集成公司构建规范（提测、上线等）  
 
 #### 2：module chunk bundle的区别
-module:各源文件,在webpack中,一切皆模块  
-chunk:多个模块合并合成的,比如entry import() splitChunk  
-bundle:最终输出文件  
+module：各源文件,在webpack中,一切皆模块  
+chunk：多个模块合并合成的,比如entry import() splitChunk  
+bundle：最终输出文件  
 
 #### 3：loader和plugin的区别
-loader模块转换器，如less->css
-plugin扩展插件，如HtmlWebpackPlugin
+loader模块转换器，如less->css  
+plugin扩展插件，如HtmlWebpackPlugin  
+相对于loader转换指定类型的模块功能，plugins能够被用于执行更广泛的任务比如打包优化、文件管理、环境注入等  
 
 #### 4：常见loader和plugin有哪些
 参考官网
+[常见loader和plugin](https://blog.csdn.net/Cao_Mary/article/details/104465872)
 
 #### 5：babel和webpack的区别
 Babel---js新语法编译工具，不关心模块化  
 Webpack---打包构建工具，是多个loader plugin的集合  
+Babel 是编译工具，把高版本语法编译成低版本语法，或者将文件按照自定义规则转换成js语法。 webpack 是打包工具，定义入口文件，将所有模块引入整理后，通过loader和plugin处理后，打包输出。 webpack 通过 babel-loader 使用 Babel 。  
 
 #### 6：如何产出一个lib
 参考DllPlugin章节
