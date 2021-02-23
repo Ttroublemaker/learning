@@ -129,8 +129,8 @@ React.Suspense
 ![shouldComponentUpdate](imgs/react/shouldComponentUpdate.png)
  
 2）PureComponent/React.memo  
-PureComponent，SCU中实现了浅比较（只比较第一层）
-Memo：函数组件中的PureComponent
+PureComponent，SCU中实现了浅比较（只比较第一层）  
+Memo：函数组件中的PureComponent  
 浅比较已经适用大部分内容，state层级尽量低（尽量避免深度比较，耗费性能 ）
 
 3）不可变值immutable.js（了解）  
@@ -145,7 +145,7 @@ Memo：函数组件中的PureComponent
 3. Render Props
 4. hook
 
-![HOC](IMGS/react/HOC.png)  
+![HOC](imgs/react/HOC.png)  
 参考官网
 
 ###### 对比：
@@ -171,18 +171,75 @@ mapStateToProps及mapDispatchToProps
 
 Redux 处理异步  
 redux-thunk  
+```
+const actions = {
+  ...
+  incrementAsync: (num) => {
+    // 返回函数，携带dispatch参数
+    return dispatch => {
+      setTimeout(() => {
+        console.log('INCREMENTASYNC');
+        dispatch({ type: constants.INCREMENTBYAMOUNT, payload: num })
+      }, 1000)
+    }
+  }
+}
+---------------------------------------------------
+import { combineReducers } from 'redux'
+import count from './count'
+import user from './user'
+const rootReducer = combineReducers({
+  count,
+  user
+})
 
-![redux-thunk](imgs/react/redux-thunk.png)
-![redux-thunk](imgs/react/redux-thunk2.png)
- 
+export default rootReducer
+---------------------------------------------------
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk' // 异步action
+import rootReducer from './reducer/index' // combineReducers
+import { composeWithDevTools } from 'redux-devtools-extension'; // 配合开发工具
+const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)))
+export default store
+```
 
 #### React-router
 面试考点不多  
 路由模式，同Vue  
 路由配置（动态路由、懒加载），同Vue    
+```
+import React, { Suspense } from 'react';
+import { HashRouter, Route, Switch } from 'react-router-dom';
 
-![React-router](imgs/react/React-router.png)
- 
+import './App.css';
+const Counter = React.lazy(() => import(/* webpackChunkName: "Counter" */ './demos/counter/Counter'));
+const User = React.lazy(() => import(/* webpackChunkName: "User" */ './demos/user/User'));
+const UserRedux = React.lazy(() => import(/* webpackChunkName: "UserRedux" */ './demos/user/User-redux'));
+const useReducerDemo = React.lazy(() => import(/* webpackChunkName: "useReducerDemo" */ './demos/useReducer/useReducer'));
+
+function App() {
+  return (
+    <div className="App">
+      <Suspense fallback={<div>Loading...</div>}>
+        <header className="App-header">
+          <HashRouter basename="/app">
+            <Switch>
+              <Route path="/counter" exact component={Counter}>
+              </Route>
+              <Route path="/user" strict exact component={User}>
+              </Route>
+              <Route path="/user-redux" strict exact component={UserRedux}>
+              </Route>
+              <Route path="/user-reducer" strict exact component={useReducerDemo}>
+              </Route>
+            </Switch>
+          </HashRouter>
+        </header>
+      </Suspense>
+    </div >
+  );
+}
+``` 
  <hr>
 
 ## 5. React 原理
@@ -191,7 +248,7 @@ redux-thunk
 
 #### 2：vdom和diff  
 h函数  
-vnode数据结构 
+vnode数据结构   
 patch函数  
 1. 只比较同一层级，不跨级比较  
 2. tag不同，则删除重建，不再深度比较  
@@ -207,9 +264,12 @@ JSX等同于Vue模板
 Vue模板非html  
 JSX也不是js  
 (babel网站中可以编译试一试)  
-
-![JSX本质](imgs/react/jsx本质.png)
-
+```
+React.createElement('div',null,[child1,child2,child3])
+React.createElement('div',null,child1,child2,child3)
+React.createElement(List,null,[child1,child2,child3])
+// 通过参数1首字母大写判断是否是React组件
+```
 JSX 的本质就是一个React.createElement 函数，即h函数，他接收多个参数来返回Vnode  
 第一个参数，可能是组件，也可能是html tag  
 组件名称在JSX中首字母必须大小写（区分h函数的第一个参数是 html tag string，还是个组件变量名）  
@@ -221,7 +281,7 @@ event 不是原生的，是SyntheticEvent合成事件对象
 
 ![React 的合成事件](imgs/react/React%20的合成事件.png)
 
-###### 为什么要合成事件机制
+###### 为什么要使用合成事件机制
 1. 抹平浏览器之间的兼容性差异。 这是估计最原始的动机。
 
 2. 事件"合成", 即事件自定义。事件合成除了处理兼容性问题，还可以用来自定义高级事件，比较典型的是React的onChange事件，它为表单元素定义了统一的值变动事件。
@@ -237,11 +297,7 @@ event 不是原生的，是SyntheticEvent合成事件对象
 有时合并（对象形式），有时不合并（函数形式）  
 1：setState主流程  
 2：batchUpdate机制  
-
-![setState 和 batchUpdate](imgs/react/setState%20和%20batchUpdate.png)
- 
- 
-
+https://blog.csdn.net/qq_39207948/article/details/113803273
 
 setState无所谓异步还是同步，看是否命中batchUpdate机制，判断isBatchingUpdates  
 ###### 哪些能命中batchUpdate机制：  
@@ -265,7 +321,7 @@ setState之后如何更新页面
 组件渲染:  
 1）props/state  
 2）render()生成vnode  
-3）patch(elem,node)  
+3）patch(elem,vnode)  
 组件更新：  
 1）setState(newState)=>dirthComponents(可能含有子组件)  
 2）render()生成newVode  
@@ -282,7 +338,7 @@ setState之后如何更新页面
 
 React fiber如何优化性能：
 1. 将reconciliation阶段进行任务拆分（commit 无法拆分）
-2. DOM需要渲染时暂停，空闲时恢复
+2. DOM需要渲染时暂停，空闲时恢复  
 3. window.requestIdleCallback（了解即可）
 备注：window.requestIdleCallback()方法将在浏览器的空闲时段内调用的函数排队。这使开发者能够在主事件循环上执行后台和低优先级工作，而不会影响延迟关键事件，如动画和输入响应。函数一般会按先进先调用的顺序执行，然而，如果回调函数指定了执行超时时间timeout，则有可能为了在超时前执行函数而打乱执行顺序
 
