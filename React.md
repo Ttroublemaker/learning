@@ -365,8 +365,9 @@ Jsx是语法糖，实质是js函数，需要babel来解析，核心函数是Reac
 shouldComponentUpdate函数是重渲染时render()函数调用前被调用的函数，它接受两个参数：nextProps和nextState，分别表示下一个props和下一个state的值。并且，当函数返回false时候，阻止接下来的render()函数的调用，阻止组件重渲染，而返回true时，组件照常重渲染。组件默认返回true，通过自定义判断是否需要重渲染，来实现性能优化
 
 #### 5：redux单向数据流
-
-![redux单向数据流](imgs/react/redux单向数据流.png)
+redux单向数据流以store为核心，我们把它看成数据存储中心，但不能直接修改，数据修改更新的角色必须由Reducers来担任, store只做存储，当Reducers的更新完成以后会通过store的订阅来通知react component，组件把新的状态重新获取渲染。组件中我们也能主动发送action，创建action后这个动作是不会执行的，所以要dispatch这个action，让store通过reducers去做更新。
+形成action=>dispatch(action)=>reducers=>store=>react component的单向数据流
+TODO: 添加单向数据流图
 
 #### 6：setState场景题
 
