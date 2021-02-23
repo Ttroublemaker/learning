@@ -344,12 +344,15 @@ React fiber如何优化性能：
 
 ## 6. React 真题演练
 #### 1：组件间如何通讯
-父子组件props
-自定义事件
-Redux和Context
+1.父子组件：  
+props（子=父 父组件将一个函数作为 props 传递给子组件，子组件调用该回调函数）  
+2.跨级组件：   
+层层传递props或者Context  
+3.非嵌套组件间通信： 
+Redux或者自定义事件（了解即可，如`import { EventEmitter } from "events";`）
 
 #### 2：JSX本质
-JSX 的本质就是一个React.createElement 函数，即h函数，他接收多个参数来返回Vnode
+Jsx是语法糖，实质是js函数，需要babel来解析，核心函数是React.createElement(tag,{attrbuties},children)，参数tag是标签名可以是html标签和组件名，attrbuties参数是标签的属性，children参数是tag的子元素。用来创建一个vnode，最后渲染到页面上。
 
 #### 3：context是什么，如何应用
 父组件，向其下所有子孙组件传递信息  
@@ -358,7 +361,7 @@ JSX 的本质就是一个React.createElement 函数，即h函数，他接收多�
 
 #### 4：shouldComponentUpdate用途
 性能优化  
-(配合"不可变值"一起使用，否则会出错) 
+(配合"不可变值"一起使用，否则会出错)   
 shouldComponentUpdate函数是重渲染时render()函数调用前被调用的函数，它接受两个参数：nextProps和nextState，分别表示下一个props和下一个state的值。并且，当函数返回false时候，阻止接下来的render()函数的调用，阻止组件重渲染，而返回true时，组件照常重渲染。组件默认返回true，通过自定义判断是否需要重渲染，来实现性能优化
 
 #### 5：redux单向数据流
@@ -377,9 +380,9 @@ shouldComponentUpdate函数是重渲染时render()函数调用前被调用的函
 参考之前内容
 
 #### 9：React发起ajax应该在哪个生命周期
-componentDidMount
-我们应当将AJAX 请求放到 componentDidMount 函数中执行，主要原因有下：
-1.React 下一代调和算法 Fiber 会通过开始或停止渲染的方式优化应用性能，其会影响到 componenТWillMount 的触发次数。对于 componenТWillMount 这个生命周期函数的调用次数会变得不确定，React 可能会多次频繁调用 componenТWillMount。如果我们将 AJAX 请求放到 componenТWillMount 函数中，那么显而易见其会被触发多次，自然也就不是好的选择。
+componentDidMount   
+我们应当将AJAX 请求放到 componentDidMount 函数中执行，主要原因有下：  
+1.React 下一代调和算法 Fiber 会通过开始或停止渲染的方式优化应用性能，其会影响到 componentWillMount 的触发次数。对于 componentWillMount 这个生命周期函数的调用次数会变得不确定，React 可能会多次频繁调用 componentWillMount。如果我们将 AJAX 请求放到 componentWillMount 函数中，那么显而易见其会被触发多次，自然也就不是好的选择。
 2.如果我们将 AJAX 请求放置在生命周期的其他函数中，我们并不能保证请求仅在组件挂载完毕后才会要求响应。如果我们的数据请求在组件挂载之前就完成，并且调用了setState函数将数据添加到组件状态中，对于未挂载的组件则会报错。而在 componentDidMount 函数中进行 AJAX 请求则能有效避免这个问题。
 
 #### 10：渲染列表，为何使用key
@@ -419,14 +422,14 @@ Hook
 需要结合不可变值的使用  
 
 #### 18：React事件和DOM事件的区别
-参考之前内容
+React所有事件都挂载在document中，DOM事件挂载在注册的DOM上  
+React event 不是原生的，是SyntheticEvent合成事件对象  
 
 #### 19：React 性能优化
 1. 渲染列表使用key
-2. 自定义事件、DOM事件及时销毁
+2. 自定义事件、定时器、DOM事件等及时销毁
 3. 合理使用异步组件
-4. 减少函数bind this的次数
-（因为这样每次render都会进行一次bind操作消耗性能）
+4. 减少函数bind this的次数（因为这样每次render都会进行一次bind操作消耗性能）
 5. 合理使用SCU PureComponent和memo
 6. Webpack层面的优化
 7. 前端通用的性能优化，如图片懒加载
@@ -440,3 +443,4 @@ Hook
 React使用JSX拥抱JS，Vue使用模板拥抱html  
 React函数式编程，Vue声明式编程  
 React更加灵活，需要自力更生，Vue把想要的都给你，添加了很多用法  
+[函数式编程和声明式编程说明](https://github.com/morganfly/morganfly_blog/issues/24)
