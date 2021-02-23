@@ -212,10 +212,10 @@ import React, { Suspense } from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 
 import './App.css';
-const Counter = React.lazy(() => import(/* webpackChunkName: "Counter" */ './demos/counter/Counter'));
-const User = React.lazy(() => import(/* webpackChunkName: "User" */ './demos/user/User'));
-const UserRedux = React.lazy(() => import(/* webpackChunkName: "UserRedux" */ './demos/user/User-redux'));
-const useReducerDemo = React.lazy(() => import(/* webpackChunkName: "useReducerDemo" */ './demos/useReducer/useReducer'));
+const Counter = React.lazy(() => import('./demos/counter/Counter'));
+const User = React.lazy(() => import('./demos/user/User'));
+const UserRedux = React.lazy(() => import('./demos/user/User-redux'));
+const useReducerDemo = React.lazy(() => import('./demos/useReducer/useReducer'));
 
 function App() {
   return (
@@ -297,7 +297,7 @@ event 不是原生的，是SyntheticEvent合成事件对象
 有时合并（对象形式），有时不合并（函数形式）  
 1：setState主流程  
 2：batchUpdate机制  
-https://blog.csdn.net/qq_39207948/article/details/113803273
+[setState主流程及batchUpdate机制](https://blog.csdn.net/qq_39207948/article/details/113803273)
 
 setState无所谓异步还是同步，看是否命中batchUpdate机制，判断isBatchingUpdates  
 ###### 哪些能命中batchUpdate机制：  
@@ -310,10 +310,7 @@ setState无所谓异步还是同步，看是否命中batchUpdate机制，判断i
 3）React管不到的入口  
 
 6：transaction(事务)机制  
-
-![transaction(事务)机制](imgs/react/transaction(事务)机制.png)  
-
-
+[transaction(事务)机制](https://blog.csdn.net/qq_39207948/article/details/113803273)
 
 #### 7：组件渲染和更新过程
 JSX如何渲染为页面  
