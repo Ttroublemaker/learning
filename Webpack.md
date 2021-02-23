@@ -64,6 +64,7 @@ module.exports = {
 
 #### 2：抽离css文件
 常用于生产环境，开发环境没有必要(减少不必要的处理，加快构建速度，使用style-loader即可)
+可以使用 enforce 强制执行 loader 的作用顺序，pre 代表在所有正常 loader 之前执行，post 是所有 loader 之后执行。(inline 官方不推荐使用)  
 
 ![抽离css文件](imgs/webpack/css-split.png)
 
@@ -72,7 +73,18 @@ module.exports = {
 #### 3：抽离公共代码（重要）
 抽离公共代码及第三方代码，splitChunksPlugin（webpack已经内置）
 如果node_modules包过大，还可以对node_modules里较大的包拆分提取出来，避免输出的bundle文件过大  
-
+```
+splitChunks = {
+  // ...
+  cacheGroups: {
+    elementUI: {
+      name: 'chunk-elementUI', // 单独将 elementUI 拆包
+      priority: 15, // 权重需大于其它缓存组
+      test: /[\/]node_modules[\/]element-ui[\/]/
+    }
+  }
+};
+```
 ![抽离公共代码](imgs/webpack/code-split.png)
 
 #### 4：实现异步加载
@@ -158,7 +170,10 @@ webpack内置Uglify工具压缩js（单进程）
 ![自动刷新](imgs/webpack/auto-fresh.png)
 
 ##### 7：热更新（开发环境）
-不丢失状态HMR   
+模块热更新是webpack的一个功能，它可以使得代码修改之后，不用刷新浏览器就可以更新。在应用过程中替换添加删出模块，无需重新加载整个页面，是高级版的自动刷新浏览器。  
+
+优点：  
+只更新变更内容，以节省宝贵的开发时间。调整样式更加快速，几乎相当于在浏览器中更改样式  
 
 ![HMR](imgs/webpack/HMR.png)
 
@@ -180,7 +195,10 @@ DllReferencePlugin---使用dll文件
 #### 9：缩小文件的搜索范围(配置include exclude alias noParse extensions)
 alias: 当我们代码中出现 import 'vue'时， webpack会采用向上递归搜索的方式去node_modules 目录下找。为了减少搜索范围我们可以直接告诉webpack去哪个路径下查找。也就是别名(alias)的配置。  
 include exclude 同样。配置include exclude也可以减少webpack loader的搜索转换时间。  
-extensions：webpack会根据extensions定义的后缀查找文件(频率较高的文件类型优先写在前面)  
+extensions：webpack会根据extensions定义的后缀查找文件(频率较高的文件类型优先写在前面) 
+
+#### 10：尽量使用高版本的webpack 和node
+webpack4 发布时，官方也曾表示，其编译速度提升了 60% ~ 98%。  
 
 #### 2）优化产出代码（比构建速度更重要）
 体积更小  
@@ -306,7 +324,7 @@ import()
 结合Vue React 异步组件  
 结合Vue-router React-router异步加载路由  
 
-#### 9:为何Proxy不能被Polyfill
+#### 9：为何Proxy不能被Polyfill
 Class 可以用function模拟  
 Promise可以用callback模拟  
 但是Proxy的功能用Object.defineProperty模拟
@@ -316,3 +334,72 @@ Promise可以用callback模拟
 
 #### 11：优化产出代码
 参考之前章节
+
+#### 12：如何对bundle体积进行监控和分析？
+VSCode 中有一个插件 Import Cost 可以帮助我们对引入模块的大小进行实时监测，还可以使用 webpack-bundle-analyzer 生成 bundle 的模块组成图，显示所占体积。
+
+#### 13：说一下 Webpack 的热更新原理吧(敲黑板，这道题必考)
+
+Webpack 的热更新又称热替换（Hot Module Replacement），缩写为 HMR。这个机制可以做到不用刷新浏览器而将新变更的模块替换掉旧的模块。  
+
+HMR的核心就是客户端从服务端拉取更新后的文件，准确的说是 chunk diff (chunk 需要更新的部分)，实际上 WDS 与浏览器之间维护了一个 Websocket，当本地资源发生变化时，WDS 会向浏览器推送更新，并带上构建时的 hash，让客户端与上一次资源进行对比。客户端对比出差异后会向 WDS 发起 Ajax 请求来获取更改内容(文件列表、hash)，这样客户端就可以再借助这些信息继续向 WDS 发起 jsonp 请求获取该chunk的增量更新。
+
+后续的部分(拿到增量更新之后如何处理？哪些状态该保留？哪些又需要更新？)由 HotModulePlugin 来完成，提供了相关 API 以供开发者针对自身场景进行处理，像react-hot-loader 和 vue-loader 都是借助这些 API 实现 HMR。
+
+[细节请参考Webpack HMR 原理解析](https://zhuanlan.zhihu.com/p/30669007)
+
+#### 14：文件监听原理
+在发现源码发生变化时，自动重新构建出新的输出文件。
+
+Webpack开启监听模式，有两种方式：
+
+启动 webpack 命令时，带上 --watch 参数
+在配置 webpack.config.js 中设置 watch:true
+缺点：每次需要手动刷新浏览器
+
+原理：轮询判断文件的最后编辑时间是否变化，如果某个文件发生了变化，并不会立刻告诉监听者，而是先缓存起来，等 aggregateTimeout 后再执行。
+
+module.export = {
+    // 默认false,也就是不开启
+    watch: true,
+    // 只有开启监听模式时，watchOptions才有意义
+    watchOptions: {
+        // 默认为空，不监听的文件或者文件夹，支持正则匹配
+        ignored: /node_modules/,
+        // 监听到变化发生后会等300ms再去执行，默认300ms
+        aggregateTimeout:300,
+        // 判断文件是否发生变化是通过不停询问系统指定文件有没有变化实现的，默认每秒问1000次
+        poll:1000
+    }
+}
+
+#### 15.source map是什么？生产环境怎么用？
+source map 是将编译、打包、压缩后的代码映射回源代码的过程。打包压缩后的代码不具备良好的可读性，想要调试源码就需要 soucre map。
+
+map文件只要不打开开发者工具，浏览器是不会加载的。
+
+线上环境一般有三种处理方案：
+
+hidden-source-map：借助第三方错误监控平台 Sentry 使用
+nosources-source-map：只会显示具体行数以及查看源代码的错误栈。安全性比 sourcemap 高
+sourcemap：通过 nginx 设置将 .map 文件只对白名单开放(公司内网)
+注意：避免在生产中使用 inline- 和 eval-，因为它们会增加 bundle 体积大小，并降低整体性能。
+
+eval： 生成代码 每个模块都被eval执行，并且存在@sourceURL
+cheap-eval-source-map： 转换代码（行内） 每个模块被eval执行，并且sourcemap作为eval的一个dataurl
+
+cheap-module-eval-source-map： 原始代码（只有行内） 同样道理，但是更高的质量和更低的性能
+
+eval-source-map： 原始代码 同样道理，但是最高的质量和最低的性能
+
+cheap-source-map： 转换代码（行内） 生成的sourcemap没有列映射，从loaders生成的sourcemap没有被使用
+
+cheap-module-source-map： 原始代码（只有行内） 与上面一样除了每行特点的从loader中进行映射
+
+source-map： 原始代码 最好的sourcemap质量有完整的结果，但是会很慢
+
+eval： 使用eval包裹模块代码  
+source-map： 产生.map文件  
+cheap： 不包含列信息（关于列信息的解释下面会有详细介绍)也不包含loader的sourcemap  
+module： 包含loader的sourcemap（比如jsx to js ，babel的sourcemap）  
+inline： 将.map作为DataURI嵌入，不单独生成.map文件（这个配置项比较少见）  
