@@ -373,30 +373,24 @@ module.export = {
     }
 }
 
-#### 15.source map是什么？生产环境怎么用？
+#### 15：source map是什么？生产环境怎么用？
 source map 是将编译、打包、压缩后的代码映射回源代码的过程。打包压缩后的代码不具备良好的可读性，想要调试源码就需要 soucre map。
 
 map文件只要不打开开发者工具，浏览器是不会加载的。
 
-线上环境一般有三种处理方案：
-
+线上环境一般有三种处理方案：  
 hidden-source-map：借助第三方错误监控平台 Sentry 使用
 nosources-source-map：只会显示具体行数以及查看源代码的错误栈。安全性比 sourcemap 高
-sourcemap：通过 nginx 设置将 .map 文件只对白名单开放(公司内网)
+sourcemap：通过 nginx 设置将 .map 文件只对白名单开放(公司内网)  
 注意：避免在生产中使用 inline- 和 eval-，因为它们会增加 bundle 体积大小，并降低整体性能。
 
-eval： 生成代码 每个模块都被eval执行，并且存在@sourceURL
-cheap-eval-source-map： 转换代码（行内） 每个模块被eval执行，并且sourcemap作为eval的一个dataurl
-
-cheap-module-eval-source-map： 原始代码（只有行内） 同样道理，但是更高的质量和更低的性能
-
-eval-source-map： 原始代码 同样道理，但是最高的质量和最低的性能
-
-cheap-source-map： 转换代码（行内） 生成的sourcemap没有列映射，从loaders生成的sourcemap没有被使用
-
-cheap-module-source-map： 原始代码（只有行内） 与上面一样除了每行特点的从loader中进行映射
-
-source-map： 原始代码 最好的sourcemap质量有完整的结果，但是会很慢
+eval： 生成代码 每个模块都被eval执行，并且存在@sourceURL  
+cheap-eval-source-map： 转换代码（行内） 每个模块被eval执行，并且sourcemap作为eval的一个dataurl  
+cheap-module-eval-source-map： 原始代码（只有行内） 同样道理，但是更高的质量和更低的性能  
+eval-source-map： 原始代码 同样道理，但是最高的质量和最低的性能  
+cheap-source-map： 转换代码（行内） 生成的sourcemap没有列映射，从loaders生成的sourcemap没有被使用  
+cheap-module-source-map： 原始代码（只有行内） 与上面一样除了每行特点的从loader中进行映射  
+source-map： 原始代码 最好的sourcemap质量有完整的结果，但是会很慢  
 
 eval： 使用eval包裹模块代码  
 source-map： 产生.map文件  
