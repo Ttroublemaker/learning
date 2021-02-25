@@ -1,6 +1,6 @@
 # Webpack篇
-webpack已是前端打包构建的不二选择，必考    
-重在配置和使用，不在原理  
+webpack已是前端打包构建的不二选择，重在配置和使用，不在原理  
+
 [Webpack官网](https://webpack.docschina.org/concepts/)
 
 基本配置  
@@ -9,11 +9,10 @@ webpack已是前端打包构建的不二选择，必考
 优化产出代码    
 Babel  
 
-### 1）Webpack基本配置
-必须掌握  
+### 1）Webpack基本配置（必须掌握）  
 
 #### 1：拆分配置和merge
-通常将基础配置、开发环境配置和生产环境配置分别进行设置，然后通过merge进行合并，根据scripts命令启用开发或者生产配置，从而构建出项目
+通常将公共配置、开发环境配置和生产环境配置分别进行设置，然后通过merge将公共配置和开发或生产配置进行合并，根据scripts命令启用合并后的配置，依此构建项目
 
 ![config-merge](imgs/webpack/config-merge.png)
 
@@ -36,15 +35,14 @@ module.exports = {
 babel-loader .babelrc文件 polyfill
 
 #### 4：处理样式
-style-loader css-loader scss-loader等css预处理loader postcss-loader(配合autoprefixer添加厂商前缀)
+style-loader、css-loader、scss-loader等css预处理loader、postcss-loader(配合autoprefixer添加厂商前缀)
 
 #### 5：处理图片
-file-loader/url-loader(配合options limit 配置项可以控制是否按吧base64格式产出)
+file-loader/url-loader(配合options limit 配置项可以控制是否按base64格式产出)
 
 <hr>
 
-### 2）Webpack高级配置
-必须掌握  
+### 2）Webpack高级配置（必须掌握）  
 
 #### 1：多入口
 多个entry 
@@ -63,7 +61,7 @@ module.exports = {
 ![多入口](imgs/webpack/multi-entry.png)
 
 #### 2：抽离css文件
-常用于生产环境，开发环境没有必要(减少不必要的处理，加快构建速度，使用style-loader即可)
+常用于生产环境，开发环境没有必要(减少不必要的处理，加快构建速度，使用style-loader即可)  
 可以使用 enforce 强制执行 loader 的作用顺序，pre 代表在所有正常 loader 之前执行，post 是所有 loader 之后执行。(inline 官方不推荐使用)  
 
 ![抽离css文件](imgs/webpack/css-split.png)
@@ -71,7 +69,7 @@ module.exports = {
 官网中提到的extract-text-webpack-plugin插件要依赖webpack3的版本。
 
 #### 3：抽离公共代码（重要）
-抽离公共代码及第三方代码，splitChunksPlugin（webpack已经内置）
+抽离公共代码及第三方代码，splitChunksPlugin（webpack已经内置）  
 如果node_modules包过大，还可以对node_modules里较大的包拆分提取出来，避免输出的bundle文件过大  
 ```
 splitChunks = {
@@ -88,7 +86,7 @@ splitChunks = {
 ![抽离公共代码](imgs/webpack/code-split.png)
 
 #### 4：实现异步加载
-import(/*webpackChunkName: chunkName */ '待引入的chunk') 使用魔术注释法进行命名，默认使用id命名 
+import(/*webpackChunkName: chunkName */  '待引入的chunk') 使用魔术注释法对输出bundle进行命名，默认使用id命名 
    
 ![实现异步加载](imgs/webpack/async-import.png)
 
@@ -170,7 +168,7 @@ webpack内置Uglify工具压缩js（单进程）
 ![自动刷新](imgs/webpack/auto-fresh.png)
 
 ##### 7：热更新（开发环境）
-模块热更新是webpack的一个功能，它可以使得代码修改之后，不用刷新浏览器就可以更新。在应用过程中替换添加删出模块，无需重新加载整个页面，是高级版的自动刷新浏览器。  
+模块热更新是webpack的一个功能，它可以使得代码修改之后，不用刷新浏览器就可以更新。在应用过程中替换添加删除模块，无需重新加载整个页面，是高级版的自动刷新浏览器。  
 
 优点：  
 只更新变更内容，以节省宝贵的开发时间。调整样式更加快速，几乎相当于在浏览器中更改样式  
@@ -353,12 +351,12 @@ HMR的核心就是客户端从服务端拉取更新后的文件，准确的说�
 
 Webpack开启监听模式，有两种方式：
 
-启动 webpack 命令时，带上 --watch 参数
-在配置 webpack.config.js 中设置 watch:true
-缺点：每次需要手动刷新浏览器
+启动 webpack 命令时，带上 --watch 参数  
+在配置 webpack.config.js 中设置 watch:true  
+缺点：每次需要手动刷新浏览器  
 
 原理：轮询判断文件的最后编辑时间是否变化，如果某个文件发生了变化，并不会立刻告诉监听者，而是先缓存起来，等 aggregateTimeout 后再执行。
-
+```
 module.export = {
     // 默认false,也就是不开启
     watch: true,
@@ -372,17 +370,17 @@ module.export = {
         poll:1000
     }
 }
-
+```
 #### 15：source map是什么？生产环境怎么用？
 source map 是将编译、打包、压缩后的代码映射回源代码的过程。打包压缩后的代码不具备良好的可读性，想要调试源码就需要 soucre map。
 
 map文件只要不打开开发者工具，浏览器是不会加载的。
 
 线上环境一般有三种处理方案：  
-hidden-source-map：借助第三方错误监控平台 Sentry 使用
-nosources-source-map：只会显示具体行数以及查看源代码的错误栈。安全性比 sourcemap 高
-sourcemap：通过 nginx 设置将 .map 文件只对白名单开放(公司内网)  
-注意：避免在生产中使用 inline- 和 eval-，因为它们会增加 bundle 体积大小，并降低整体性能。
+hidden-source-map：借助第三方错误监控平台 Sentry 使用  
+nosources-source-map：只会显示具体行数以及查看源代码的错误栈。安全性比 sourcemap 高  
+sourcemap：通过 nginx 设置将 .map 文件只对白名单开放(公司内网)    
+注意：避免在生产中使用 inline- 和 eval-，因为它们会增加 bundle 体积大小，并降低整体性能。  
 
 eval： 生成代码 每个模块都被eval执行，并且存在@sourceURL  
 cheap-eval-source-map： 转换代码（行内） 每个模块被eval执行，并且sourcemap作为eval的一个dataurl  
