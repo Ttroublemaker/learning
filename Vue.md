@@ -532,7 +532,7 @@ select 字段将 value 作为 prop 并将 change 作为事件。
 
 #### 7：对MVVM的理解
 会画模型图  
-MVVM是Model-View-ViewModel缩写，Model层代表数据模型，View代表UI组件，ViewModel是View和Model层的桥梁，数据会绑定到viewModel层并自动将数据渲染到页面中，视图变化的时候会通知viewModel层更新数据。
+MVVM是Model-View-ViewModel缩写，Model层代表数据模型，View代表UI视图，ViewModel是View和Model层的桥梁，数据会绑定到viewModel层并自动将数据渲染到页面中，view中由于用户交互操作而改变的数据也会在Model中同步,从而实现数据驱动视图的效果
 
 ![mvvm](imgs/vue/数据驱动视图.jpg)
 
