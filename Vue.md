@@ -222,6 +222,7 @@ exclude - 字符串或正则表达式，任何匹配的组件都不会被缓存�
 <keep-alive exclude="excludeComponents">
   <!-- 将不缓存name为excludeComponents的组件 -->
   <component></component>
+</keep-alive>
 ```
 
 想保持这些组件的状态，以避免反复重渲染导致的性能问题  
