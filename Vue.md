@@ -200,18 +200,28 @@ data，computed都执行了。属性已经赋值，但没有动态创建template
 频繁切换，不需要重复渲染  
 vue常见的性能优化手段之一  
 include - 字符串或正则表达，只有匹配的组件会被缓存  
-exclude - 字符串或正则表达式，任何匹配的组件都不会被缓存（优先级高于include）
+exclude - 字符串或正则表达式，任何匹配的组件都不会被缓存（优先级高于include）  
+使用include/exclude 属性需要给所有vue类的name赋值（注意不是给route的name赋值），否则 include/exclude不生效  
 ```
-<keep-alive include="a">
-  <component>
-    <!-- name 为 a 的组件将被缓存！ -->
-  </component>
-</keep-alive>可以保留它的状态或避免重新渲染
-<keep-alive exclude="a">
-  <component>
-    <!-- 除了 name 为 a 的组件都将被缓存！ -->
-  </component>
-</keep-alive>可以保留它的状态或避免重新渲染
+<keep-alive include="a,b">
+  <!-- 将缓存name为a或者b的组件，结合动态组件使用 -->
+  <component :is="view"></component>
+</keep-alive>
+ 
+<!-- 使用正则表达式，需使用v-bind -->
+<keep-alive :include="/a|b/">
+  <component :is="view"></component>
+</keep-alive>
+ 
+<!-- 动态判断 -->
+<!-- includedComponents是缓存的组件Array集合 -->
+<keep-alive :include="includedComponents">
+  <router-view></router-view>
+</keep-alive>
+ 
+<keep-alive exclude="excludeComponents">
+  <!-- 将不缓存name为excludeComponents的组件 -->
+  <component></component>
 ```
 
 想保持这些组件的状态，以避免反复重渲染导致的性能问题  
