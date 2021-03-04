@@ -401,8 +401,33 @@ Vue和react是数据驱动视图，如何有效控制DOM操作？
 Virtual DOM 是用 VNode 这么一个Class 去描述  
 
 会用vdom描述html结构，如下：
+```
+<div class="title">
+      <span>Hello ConardLi</span>
+      <ul>
+        <li>苹果</li>
+        <li>橘子</li>
+      </ul>
+</div>
 
-![vdom](imgs/vue/vdom.jpg)
+const VitrualDom = {
+  tag: 'div',
+  props: { className: 'title' },
+  children: [
+    {
+      tag: 'span',
+      children: 'Hello ConardLi'
+    },
+    {
+      tag: 'ul',
+      children: [
+        { tag: 'li', children: '苹果' },
+        { tag: 'li', children: '橘子' }
+      ]
+    }
+  ]
+}
+```
 <br>
 
 vue3重写了vdom的代码，优化了性能  
