@@ -369,7 +369,7 @@ shouldComponentUpdate函数是重渲染时render()函数调用前被调用的函
 #### 5：redux单向数据流
 redux单向数据流以store为核心，我们把它看成数据存储中心，但不能直接修改，数据修改更新的角色必须由Reducers来担任, store只做存储，当Reducers的更新完成以后会通过store的订阅来通知react component，组件把新的状态重新获取渲染。组件中我们也能主动发送action，创建action后这个动作是不会执行的，所以要dispatch这个action，让store通过reducers去做更新。
 形成action=>dispatch(action)=>reducers=>store=>react component的单向数据流
-TODO: 添加单向数据流图
+![单向数据流图](./imgs/react/单向数据流.jpg)
 
 #### 6：setState场景题
 
