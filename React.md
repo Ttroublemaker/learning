@@ -18,7 +18,12 @@ if/else、三元表达式、逻辑运算符&&或者||
 map（带key）
 
 #### 4：事件（重点）
-1）bind this（三种形式，使用类时：构造函数内绑定this、class fields、回调中使用箭头函数）   
+React 事件的命名采用小驼峰式（camelCase），而不是纯小写。  
+使用 JSX 语法时你需要传入一个函数作为事件处理函数，而不是一个字符串。  
+不能通过返回 false 的方式阻止默认行为。你必须显式的使用 preventDefault  
+
+1）bind this（三种形式，使用类时：构造函数内绑定this、class fields、回调中使用箭头函数）     
+回调中使用箭头函数在于每次渲染 LoggingButton 时都会创建不同的回调函数。在大多数情况下，这没什么问题，但如果该回调函数作为 prop 传入子组件时，这些组件可能会进行额外的重新渲染  
 
 ![bind this](imgs/react/event-bind.png)
 
@@ -46,7 +51,7 @@ map（带key）
 #### 1：setState（非常重要）
 1）不可变值(注意)
 ```
-// 不要直接修改 state ，使用不可变值 
+// 不要直接修改 state ，使用不可变值，构造函数是唯一可以给 this.state 赋值的地方
 // this.state.count++ // 错误,如违反不可变值原则,会影响 shouldComponentUpdate 
 // this.setState({
 //     count: this.state.count + 1    
@@ -373,6 +378,7 @@ TODO: 添加单向数据流图
 #### 7：什么是纯函数
 返回一个新值，没有副作用（不会偷偷修改其他值）  
 重点是不可变值  
+另外：所有 React 组件都必须像纯函数一样保护它们的 props 不被更改。
 
 #### 8：组件生命周期
 参考之前内容
