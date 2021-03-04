@@ -414,6 +414,10 @@ diff算法是vdom中最核心、最关键的部分
 diff算法能在日常使用vue react 中体现出来（如key的使用）  
 diff 算法是前端热门话题，面试宠儿  
 
+[diff算法详解1](https://github.com/aooy/blog/issues/2]) 
+
+[diff算法详解2](https://github.com/answershuto/learnVue/blob/master/docs/VirtualDOM%E4%B8%8Ediff(Vue%E5%AE%9E%E7%8E%B0).MarkDown)
+
 diff即对比，是一个广泛的概念，如linux diff命令、git diff等    
 两个js对象也可以做diff    
 两棵树做diff，如这里的vdom diff   
