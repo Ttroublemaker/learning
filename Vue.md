@@ -682,7 +682,7 @@ watch没有缓存性，更多的是观察的作用，可以监听某些数据执
 11. 使用vue-loader 在开发环境做模板编译 vue-runtime 版本  
 12. webpack层面（参考webpack相关章节）  
 13. 前端通用性能优化，如图片懒加载  
-    减少HTTP请求/减小cookie大小/将样式表放到页面顶部/将脚本放到页面底部/将javascript和css从外部引入/压缩javascript和css
+    减少HTTP请求/减小cookie大小/将样式表放到页面顶部/将脚本放到页面底部/将javascript和css从外部引入/压缩javascript和css/服务使用Gzip压缩
 
 ## Vue3
 面试会考察候选人对新技术的关注程度  
