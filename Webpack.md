@@ -2,12 +2,11 @@
 webpack已是前端打包构建的不二选择，重在配置和使用，不在原理  
 
 [Webpack官网](https://webpack.docschina.org/concepts/)
-
-基本配置  
-高级配置  
-优化打包速度  
-优化产出代码    
-Babel  
+- 基本配置  
+- 高级配置  
+- 优化打包速度  
+- 优化产出代码    
+- Babel  
 
 ### 1）Webpack基本配置（必须掌握）  
 
@@ -40,13 +39,13 @@ style-loader、css-loader、scss-loader等css预处理loader、postcss-loader(�
 #### 5：处理图片
 file-loader/url-loader(配合options limit 配置项可以控制是否按base64格式产出)
 
-<hr>
+---
 
 ### 2）Webpack高级配置（必须掌握）  
 
 #### 1：多入口
-多个entry 
 ```
+// 多个entry 
 module.exports = {
   entry: {
     main: 'xxx1', // 入口1
@@ -112,21 +111,21 @@ const module = {
 
 
 #### 6：module chunk bundle 的区别
-module：各源文件，在webpack中，一切皆模块  
-chunk：多个模块合并合成的，比如entry、import()、splitChunk  
-bundle：最终输出文件  
+- module：各源文件，在webpack中，一切皆模块  
+- chunk：多个模块合并合成的，比如entry、import()、splitChunk  
+- bundle：最终输出文件  
 
-<hr>
+---
 
 ### 3）webpack性能优化(重要）
 
-优化打包构建速度---开发体验和效率  
-优化产出代码---产品性能  
+- 优化打包构建速度---开发体验和效率  
+- 优化产出代码---产品性能  
 
 #### 1）优化打包构建速度
 ##### 1：优化babel-loader
-1）开启缓存，未修改过的es6+代码，就不会重新编译  
-2）限定打包范围 include or exclude(exclude优先级高于前者)
+- 开启缓存，未修改过的es6+代码，就不会重新编译  
+- 限定打包范围 include or exclude(exclude优先级高于前者)
 
 ![优化babel-loader](imgs/webpack/babel-loader-optimization.png)
 
@@ -199,9 +198,9 @@ extensions：webpack会根据extensions定义的后缀查找文件(频率较高�
 webpack4 发布时，官方也曾表示，其编译速度提升了 60% ~ 98%。  
 
 #### 2）优化产出代码（比构建速度更重要）
-体积更小  
-合理分包，不重复加载  
-速度更快，内存使用更小（代码执行更快）  
+- 体积更小  
+- 合理分包，不重复加载  
+- 速度更快，内存使用更小（代码执行更快）  
 
 ##### 1：小图片base64编码 (配合url-loader limit配置项)
 ##### 2：bundle加hash （使用contentHash，只有文件变更后才加载新内容）
@@ -215,9 +214,9 @@ CDN的全称是(Content Delivery Network)，即内容分发网络。其目的是
 自动开启代码压缩、Vue/React等会自动删掉调试代码（如开发环境的warning），自动启动tree-shaking  
 
 为了学会使用 tree shaking，你必须:  
-1. 使用 ES2015 模块语法（即 import 和 export）
-2. 在项目 package.json 文件中，添加一个 "sideEffects" 入口(注意，任何导入的文件都会受到 tree shaking 的影响。这意味着，如果在项目中使用类似 css-loader 并导入 CSS 文件，则需要将其添加到 side effect 列表中，以免在生产模式中无意中将它删除)
-3. 引入一个能够删除未引用代码(dead code)的压缩工具(minifier)
+- 使用 ES2015 模块语法（即 import 和 export）
+- 在项目 package.json 文件中，添加一个 "sideEffects" 入口(注意，任何导入的文件都会受到 tree shaking 的影响。这意味着，如果在项目中使用类似 css-loader 并导入 CSS 文件，则需要将其添加到 side effect 列表中，以免在生产模式中无意中将它删除)
+- 引入一个能够删除未引用代码(dead code)的压缩工具(minifier)
 ```
 // 开启 tree shaking
  optimization: {
@@ -225,20 +224,20 @@ CDN的全称是(Content Delivery Network)，即内容分发网络。其目的是
  },
 ```
 备注：ES6 Module和Commonjs区别  
-ES6 Module是静态引入，编译时引入，Commonjs是动态引入，执行时引入，所以只有ES6 Module才能静态分析，实现Tree-Shaking
+- ES6 Module是静态引入，编译时引入，Commonjs是动态引入，执行时引入，所以只有ES6 - Module才能静态分析，实现Tree-Shaking
 
 ![module&commonjs](imgs/webpack/module&commonjs.png)
 
 ##### 8：Scope Hoisting
-代码体积更小  
-创建函数作用域更少  
-代码可读性更好  
-Scope Hoisting 它可以让webpack打包出来的代码文件更小，运行更快，它可以被称作为 "作用域提升"。
+- 代码体积更小  
+- 创建函数作用域更少  
+- 代码可读性更好  
+- Scope Hoisting 它可以让webpack打包出来的代码文件更小，运行更快，它可以被称作为 "作用域提升"。
 [Scope Hoisting](https://blog.csdn.net/qq_36380426/article/details/107298332)
 
 ![Scope Hoisting](imgs/webpack/Scope%20Hoisting.png)
 
-<hr>
+---
 
 ### 4）babel 
 [babel官网](https://www.babeljs.cn/setup#installation)    
@@ -271,46 +270,48 @@ If useBuiltIns key is not specified or it is explicitly set with useBuiltIns: fa
 add @babel/polyfill directly to the entry array in your webpack.config.js.
 ```
 
-babel-polyfill 存在的问题:  
-###### 会污染全局环境  
-如果做的是web系统，没有关系。如果作为一个library库，则会有负面影响  
-解决方案：babel-runtime  
-故如果输出的web系统，使用babel-polyfill，如果输出library库，使用babel-runtime
+**babel-polyfill 存在的问题:** 
+
+***会污染全局环境***  
+- 如果做的是web系统，没有关系。如果作为一个library库，则会有负面影响  
+- 解决方案：babel-runtime  
+- 故如果输出的web系统，使用babel-polyfill，如果输出library库，使用babel-runtime
 
 #### 3）babel-runtime  
 @babel/plugin-transform-runtime
 
 ![babel-runtime](imgs/webpack/babel-runtime.png)
 
-<hr>
+---
 
 ### 5）面试真题
 #### 1：前端为何要进行打包和构建
-体积更小（Tree-Shaking、压缩、合并），加载更快  
-编译高级语言或者语法（TS、ES6+、模块化、scss）  
-兼容性和错误检查（polyfill、postcss、eslint）  
-统一、高效的开发环境  
-统一的构建流程和产出标准  
-集成公司构建规范（提测、上线等）  
+- 体积更小（Tree-Shaking、压缩、合并），加载更快  
+- 编译高级语言或者语法（TS、ES6+、模块化、scss）  
+- 兼容性和错误检查（polyfill、postcss、eslint）  
+- 统一、高效的开发环境  
+- 统一的构建流程和产出标准  
+- 集成公司构建规范（提测、上线等）  
 
 #### 2：module chunk bundle的区别
-module：各源文件,在webpack中,一切皆模块  
-chunk：多个模块合并合成的,比如entry import() splitChunk  
-bundle：最终输出文件  
+- module：各源文件,在webpack中,一切皆模块  
+- chunk：多个模块合并合成的,比如entry import() splitChunk  
+- bundle：最终输出文件  
 
 #### 3：loader和plugin的区别
-loader模块转换器，如less->css  
-plugin扩展插件，如HtmlWebpackPlugin  
-相对于loader转换指定类型的模块功能，plugins能够被用于执行更广泛的任务比如打包优化、文件管理、环境注入等  
+- loader模块转换器，如less->css  
+- plugin扩展插件，如HtmlWebpackPlugin  
+- 相对于loader转换指定类型的模块功能，plugins能够被用于执行更广泛的任务比如打包优化、文件管理、环境注入等  
 
 #### 4：常见loader和plugin有哪些
-参考官网
+参考官网  
 [常见loader和plugin](https://blog.csdn.net/Cao_Mary/article/details/104465872)
 
 #### 5：babel和webpack的区别
-Babel---js新语法编译工具，不关心模块化  
-Webpack---打包构建工具，是多个loader plugin的集合  
-Babel 是编译工具，把高版本语法编译成低版本语法，或者将文件按照自定义规则转换成js语法。 webpack 是打包工具，定义入口文件，将所有模块引入整理后，通过loader和plugin处理后，打包输出。 webpack 通过 babel-loader 使用 Babel 。  
+- Babel---js新语法编译工具，不关心模块化  
+- Webpack---打包构建工具，是多个loader plugin的集合  
+- Babel 是编译工具，把高版本语法编译成低版本语法，或者将文件按照自定义规则转换成js语法。 
+- webpack 是打包工具，定义入口文件，将所有模块引入整理后，通过loader和plugin处理后，打包输出。 webpack 通过 babel-loader 使用 Babel 。  
 
 #### 6：如何产出一个lib
 参考DllPlugin章节
@@ -325,9 +326,9 @@ import()
 结合Vue-router React-router异步加载路由  
 
 #### 9：为何Proxy不能被Polyfill
-Class 可以用function模拟  
-Promise可以用callback模拟  
-但是Proxy的功能用Object.defineProperty模拟
+- Class 可以用function模拟  
+- Promise可以用callback模拟  
+- 但是Proxy的功能用Object.defineProperty模拟
 
 #### 10：优化构建速度
 参考之前章节
@@ -384,16 +385,19 @@ nosources-source-map：只会显示具体行数以及查看源代码的错误栈
 sourcemap：通过 nginx 设置将 .map 文件只对白名单开放(公司内网)    
 注意：避免在生产中使用 inline- 和 eval-，因为它们会增加 bundle 体积大小，并降低整体性能。  
 
-eval： 生成代码 每个模块都被eval执行，并且存在@sourceURL  
-cheap-eval-source-map： 转换代码（行内） 每个模块被eval执行，并且sourcemap作为eval的一个dataurl  
-cheap-module-eval-source-map： 原始代码（只有行内） 同样道理，但是更高的质量和更低的性能  
-eval-source-map： 原始代码 同样道理，但是最高的质量和最低的性能  
-cheap-source-map： 转换代码（行内） 生成的sourcemap没有列映射，从loaders生成的sourcemap没有被使用  
-cheap-module-source-map： 原始代码（只有行内） 与上面一样除了每行特点的从loader中进行映射  
-source-map： 原始代码 最好的sourcemap质量有完整的结果，但是会很慢  
+**常用source-map**
+- eval： 生成代码 每个模块都被eval执行，并且存在@sourceURL  
+- cheap-eval-source-map： 转换代码（行内） 每个模块被eval执行，并且sourcemap作为- eval的一个dataurl  
+- cheap-module-eval-source-map： 原始代码（只有行内） 同样道理，但是更高的质量和更低的性能  
+- eval-source-map： 原始代码 同样道理，但是最高的质量和最低的性能  
+- cheap-source-map： 转换代码（行内） 生成的sourcemap没有列映射，从loaders生成的- sourcemap没有被使用  
+- cheap-module-source-map： 原始代码（只有行内） 与上面一样除了每行特点的从loader中进行映射  
+- source-map： 原始代码 最好的sourcemap质量有完整的结果，但是会很慢  
 
-eval： 使用eval包裹模块代码  
-source-map： 产生.map文件  
-cheap： 不包含列信息（关于列信息的解释下面会有详细介绍)也不包含loader的sourcemap  
-module： 包含loader的sourcemap（比如jsx to js ，babel的sourcemap）  
-inline： 将.map作为DataURI嵌入，不单独生成.map文件（这个配置项比较少见）  
+
+**各部分含义**
+- eval： 使用eval包裹模块代码  
+- source-map： 产生.map文件  
+- cheap： 不包含列信息（关于列信息的解释下面会有详细介绍)也不包含loader的sourcemap 
+- module： 包含loader的sourcemap（比如jsx to js ，babel的sourcemap）  
+- inline： 将.map作为DataURI嵌入，不单独生成.map文件（这个配置项比较少见）  

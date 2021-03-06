@@ -6,8 +6,8 @@
 #### 2：指令、动态属性 
 #### 3：v-html：会有XSS风险、会覆盖子组件
 #### 4：computed和watch
-1：computed 有缓存，data不变化则不会重新计算，取决于依赖项是否变化  
-2：watch如何深度监听
+- computed 有缓存，data不变化则不会重新计算，取决于依赖项是否变化  
+- watch如何深度监听
 ```
 watch:{  
   name:{  
@@ -18,36 +18,88 @@ watch:{
   }  
 }  
 ```
-3：watch 监听引用类型，拿不到oldVal， 因为引用类型是指针赋值，新值旧值指向同一个地址  
+- watch 监听引用类型，拿不到oldVal， 因为引用类型是指针赋值，新值旧值指向同一个地址  
 
 #### 5：class和style
 使用动态属性 对象语法 数组语法  
 使用驼峰写法  
 
 #### 6：条件渲染
-v-if/v-else-if/v-else 用法，可以使用变量，也可以使用===等判断表达式  
-v-if和v-show的区别：v-if控制组件的渲染与销毁，v-show通过设置display 控制隐藏和显示  
-v-if和v-show的使用场景：频繁切换用v-show(v-if渲染代价更大)，切换不频繁或者只判断一次的使用v-if  
+- v-if/v-else-if/v-else 用法，可以使用变量，也可以使用===等判断表达式  
+- v-if和v-show的区别：v-if控制组件的渲染与销毁，v-show通过设置display 控制隐藏和显示  
+- v-if和v-show的使用场景：频繁切换用v-show(v-if渲染代价更大)，切换不频繁或者只判断一次的使用v-if  
 
 #### 7：循环（列表）渲染 v-for 
-1: key的重要性，key不能乱写，必须唯一，最好是唯一id  
+- key的重要性，key不能乱写，必须唯一，最好是唯一id  
 key是为Vue中vnode标记的唯一id，通过这个key,我们的diff操作可以更准确、更快速  
 准确: 如果不加key，那么vue会选择复用节点(Vue的就地更新策略)，导致之前节点的状态被保留下来，会产生一系列的bug  
 快速: key的唯一性可以被Map数据结构充分利用，相比于遍历查找的时间复杂度O(n)，Map的时间复杂度仅仅为O(1)  
 
-2: v-for 和v-if 不能一起使用    
+- v-for 和v-if 不能一起使用    
 v-for的优先级高过v-if，所以会对循环体内的每一项使用v-if进行判断，因此哪怕我们只渲染出一小部分用户的元素，也得在每次重渲染的时候遍历整个列表，不论活跃用户是否发生了变化，从而导致不必要的计算。通常可以使用computed对数据先进行过滤
 
 #### 8：事件
-1: event参数、自定义参数  
+- event参数、自定义参数  
 模板中使用$event 表示"原生事件"对象，比如increment(payload,$event)，打印event.currentTarget会发现事件被注册到当前元素上，和react不同，react是合成事件。  
-关注点：  
+**关注点：**  
 1）事件是原生的  
 2）事件被注册到当前元素上  
 
-2: 事件修饰符，按键修饰符  
-![事件修饰符](imgs/vue/事件修饰符.jpg)
-![按键修饰符](imgs/vue/按键修饰符.jpg)
+- 事件修饰符，按键修饰符  
+```
+<!-- 事件修饰符 -->
+
+<!-- 阻止单击事件继续传播 -->
+<a v-on:click.stop="doThis"></a>
+
+<!-- 提交事件不再重载页面 -->
+<form v-on:submit.prevent="onSubmit"></form>
+
+<!-- 修饰符可以串联 -->
+<a v-on:click.stop.prevent="doThat"></a>
+
+<!-- 只有修饰符 -->
+<form v-on:submit.prevent></form>
+
+<!-- 添加事件监听器时使用事件捕获模式 -->
+<!-- 即内部元素触发的事件先在此处理，然后才交由内部元素进行处理 -->
+<div v-on:click.capture="doThis">...</div>
+
+<!-- 只当在 event.target 是当前元素自身时触发处理函数 -->
+<!-- 即事件不是从内部元素触发的 -->
+<div v-on:click.self="doThat">...</div>
+
+<!-- 点击事件将只会触发一次 -->
+<a v-on:click.once="doThis"></a>
+
+<!-- 滚动事件的默认行为 (即滚动行为) 将会立即触发 -->
+<!-- 而不会等待 `onScroll` 完成  -->
+<!-- 这其中包含 `event.preventDefault()` 的情况 -->
+<div v-on:scroll.passive="onScroll">...</div>
+
+```
+
+```
+<!-- 按键修饰符 -->
+
+<!-- 只有在 `key` 是 `Enter` 时调用 `vm.submit()` -->
+<input v-on:keyup.enter="submit">
+
+<!-- Alt + C -->
+<input v-on:keyup.alt.67="clear">
+
+<!-- Ctrl + Click -->
+<div v-on:click.ctrl="doSomething">Do something</div>
+
+<!-- 即使 Alt 或 Shift 被一同按下时也会触发 -->
+<button v-on:click.ctrl="onClick">A</button>
+
+<!-- 有且只有 Ctrl 被按下的时候才触发 -->
+<button v-on:click.ctrl.exact="onCtrlClick">A</button>
+
+<!-- 没有任何系统修饰符被按下的时候才触发 -->
+<button v-on:click.exact="onClick">A</button>
+```
 
 #### 9：表单
 v-model  
@@ -55,35 +107,35 @@ v-model
 修饰符 lazy number trim  
 Lazy 具备防抖效果，输入过程中value不会变化，在输完后才变化  
 
-<hr>
+---
 
 ## 2. Vue组件使用（必会）
 
 #### 1：props和$emit
-1：父=>子 props v-bind:name="name" 或者 :name="name"  
-2：子=>父 $emit 父组件中使用@userEvent="userMethod"监听自定义事件  
+- 父=>子 props v-bind:name="name" 或者 :name="name"  
+- 子=>父 $emit 父组件中使用@userEvent="userMethod"监听自定义事件  
 
 #### 2：组件间通讯、自定义事件
-1：父=>子 props   
-2：子=>父 $emit     
-3：自定义事件（事件总线 ），eventBus = new Vue(), 常用于兄弟组件、远距离组件等， $on、$off、$once、$emit。使用时注意及时解绑自定义事件  
-4：vuex  
-5：inject  provide  
-6：获取父子组件实例 $parent、$children、$refs 获取实例的方式调用组件的属性或者方法  
+1. 父=>子 props   
+2. 子=>父 $emit     
+3. 自定义事件（事件总线 ），eventBus = new Vue(), 常用于兄弟组件、远距离组件等， $on、$off、$once、$emit。使用时注意及时解绑自定义事件  
+4. vuex  
+5. inject  provide  
+6. 获取父子组件实例 $parent、$children、$refs 获取实例的方式调用组件的属性或者方法  
 
 #### 3：组件生命周期（必考，可能涉及父子组件）
-Vue生命周期经历哪些阶段：  
-总体来说：初始化、运行中、销毁  
-详细来说：开始创建、初始化数据、编译模板、挂载Dom、渲染→更新→渲染、销毁等一系列过程  
+- Vue生命周期经历哪些阶段：  
+   - 总体来说：初始化、运行中、销毁  
+   - 详细来说：开始创建、初始化数据、编译模板、挂载Dom、渲染→更新→渲染、销毁等一系列过程  
 
-详见下页图，必须会画  
-至少知道created和mounted的区别  
-beforeDestroy 里注意解除事件监听、定时器等  
+- 详见下页图，必须会画  
+- 至少知道created和mounted的区别  
+- beforeDestroy 里注意解除事件监听、定时器等  
 ![生命周期](imgs/vue/生命周期.jpg)
 ![父子生命周期](imgs/vue/父子生命周期.jpg)
 ![父子生命周期2](imgs/vue/父子生命周期2.jpg)
 
-###### 生命周期经历的阶段和钩子函数
+**生命周期经历的阶段和钩子函数**
 
 1：实例化vue(组件)对象：  
 new Vue()
@@ -138,7 +190,7 @@ data，computed都执行了。属性已经赋值，但没有动态创建template
 
 15：destroyed：vue组件销毁后
 
-<hr>
+---
 
 ## 3. Vue高级特性
 
@@ -182,7 +234,31 @@ data，computed都执行了。属性已经赋值，但没有动态创建template
 `<current-user v-slot:default="slotProps"> {{ slotProps.user.firstName }} </current-user>`   
 
 3: 具名插槽  
-![具名插槽](imgs/vue/具名插槽.jpg)
+```
+<div class="container">
+  <header>
+    <!-- 我们希望把页头放这里 -->
+  </header>
+  <main>
+    <!-- 我们希望把主要内容放这里 -->
+  </main>
+  <footer>
+    <!-- 我们希望把页脚放这里 -->
+  </footer>
+</div>
+
+<div class="container">
+  <header>
+    <slot name="header"></slot>
+  </header>
+  <main>
+    <slot></slot>
+  </main>
+  <footer>
+    <slot name="footer"></slot>
+  </footer>
+</div>
+```
 
 
 #### 4：动态组件
@@ -193,7 +269,21 @@ data，computed都执行了。属性已经赋值，但没有动态创建template
 1：import()函数  
 2：按需加载，异步加载大组件  
 配合魔法注释可以对异步chunk进行自定义命名  
-![异步组件](imgs/vue/异步组件.jpg)
+```
+const AsyncComponent = () => ({
+  // 需要加载的组件 (应该是一个 `Promise` 对象)
+  component: import('./MyComponent.vue'),
+  // 异步组件加载时使用的组件
+  loading: LoadingComponent,
+  // 加载失败时使用的组件
+  error: ErrorComponent,
+  // 展示加载时组件的延时时间。默认值是 200 (毫秒)
+  delay: 200,
+  // 如果提供了超时时间且组件加载也超时了，
+  // 则使用加载失败时使用的组件。默认值是：`Infinity`
+  timeout: 3000
+})
+```
 
 #### 6：keep-alive
 缓存组件  
@@ -228,24 +318,24 @@ exclude - 字符串或正则表达式，任何匹配的组件都不会被缓存�
 想保持这些组件的状态，以避免反复重渲染导致的性能问题  
 
 #### 7：mixin
-1: 多个组件有相同的逻辑，抽离出来  
-mixins：[mixinOne，mixinTwo...]  
-同名钩子函数将合并为一个数组，因此都将被调用。另外，混入对象的钩子将在组件自身钩子之前调用    
-当组件和混入对象含有同名选项时，这些选项将以恰当的方式进行“合并”。比如，数据对象在内部会进行递归合并，并在发生冲突时以组件数据优先    
+- 多个组件有相同的逻辑，抽离出来  
+   - mixins：[mixinOne，mixinTwo...]  
+   - 同名钩子函数将合并为一个数组，因此都将被调用。另外，混入对象的钩子将在组件自身钩子之前调用    
+   - 当组件和混入对象含有同名选项时，这些选项将以恰当的方式进行“合并”。比如，数据对象在内部会进行递归合并，并在发生冲突时以组件数据优先    
 
-2: mixin并非完美的解决方案，会有一些问题  
-变量来源不明确，不利于阅读  
-多mixin时，容易造成命名冲突  
-mixin和组件可能出现多对多的关系，复杂度高（维护火葬场）  
+- mixin并非完美的解决方案，会有一些问题  
+   - 变量来源不明确，不利于阅读  
+   - 多mixin时，容易造成命名冲突  
+   - mixin和组件可能出现多对多的关系，复杂度高（维护火葬场）  
 
-3: vue3中的composition API旨在解决这些问题  
+- vue3中的composition API旨在解决这些问题  
 
 ### 总结：
 高级特性  
 可以不深入，但必须知道  
 熟悉基本用法，了解使用场景，最好能和自己的项目经验结合起来  
 
-<hr>
+---
 
 ## 4. 扩展
 #### Vuex使用  
@@ -253,19 +343,20 @@ mixin和组件可能出现多对多的关系，复杂度高（维护火葬场）
 基本概念，基本使用和API必须要掌握  
 可能会考察state的数据结构设计（参考数据结构与组件设计章节）  
 
-Vuex基本概念  
-state  
-getters  
-action  
-mutation  
+- Vuex基本概念  
+   - state  
+   - getters  
+   - action  
+   - mutation  
 
-用于vue组件  
-dispatch  
-commit  
-mapState  
-mapGetter  
-mapActions  
-mapMutations  
+- 用于vue组件  
+   - dispatch  
+   - commit  
+   - mapState  
+   - mapGetter  
+   - mapActions  
+   - mapMutations  
+
 理解流程（重要），只能在actions里进行异步操作，mutations进行同步操作，state只能通过mutations进行修改，不能直接修改  
 必须会画  
 
@@ -280,7 +371,7 @@ h5 history需要后端配置，无论请求什么地址，后端都返回index.h
 
 ![动态路由](imgs/vue/动态路由.jpg) 
 
-<hr>
+---
 
 ## 5. Vue原理(大厂必考) 原理≠源码
 
@@ -493,33 +584,33 @@ $nextTick 汇总data修改，一次性更新视图，减少DOM操作次数，提
 #### 10： 前端路由原理
 稍微复杂的SPA，都需要前端路由，Vue-router是vue全家桶标配之一，属于"和日常使用相关联的原理"，面试常考。
 
-###### 路由模式  
-1：hash  
-2：H5 history  
+**路由模式**  
+1. hash  
+2. H5 history  
 
-hash 模式
-形如：http://ai.huawei.com/nlp/aila_conference/#/home  
-location.hash => #/home 
-hash 的特点  
-1.hash变化会触发网页跳转，即浏览器的前进后退  
-2.hash变化不会刷新页面，SPA必需的特点  
-3.hash永远不会提交到server端  
+- hash 模式
+   - 形如：http://ai.huawei.com/nlp/aila_conference/#/home  
+   - location.hash => #/home 
+   - hash 的特点  
+      - hash变化会触发网页跳转，即浏览器的前进后退  
+      - hash变化不会刷新页面，SPA必需的特点  
+      - hash永远不会提交到server端  
 
 ![hash](imgs/vue/router-hash.png) 
 
-H5 history 模式  
-用url规范的路由，但跳转时不刷新页面  
-histroy.pushState：  
-打开一个新的路由【注意】用 pushState 方式，浏览器不会刷新页面  
-window.onpopstate：  
-监听浏览器前进、后退  
+- H5 history 模式  
+   - 用url规范的路由，但跳转时不刷新页面  
+   - histroy.pushState：  
+      - 打开一个新的路由【注意】用 pushState 方式，浏览器不会刷新页面  
+   - window.onpopstate：  
+      - 监听浏览器前进、后退  
 
 ![history](imgs/vue/router-history.png)
 ![history](imgs/vue/router-history2.png)
 
 Vue原理总结：组件化、响应式 、vdom和diff 、模板编译、渲染过程、前端路由 
 
-<hr>
+---
 
 ## 6. 面试真题演练：
 #### 1：v-show和v-if 的区别
@@ -711,22 +802,3 @@ Proxy
 可监听 新增、删除属性  
 可监听数组变化  
 无法兼容所有浏览器，无法polyfill(缺点)  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
