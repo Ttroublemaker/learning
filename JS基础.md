@@ -10,7 +10,7 @@
 - 识别是否是引用类型（无法细分，使用instanceof）
 
 #### 3、手写深拷贝
-```
+```js
 /**
  * 深拷贝
  * @param {Object} obj 要拷贝的对象
@@ -87,7 +87,7 @@ function deepClone (obj = {}) {
 - 属性和方法的执行规则（顺着原型链一步步查找）
   
 #### 3、手写建议jQuery，考虑插件和扩展性
-```
+```js
 class jQuery {
     constructor(selector) {
         const result = document.querySelectorAll(selector)
@@ -162,7 +162,7 @@ class myJQuery extends jQuery {
 两种表现：
 - 函数作为参数被传递
 - 函数作为返回值被返回
-```
+```js
 // 函数作为返回值
 // function create() {
 //     const a = 100
@@ -195,7 +195,7 @@ print(fn) // 100
 - 作为普通函数 => window
 - 使用call apply bind => 绑定的值
 - 做为对象函数被调用 => 对象本身
-```
+```js
 let obj = {
   a: 222,
   fn: function () {
@@ -218,7 +218,7 @@ obj2.fn(); // obj
 **this取值是在函数执行时确认，而不是在定义时执行**
 
 ### 2、手写bind函数
-```
+```js
 function fn (a, b) {
   console.log(this);
   console.log({ a, b });
@@ -246,7 +246,7 @@ fn3() // {x:2} {a:3, b:4}
 - 闭包的另一个用处，是封装对象的私有属性和私有方法
   
 **案例：隐藏数据**
-```
+```js
 // 闭包隐藏数据，只提供 API
 function createCache () {
   const data = {} // 闭包中的数据，被隐藏，不被外界访问
@@ -309,3 +309,477 @@ function loadImg (src) {
 ### 3、前端使用异步的应用场景
 - 网络请求，如ajax请求
 - 定时任务，如setTimeout、setInterval
+
+---
+
+# js异步-进阶(重要)
+- event loop
+- promise 进阶
+- async/await
+- 微任务/宏任务
+
+### 思考题:
+- 请描述event loop（事件循环/事件轮询）的机制,可画图
+- 什么是宏任务和微任务,两者有什么区别
+- promise有哪三种状态,如何变化
+- 场景题：promise then 和catch的连接
+- async/await 语法
+- promise和setTimeout的顺序
+- 外加async/await的顺序问题
+
+
+**event loop（事件循环/事件轮询）**
+- js是单线程运行的
+- 异步是基于回调来实现的
+- DOM事件（不是异步，只是都基于时间循环）也是使用回调，也是基于event loop
+- event loop 就是异步回调的实现原理
+
+**总结event loop过程**
+- 同步代码，一行一行放在Call Stack执行
+- 遇到异步，会先"记录"下来，等待时机（网络请求、定时器等）
+- 时机到了，就移动到Callback Queue
+- 如果Call Stack为空（同步代码执行完毕），Event loop 开始工作
+- 轮询查找Callback Queue，如有则移动到Call Stack执行
+- 然后继续轮询查找（类似死循环一样）
+
+
+**promise**
+- 三种状态
+   - pending 
+   - resolved
+   - rejected
+- pending=>resolved或者pending=>rejected，结果不可逆
+- pending状态，不会触发then和catch
+- resolved状态，触发后续then回调函数
+- rejected状态，触发后续catch回调函数
+
+**then 和catch改变状态(重要)**
+- then正常返回resolved，里面有报错则返回rejected
+- catch正常返回resolved，里面有报错则返回rejected 
+```js
+// 第一题
+Promise.resolve().then(() => {
+    console.log(1) // 1
+}).catch(() => {
+    console.log(2)
+}).then(() => {
+    console.log(3) // 3
+})
+
+// 第二题
+Promise.resolve().then(() => { // 返回 rejected 状态的 promise
+    console.log(1) // 1
+    throw new Error('erro1')
+}).catch(() => { // 返回 resolved 状态的 promise
+    console.log(2) // 2
+}).then(() => {
+    console.log(3) // 3
+})
+
+// 第三题
+Promise.resolve().then(() => { // 返回 rejected 状态的 promise
+    console.log(1) // 1
+    throw new Error('erro1')
+}).catch(() => { // 返回 resolved 状态的 promise
+    console.log(2) // 2
+}).catch(() => {
+    console.log(3)
+})
+```
+
+# async/await
+
+- 语法介绍
+- 和 Promise 的关系
+- 异步本质
+- for...of
+
+**有很多 async 的面试题，例如** 
+- async 直接返回，是什么
+- async 直接返回 promise
+- await 后面不加 promise
+- 等等，需要找出一个规律
+
+## 语法介绍
+
+用同步的方式，编写异步
+
+```js
+function loadImg(src) {
+    const promise = new Promise((resolve, reject) => {
+        const img = document.createElement('img')
+        img.onload = () => {
+            resolve(img)
+        }
+        img.onerror = () => {
+            reject(new Error(`图片加载失败 ${src}`))
+        }
+        img.src = src
+    })
+    return promise
+}
+
+async function loadImg1() {
+    const src1 = 'http://www.imooc.com/static/img/index/logo_new.png'
+    const img1 = await loadImg(src1)
+    return img1
+}
+
+async function loadImg2() {
+    const src2 = 'https://avatars3.githubusercontent.com/u/9583120'
+    const img2 = await loadImg(src2)
+    return img2
+}
+
+(async function () {
+    // 注意：await 必须放在 async 函数中，否则会报错
+    try {
+        // 加载第一张图片
+        const img1 = await loadImg1()
+        console.log(img1)
+        // 加载第二张图片
+        const img2 = await loadImg2()
+        console.log(img2)
+    } catch (ex) {
+        console.error(ex)
+    }
+})()
+```
+
+## 和 Promise 的关系(重要)
+
+- async 函数返回结果都是 Promise 对象（如果函数内没返回 Promise ，则自动封装一下）
+
+```js
+async function fn2() {
+    return new Promise(() => {})
+}
+console.log( fn2() )
+
+async function fn1() {
+    return 100
+}
+console.log( fn1() ) // 相当于 Promise.resolve(100)
+```
+
+- await 后面跟 Promise 对象：会阻断后续代码，等待状态变为 resolved ，才获取结果并继续执行
+- await 后续跟非 Promise 对象：会直接返回
+
+```js
+(async function () {
+    const p1 = new Promise(() => {})
+    await p1
+    console.log('p1') // 不会执行
+})()
+
+(async function () {
+    const p2 = Promise.resolve(100)
+    const res = await p2
+    console.log(res) // 100
+})()
+
+(async function () {
+    const res = await 100
+    console.log(res) // 100
+})()
+
+(async function () {
+    const p3 = Promise.reject('some err')
+    const res = await p3
+    console.log(res) // 不会执行
+})()
+```
+
+- try...catch 捕获 rejected 状态
+
+```js
+(async function () {
+    const p4 = Promise.reject('some err')
+    try {
+        const res = await p4
+        console.log(res)
+    } catch (ex) {
+        console.error(ex)
+    }
+})()
+```
+
+总结来看：
+
+- async 封装 Promise
+- await 处理 Promise 成功（相当于Promise.then）
+- try...catch 处理 Promise 失败
+
+## 异步本质
+
+await 是同步写法，但本质还是异步调用。
+
+```js
+async function async1 () {
+  console.log('async1 start')
+  await async2()
+  // await 后面的代码都可以看做是回调中的内容，即异步
+  console.log('async1 end') // 关键在这一步，它相当于放在 callback 中，最后执行
+}
+
+async function async2 () {
+  console.log('async2')
+}
+
+console.log('script start')
+async1()
+console.log('script end')
+
+// script start
+// async1 start
+// async2
+// script end
+// async1 end
+```
+
+即，只要遇到了 `await` ，后面的代码都相当于放在 callback 里。
+
+## for...of
+
+```js
+// 定时算乘法
+function multi(num) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(num * num) 
+        }, 1000)
+    })
+}
+
+// // 使用 forEach ，是 1s 之后打印出所有结果，即 3 个值是一起被计算出来的
+// function test1 () {
+//     const nums = [1, 2, 3];
+//     nums.forEach(async x => {
+//         const res = await multi(x);
+//         console.log(res);
+//     })
+// }
+// test1();
+
+// 使用 for...of ，可以让计算挨个串行执行
+async function test2 () {
+    const nums = [1, 2, 3];
+    for (let x of nums) {
+        // 在 for...of 循环体的内部，遇到 await 会挨个串行计算
+        const res = await multi(x)
+        console.log(res)
+    }
+}
+test2()
+```
+---
+
+# 宏任务和微任务
+
+- 宏任务：setTimeout setInterval DOM 事件 AJAX
+- 微任务：Promise（对于前端来说）
+- 微任务比宏任务执行的更早（重要）
+
+```js
+console.log(100)
+setTimeout(() => {
+    console.log(200)
+})
+Promise.resolve().then(() => {
+    console.log(300)
+})
+console.log(400)
+// 100 400 300 200
+```
+
+## event loop 和 DOM 渲染
+
+再次回顾 event loop 的过程
+
+- 每一次 call stack 结束，都会触发 DOM 渲染（不一定非得渲染，就是给一次 DOM 渲染的机会！！！）
+- 然后再进行 event loop
+
+```js
+const $p1 = $('<p>一段文字</p>')
+const $p2 = $('<p>一段文字</p>')
+const $p3 = $('<p>一段文字</p>')
+$('#container')
+            .append($p1)
+            .append($p2)
+            .append($p3)
+
+console.log('length',  $('#container').children().length )
+alert('本次 call stack 结束，DOM 结构已更新，但尚未触发渲染')
+// （alert 会阻断 js 执行，也会阻断 DOM 渲染，便于查看效果）
+// 到此，即本次 call stack 结束后（同步任务都执行完了），浏览器会自动触发渲染，不用代码干预
+
+// 另外，按照 event loop 触发 DOM 渲染时机，setTimeout 时 alert ，就能看到 DOM 渲染后的结果了
+setTimeout(function () {
+    alert('setTimeout 是在下一次 Call Stack ，就能看到 DOM 渲染出来的结果了')
+})
+```
+
+## 宏任务和微任务的区别
+
+- 宏任务：DOM 渲染后再触发
+- 微任务：DOM 渲染前会触发
+
+```js
+// 修改 DOM
+const $p1 = $('<p>一段文字</p>')
+const $p2 = $('<p>一段文字</p>')
+const $p3 = $('<p>一段文字</p>')
+$('#container')
+    .append($p1)
+    .append($p2)
+    .append($p3)
+
+// // 微任务：渲染之前执行（DOM 结构已更新）
+// Promise.resolve().then(() => {
+//     const length = $('#container').children().length
+//     alert(`micro task ${length}`)
+// })
+
+// 宏任务：渲染之后执行（DOM 结构已更新）
+setTimeout(() => {
+    const length = $('#container').children().length
+    alert(`macro task ${length}`)
+})
+```
+
+再深入思考一下：为何两者会有以上区别，一个在渲染前，一个在渲染后？
+
+- 执行 ES6 语法规范的是 js 引擎，制定宏任务的是浏览器，这俩不一个模块。
+- 所以，微任务是 ES6 语法的一部分，那也就顺带让 js 引擎直接给执行了，这样效率最高。
+- 等 ES6 语法全部执行完（包括微任务）之后，再去执行浏览器该有的操作（如渲染、宏任务）
+
+# 异步 题目
+
+- 描述 event loop 运行机制（可画图）
+- Promise 哪几种状态，如何变化？
+- 宏任务和微任务的区别
+- 场景题：Promise catch 连接 then
+- 场景题：Promise 和 setTimeout 顺序
+- 场景题：各类异步执行顺序问题
+
+## Promise catch 连接 then
+
+```js
+// 第一题
+Promise.resolve().then(() => {
+    console.log(1)
+}).catch(() => {
+    console.log(2)
+}).then(() => {
+    console.log(3)
+})
+// 1 3
+
+// 第二题
+Promise.resolve().then(() => {
+    console.log(1)
+    throw new Error('erro1')
+}).catch(() => {
+    console.log(2)
+}).then(() => {
+    console.log(3)
+})
+// 1 2 3
+
+// 第三题
+Promise.resolve().then(() => {
+    console.log(1)
+    throw new Error('erro1')
+}).catch(() => {
+    console.log(2)
+}).catch(() => { // 注意这里是 catch
+    console.log(3)
+})
+// 1 2
+```
+
+## async/await 语法问题
+
+```js
+async function fn() {
+    return 100
+}
+(async function () {
+    const a = fn() // ??               // promise
+    const b = await fn() // ??         // 100
+})()
+```
+
+```js
+(async function () {
+    console.log('start')
+    const a = await 100
+    console.log('a', a)
+    const b = await Promise.resolve(200)
+    console.log('b', b)
+    const c = await Promise.reject(300) // 注意是reject
+    console.log('c', c)
+    console.log('end')
+})() // 执行完毕，打印出那些内容？
+// start -> a 100 -> b 200
+```
+
+## Promise 和 setTimeout 顺序
+
+```js
+console.log(100)
+setTimeout(() => {
+    console.log(200)
+})
+Promise.resolve().then(() => {
+    console.log(300)
+})
+console.log(400)
+// 100 400 300 200
+```
+
+## 执行顺序问题
+
+网上很经典的面试题
+
+```js
+async function async1 () {
+  console.log('async1 start') // 2
+  await async2() // 这一句会同步执行，返回 Promise ，其中的 `console.log('async2')` 也会同步执行
+  console.log('async1 end') // 上面有 await ，下面就变成了“异步”，类似 cakkback 的功能（微任务） // 6
+}
+
+async function async2 () {
+  console.log('async2') // 3
+}
+
+console.log('script start') // 1
+
+setTimeout(function () { // 异步，宏任务
+  console.log('setTimeout') // 8
+}, 0)
+
+async1()
+
+new Promise (function (resolve) { // 返回 Promise 之后，即同步执行完成，then 是异步代码
+  console.log('promise1') // Promise 的函数体会立刻执行 // 4
+  resolve()
+}).then (function () { // 异步，微任务
+  console.log('promise2') // 7
+})
+
+console.log('script end') // 5
+
+// 同步代码执行完之后，屡一下现有的异步未执行的，按照顺序
+// 1. async1 函数中 await 后面的内容 —— 微任务
+// 2. setTimeout —— 宏任务
+// 3. then —— 微任务
+// script start
+// async1 start
+// async2
+// promise1
+// script end
+// async1 end
+// promise2
+// setTimeout
+```
