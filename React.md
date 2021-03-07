@@ -33,7 +33,7 @@ React 事件的命名采用小驼峰式（camelCase），而不是纯小写。
 ![event](imgs/react/event参数.png)
 
 3）传递自定义参数  
-```
+```js
 <button onClick={(e) => this.deleteRow(id, e)}>Delete Row</button>
 <button onClick={this.deleteRow.bind(this, id)}>Delete Row</button>
 ```
@@ -50,7 +50,7 @@ React 事件的命名采用小驼峰式（camelCase），而不是纯小写。
 
 #### 1：setState（非常重要）
 1）不可变值(注意)
-```
+```js
 // 不要直接修改 state ，使用不可变值，构造函数是唯一可以给 this.state 赋值的地方
 // this.state.count++ // 错误,如违反不可变值原则,会影响 shouldComponentUpdate 
 // this.setState({
@@ -176,7 +176,7 @@ mapStateToProps及mapDispatchToProps
 
 Redux 处理异步  
 redux-thunk  
-```
+```js
 const actions = {
   ...
   incrementAsync: (num) => {
@@ -212,7 +212,7 @@ export default store
 面试考点不多  
 路由模式，同Vue  
 路由配置（动态路由、懒加载），同Vue    
-```
+```js
 import React, { Suspense } from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 
@@ -269,7 +269,7 @@ JSX等同于Vue模板
 Vue模板非html  
 JSX也不是js  
 (babel网站中可以编译试一试)  
-```
+```js
 React.createElement('div',null,[child1,child2,child3])
 React.createElement('div',null,child1,child2,child3)
 React.createElement(List,null,[child1,child2,child3])

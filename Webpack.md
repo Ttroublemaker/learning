@@ -18,7 +18,7 @@ webpack已是前端打包构建的不二选择，重在配置和使用，不在�
 #### 2：启动本地服务
 webpack-dev-server插件   
 devServer 配置项
-```
+```js
 var path = require('path');
 module.exports = {
   //...
@@ -44,7 +44,7 @@ file-loader/url-loader(配合options limit 配置项可以控制是否按base64�
 ### 2）Webpack高级配置（必须掌握）  
 
 #### 1：多入口
-```
+```js
 // 多个entry 
 module.exports = {
   entry: {
@@ -70,7 +70,7 @@ module.exports = {
 #### 3：抽离公共代码（重要）
 抽离公共代码及第三方代码，splitChunksPlugin（webpack已经内置）  
 如果node_modules包过大，还可以对node_modules里较大的包拆分提取出来，避免输出的bundle文件过大  
-```
+```js
 splitChunks = {
   // ...
   cacheGroups: {
@@ -91,7 +91,7 @@ import(/*webpackChunkName: chunkName */  '待引入的chunk') 使用魔术注释
 
 #### 5：处理JSX和vue
 配合使用对应的loader即可
-```
+```js
 const module = {
   rules: [
     {
@@ -134,7 +134,7 @@ const module = {
 
 ![IgnorePlugin](imgs/webpack/ignorePlugin.png)
 
-```
+```js
 new webpack.IgnorePlugin({
   resourceRegExp: /^\.\/locale$/,
   contextRegExp: /moment$/,
@@ -217,7 +217,7 @@ CDN的全称是(Content Delivery Network)，即内容分发网络。其目的是
 - 使用 ES2015 模块语法（即 import 和 export）
 - 在项目 package.json 文件中，添加一个 "sideEffects" 入口(注意，任何导入的文件都会受到 tree shaking 的影响。这意味着，如果在项目中使用类似 css-loader 并导入 CSS 文件，则需要将其添加到 side effect 列表中，以免在生产模式中无意中将它删除)
 - 引入一个能够删除未引用代码(dead code)的压缩工具(minifier)
-```
+```js
 // 开启 tree shaking
  optimization: {
    usedExports: true,
@@ -359,7 +359,7 @@ Webpack开启监听模式，有两种方式：
 缺点：每次需要手动刷新浏览器  
 
 原理：轮询判断文件的最后编辑时间是否变化，如果某个文件发生了变化，并不会立刻告诉监听者，而是先缓存起来，等 aggregateTimeout 后再执行。
-```
+```js
 module.export = {
     // 默认false,也就是不开启
     watch: true,

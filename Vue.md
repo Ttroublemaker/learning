@@ -8,7 +8,7 @@
 #### 4：computed和watch
 - computed 有缓存，data不变化则不会重新计算，取决于依赖项是否变化  
 - watch如何深度监听
-```
+```js
 watch:{  
   name:{  
     handler(oldVal, newVal ){  
@@ -46,7 +46,7 @@ v-for的优先级高过v-if，所以会对循环体内的每一项使用v-if进�
 2）事件被注册到当前元素上  
 
 - 事件修饰符，按键修饰符  
-```
+```js
 <!-- 事件修饰符 -->
 
 <!-- 阻止单击事件继续传播 -->
@@ -79,7 +79,7 @@ v-for的优先级高过v-if，所以会对循环体内的每一项使用v-if进�
 
 ```
 
-```
+```js
 <!-- 按键修饰符 -->
 
 <!-- 只有在 `key` 是 `Enter` 时调用 `vm.submit()` -->
@@ -234,7 +234,7 @@ data，computed都执行了。属性已经赋值，但没有动态创建template
 `<current-user v-slot:default="slotProps"> {{ slotProps.user.firstName }} </current-user>`   
 
 3: 具名插槽  
-```
+```js
 <div class="container">
   <header>
     <!-- 我们希望把页头放这里 -->
@@ -269,7 +269,7 @@ data，computed都执行了。属性已经赋值，但没有动态创建template
 1：import()函数  
 2：按需加载，异步加载大组件  
 配合魔法注释可以对异步chunk进行自定义命名  
-```
+```js
 const AsyncComponent = () => ({
   // 需要加载的组件 (应该是一个 `Promise` 对象)
   component: import('./MyComponent.vue'),
@@ -292,7 +292,7 @@ vue常见的性能优化手段之一
 include - 字符串或正则表达，只有匹配的组件会被缓存  
 exclude - 字符串或正则表达式，任何匹配的组件都不会被缓存（优先级高于include）  
 使用include/exclude 属性需要给所有vue类的name赋值（注意不是给route的name赋值），否则 include/exclude不生效  
-```
+```js
 <keep-alive include="a,b">
   <!-- 将缓存name为a或者b的组件，结合动态组件使用 -->
   <component :is="view"></component>
@@ -404,7 +404,7 @@ vue3：Proxy 兼容性不好，且无法polyfill
 
 监听对象、监听数组、复杂对象，深度监听  
 
-```
+```js
 // 触发更新视图  
 function updateView () {
   console.log('视图更新')
@@ -492,7 +492,7 @@ Vue和react是数据驱动视图，如何有效控制DOM操作？
 Virtual DOM 是用 VNode 这么一个Class 去描述  
 
 会用vdom描述html结构，如下：
-```
+```js
 <div class="title">
       <span>Hello ConardLi</span>
       <ul>
@@ -705,7 +705,7 @@ hash模式（默认） onhashchange
 H5 history (需要服务端支持) history.pushState /onpopstate  
 
 #### 19：如何配置vue-router 异步加载
-```
+```js
 new Vue({
   //...
   components:{
