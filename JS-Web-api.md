@@ -14,20 +14,22 @@
 - DOM 是哪种数据结构
    - 本质是DOM树
 - DOM操作的常用API(自行补充)
-   - 元素获取 
-      -  document.getElementById
-      -  document.getElementsByTagName
-      -  document.getElementsByClassName
-      -  document.querySelectorAll
-      -  document.querySelector
-   - 元素操作
-      - 新增元素document.createElement
-      - 插入元素div1.appendChild(newP)
-      - 移动元素div1.appendChild(reservedNode)
-      - 获取父元素p1.parentNode
-      - 获取子元素列表div1ChildNodes = div1.childNodes
-      - 移除子元素div1.removeChild(div1ChildNodesP[0])
-- attr和property的区别
+   - 创建新节点
+   - 添加、移除、替换、插入
+   - 查找
+```js
+createDocumentFragment()    //创建一个DOM片段
+createElement()   //创建一个具体的元素
+createTextNode()   //创建一个文本节点
+appendChild()      //添加
+removeChild()      //移除
+replaceChild()      //替换
+insertBefore()      //插入
+getElementsByTagName()    //通过标签名称
+getElementsByName()     //通过元素的Name属性的值
+getElementById()        //通过元素Id，唯一性
+```
+- [attr和property的区别](https://www.cnblogs.com/elcarim5efil/p/4698980.html)
    - Attribute和Property分别为特性和属性，Attribute就是DOM节点自带属性，例如我们在HTML中常用的id,class,src,title,alt等。而Property则是这个DOM元素作为对象，其附加的属性或者内容，例如childNodes，firstChild等
    - Property修改对象属性,不会体现到html结构中
    - Attribute 修改html属性,会改变html 结构
