@@ -45,7 +45,9 @@
   
   5：[FE-Interview-Questions](http://blog.poetries.top/FE-Interview-Questions/)
   
-  6： [一个合格(优秀)的前端都应该阅读这些文章](https://juejin.im/post/5d387f696fb9a07eeb13ea60)
+  6：[Front-End-Interview-Notebook](https://github.com/CavsZhouyou/Front-End-Interview-Notebook)
+  
+  7：[一个合格(优秀)的前端都应该阅读这些文章](https://juejin.im/post/5d387f696fb9a07eeb13ea60)
   
  ### 编码风格
   1：[airbnb](https://github.com/airbnb/javascript)
