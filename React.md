@@ -146,9 +146,10 @@ Memo：函数组件中的PureComponent
 
 #### 7：关于组件公共逻辑的抽离
 1. Mixin，已被React弃用  
-2. 高阶组件 HOC（注意透传所有props）  
-3. Render Props
-4. hook
+2. 高阶组件 HOC（注意透传所有props） 需要重新组织你的组件结构，这可能会很麻烦，使你的代码难以理解 
+3. Render Props 需要重新组织你的组件结构，这可能会很麻烦，使你的代码难以理解
+4. hook Hook 使你在无需修改组件结构的情况下复用状态逻辑  
+Hook 允许我们按照代码的用途分离他们， 而不是像生命周期函数那样
 
 ![HOC](imgs/react/HOC.png)  
 参考官网
