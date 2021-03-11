@@ -3,9 +3,10 @@
 **知识总结**
 - [html及css](./html及css.md)
 - [JS基础](./JS基础.md)
-- [JS-Web-API](./JS-Web-API.md)
+- [JS-Web-API](./JS-Web-api.md)
 - [ajax](./ajax.md)
 - [事件](./事件.md)
+- [存储](./存储.md)
 - [vue](./Vue.md)
 - [React](./React.md)
 - [webpack](./Webpack.md)

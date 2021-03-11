@@ -1,7 +1,7 @@
 # js基础
 ### 变量类型
 #### 1、值类型
-- 基本类型：String、Number、null、underfined、Boolean、symbol。数据占用空间小，存储在栈中
+- 基本类型：String、Number、null、undefined、Boolean、symbol。数据占用空间小，存储在栈中
 - 引用类型：object，数据存储在堆中，地址存储在栈中，指向这个对象
 - JS基本数据类型的变量存放的是基本类型数据的实际值；而引用数据类型的变量保存对它的引用，即指针
 #### 2、typeof运算符
@@ -45,10 +45,7 @@ function deepClone (obj = {}) {
 ### 变量计算-类型转换
 - 字符串拼接
 - ==（建议使用全等===）
-- if语句及逻辑运算 
-  - truly: !!a===true  
-  - falsely: !!a===false
-  
+- if语句及逻辑运算 (truly: !!a===true; falsely: !!a===false)
 ---
 
 # 原型和原型链（重点）
@@ -72,7 +69,6 @@ function deepClone (obj = {}) {
   
 ### 4、原型链(能画)
 ![原型链](./imgs/js/原型链.png)
-
 
 ---
 
@@ -149,7 +145,7 @@ class myJQuery extends jQuery {
 - 块级作用域
 
 作用域链: 
-- 变量的查找从当前作用域开始，如果找到即停止,没有找到则继续向上级作用域查找,直到全局作用域或者找到为止
+- 变量的查找从当前作用域开始，如果找到即停止，没有找到则继续向上级作用域查找,直到全局作用域或找到为止
 
 闭包
 - 有权访问另一个函数作用域中变量的函数，创建闭包的最常见的方式就是在一个函数内创建另一个函数，通过另一个函数访问这个函数的局部变量，利用闭包可以突破作用链域
@@ -284,7 +280,7 @@ console.log(c.get('a'))
 
 ## 思考
 ### 1、同步与异步的区别
-基于js是单线程本质，异步不会阻塞代码执行，相反同步会阻塞
+基于js是单线程本质，异步不会阻塞代码执行，同步会阻塞
 
 ### 2、手写promise加载一张图片
 ```
@@ -319,9 +315,9 @@ function loadImg (src) {
 - 微任务/宏任务
 
 ### 思考题:
-- 请描述event loop（事件循环/事件轮询）的机制,可画图
-- 什么是宏任务和微任务,两者有什么区别
-- promise有哪三种状态,如何变化
+- 请描述event loop（事件循环/事件轮询）的机制，可画图
+- 什么是宏任务和微任务，两者有什么区别
+- promise有哪三种状态，如何变化
 - 场景题：promise then 和catch的连接
 - async/await 语法
 - promise和setTimeout的顺序
@@ -331,7 +327,7 @@ function loadImg (src) {
 **event loop（事件循环/事件轮询）**
 - js是单线程运行的
 - 异步是基于回调来实现的
-- DOM事件（不是异步，只是都基于时间循环）也是使用回调，也是基于event loop
+- DOM事件（不是异步，只是都基于事件循环）也是使用回调，也是基于event loop
 - event loop 就是异步回调的实现原理
 
 **总结event loop过程**
@@ -398,7 +394,6 @@ Promise.resolve().then(() => { // 返回 rejected 状态的 promise
 - async 直接返回，是什么
 - async 直接返回 promise
 - await 后面不加 promise
-- 等等，需要找出一个规律
 
 ## 语法介绍
 
@@ -746,7 +741,7 @@ console.log(400)
 async function async1 () {
   console.log('async1 start') // 2
   await async2() // 这一句会同步执行，返回 Promise ，其中的 `console.log('async2')` 也会同步执行
-  console.log('async1 end') // 上面有 await ，下面就变成了“异步”，类似 cakkback 的功能（微任务） // 6
+  console.log('async1 end') // 上面有 await ，下面就变成了“异步”，类似 callback 的功能（微任务） // 6
 }
 
 async function async2 () {

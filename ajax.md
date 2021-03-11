@@ -9,9 +9,9 @@
 - 状态码
 - 跨域：同源策略，跨域解决方案
 
-### XMLHttpReguest
+### 1. XMLHttpReguest
 ```js
-/** 1. 创建连接 **/
+/** 1. 创建XMLHttpRequest对象 **/
 var xhr = null;
 xhr = new XMLHttpRequest()
 /** 2. 连接服务器 **/
@@ -28,25 +28,6 @@ xhr.onreadystatechange = function () {
       fail && fail(xhr.status);
     }
   }
-}
-function ajax (url) {
-  const p = new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest()
-    xhr.open('GET', url, true) // true 异步请求
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4) {
-        if (xhr.status === 200) {
-          resolve(
-            JSON.parse(xhr.responseText)
-          )
-        } else if (xhr.status === 404 || xhr.status === 500) {
-          reject(new Error('404 not found'))
-        }
-      }
-    }
-    xhr.send(null)
-  })
-  return p
 }
 ```
 
@@ -90,3 +71,67 @@ function ajax (url) {
    - 500   （服务器内部错误）  服务器遇到错误，无法完成请求。
    - 502   （错误网关） 服务器作为网关或代理，从上游服务器收到无效响应。
    - 503   （服务不可用） 服务器目前无法使用（由于超载或停机维护）。 通常，这只是暂时状态。
+
+
+### 2. 跨域
+
+#### 同源策略
+- ajax请求时，浏览器要求当前网页和服务必须同源（安全）
+- 同源：协议、域名、端口，三者必须一致
+- 加载图片、css、js可无视同源策略
+- 所有跨域，都必须通过服务端允许和配合
+- 未经服务端允许就实现跨域，说明浏览器有漏洞，危险信号
+
+#### 跨域方案
+- JSONP
+```js
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+
+  // 传参并指定回调执行函数为onBack
+  script.src = 'http://www.....:8080/login?user=admin&callback=onBack';
+  document.head.appendChild(script);
+
+  // 回调执行函数
+  function onBack(res) {
+    alert(JSON.stringify(res));
+  }
+```
+- cors 服务器设置http header
+![服务器设置http header](./imgs/js/跨域响应头设置.png)
+
+- nginx代理跨域
+- webpack-dev-server(仅适用于开发环境)
+
+### 题目
+- 书写一个简易的ajax
+```js
+function ajax (url) {
+  const p = new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open('GET', url, true) // true表示异步请求
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          resolve(JSON.parse(xhr.responseText))
+        } else if (xhr.status === 404) {
+          reject(new Error('404 not found'))
+        }else if ( xhr.status === 500) {
+          reject(new Error('500 server error'))
+        }
+      }
+    }
+    xhr.send(null)
+  })
+  return p
+}
+```
+- 跨域的常用实现方式
+   - JSONP
+   - cors 服务器设置http header
+   - nginx代理跨域
+   - webpack-dev-server
+
+
+### 3. fetch
+### 4. axios
