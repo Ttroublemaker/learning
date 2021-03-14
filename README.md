@@ -14,6 +14,7 @@
 - [项目设计](./项目设计.md)
 - [运行环境](./运行环境.md)
 - [面试准备](./面试准备.md)
+- [面试真题](./面试真题.md)
 
 ## TypeScript学习：
   1：[TypeScript 入门教程](https://github.com/xcatliu/typescript-tutorial/blob/master/README.md)
