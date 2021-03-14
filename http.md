@@ -68,12 +68,12 @@
 - Restful API设计：把每个url当做一个唯一的资源
   - 如何设计成一个资源
     - 不使用url参数
-  ```js
+  ```
   传统的API设计：/api/list?pageIndex=2
   Restful API设计：/api/list/2
   ```
     - 使用method表示操作类型
-  ```js
+  ```
   传统的API设计：
   post 请求 /api/create-blog
   post 请求 /api/update-blog?id=100

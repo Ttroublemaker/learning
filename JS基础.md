@@ -41,6 +41,12 @@ function deepClone (obj = {}) {
   return result
 }
 ```
+> 这个问题通常可以通过 JSON.parse(JSON.stringify(obj)) 来解决  
+> 但是该方法也是有局限性的：
+> - 会忽略 undefined
+> - 会忽略 symbol
+> - 不能序列化函数
+> - 不能解决循环引用的对象
 
 ### 变量计算-类型转换
 - 字符串拼接
@@ -59,7 +65,23 @@ function deepClone (obj = {}) {
 - 扩展或重写方法
   
 ### 2、instanceof 类型判断
-顺着原型链一层层查找原型
+内部机制是通过判断对象的原型链中是不是能找到类型的 prototype
+```js
+function instanceof(left, right) {
+    // 获得类型的原型
+    let prototype = right.prototype
+    // 获得对象的原型
+    left = left.__proto__
+    // 判断对象的类型是否等于类型的原型
+    while (true) {
+    	if (left === null)
+    		return false
+    	if (prototype === left)
+    		return true
+    	left = left.__proto__
+    }
+}
+```
 
 ### 3、原型
 - class 实际上是函数，是语法糖
@@ -213,15 +235,12 @@ obj2.fn(); // obj
 
 **this取值是在函数执行时确认，而不是在定义时执行**
 
-### 2、手写bind函数
+### 2、手写bind、call及apply函数
 ```js
 function fn (a, b) {
   console.log(this);
   console.log({ a, b });
 }
-
-const fn2 = fn.bind({ x: 1 }, 10, 20)
-fn2() // {x:1} {a:10, b:20}
 // 模拟bind
 Function.prototype.myBind = function () {
   // context 即为this
@@ -237,6 +256,39 @@ Function.prototype.myBind = function () {
 const fn3 = fn.myBind({ x: 2 }, 3, 4)
 fn3() // {x:2} {a:3, b:4}
 ```
+```js
+// 模拟call
+Function.prototype.myCall = function (context) {
+  var context = context || window
+  // 给 context 添加一个属性
+  // getValue.call(a, 'yck', '24') => a.fn = getValue
+  context.fn = this
+  // 将 context 后面的参数取出来
+  var args = [...arguments].slice(1)
+  // getValue.call(a, 'yck', '24') => a.fn('yck', '24')
+  var result = context.fn(...args)
+  // 删除 fn
+  delete context.fn
+  return result
+}
+```
+```js
+Function.prototype.myApply = function (context) {
+  var context = context || window
+  context.fn = this
+  var result
+  // 需要判断是否存储第二个参数
+  // 如果存在，就将第二个参数展开
+  if (arguments[1]) {
+    result = context.fn(...arguments[1])
+  } else {
+    result = context.fn()
+  }
+  delete context.fn
+  return result
+}
+```
+
 ### 3、实际开发中闭包的应用场景
 - 闭包的最大用处有两个，一个是可以读取函数内部的变量，另一个就是让这些变量始终保持在内存中
 - 闭包的另一个用处，是封装对象的私有属性和私有方法
@@ -326,6 +378,7 @@ function loadImg (src) {
 
 **event loop（事件循环/事件轮询）**
 - js是单线程运行的
+> 如果 JS 是门多线程的语言话，我们在多个线程中处理 DOM 就可能会发生问题（一个线程中新加节点，另一个线程中删除节点）。
 - 异步是基于回调来实现的
 - DOM事件（不是异步，只是都基于事件循环）也是使用回调，也是基于event loop
 - event loop 就是异步回调的实现原理
@@ -337,7 +390,9 @@ function loadImg (src) {
 - 如果Call Stack为空（同步代码执行完毕），Event loop 开始工作
 - 轮询查找Callback Queue，如有则移动到Call Stack执行
 - 然后继续轮询查找（类似死循环一样）
+> 本质上来说 JS 中的异步还是同步行为
 
+![event-loop](./imgs/js/event-loop.png)
 
 **promise**
 - 三种状态
@@ -573,7 +628,7 @@ test2()
 
 - 宏任务：setTimeout setInterval DOM 事件 AJAX
 - 微任务：Promise（对于前端来说）
-- 微任务比宏任务执行的更早（重要）
+- 微任务比宏任务执行的更早（在不考虑script宏任务的前提下，参考上述思考题）
 
 ```js
 console.log(100)
