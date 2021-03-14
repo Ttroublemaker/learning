@@ -7,10 +7,12 @@
 - [ajax](./ajax.md)
 - [事件](./事件.md)
 - [存储](./存储.md)
+- [http](./http.md)
 - [vue](./Vue.md)
 - [React](./React.md)
 - [webpack](./Webpack.md)
 - [项目设计](./项目设计.md)
+- [运行环境](./运行环境.md)
 - [面试准备](./面试准备.md)
 
 ## TypeScript学习：
