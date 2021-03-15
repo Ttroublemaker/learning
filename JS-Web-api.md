@@ -1,14 +1,14 @@
-# 从js基础知识到JS Web API
-- js基础知识,规定语法(ECMA 262标准)
-- Js Web API,网页操作的API(w3c)
+# 从js基础知识到JS-Web-API
+- js基础知识，规定语法(ECMA 262标准)
+- Js Web API，网页操作的API(w3c)
 - 前者是后者的基础,两者结合才能实现真正实际应用
 
 ### JS Web API
 - DOM
 - BOM
-- 事件绑定
-- AJAX
-- 存储
+- [事件](./事件.md)
+- [AJAX](./http及ajax.md)
+- [存储](./存储.md)
   
 ### DOM
 - DOM 是哪种数据结构
@@ -16,7 +16,7 @@
 - DOM操作的常用API(自行补充)
    - 创建新节点
    - 添加、移除、替换、插入
-   - 查找
+   - 节点查找
 ```js
 createDocumentFragment()    //创建一个DOM片段
 createElement()   //创建一个具体的元素

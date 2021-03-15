@@ -1,13 +1,13 @@
 # js基础
 ### 变量类型
 #### 1、值类型
-- 基本类型：String、Number、null、undefined、Boolean、symbol。数据占用空间小，存储在栈中
+- 基本类型：string、number、null、undefined、boolean、symbol。数据占用空间小，存储在栈中
 - 引用类型：object，数据存储在堆中，地址存储在栈中，指向这个对象
 - JS基本数据类型的变量存放的是基本类型数据的实际值；而引用数据类型的变量保存对它的引用，即指针
 #### 2、typeof运算符
 - 识别所有值类型
 - 识别函数
-- 识别是否是引用类型（无法细分，使用instanceof）
+- 识别是否是引用类型（但无法细分，需使用instanceof）
 
 #### 3、手写深拷贝
 ```js
@@ -41,14 +41,13 @@ function deepClone (obj = {}) {
   return result
 }
 ```
-> 这个问题通常可以通过 JSON.parse(JSON.stringify(obj)) 来解决  
-> 但是该方法也是有局限性的：
+> 通常可以通过 JSON.parse(JSON.stringify(obj)) 来解决，但是该方法也有局限性：
 > - 会忽略 undefined
 > - 会忽略 symbol
 > - 不能序列化函数
 > - 不能解决循环引用的对象
 
-### 变量计算-类型转换
+### 类型隐式转换
 - 字符串拼接
 - ==（建议使用全等===）
 - if语句及逻辑运算 (truly: !!a===true; falsely: !!a===false)
@@ -182,16 +181,16 @@ class myJQuery extends jQuery {
 - 函数作为返回值被返回
 ```js
 // 函数作为返回值
-// function create() {
-//     const a = 100
-//     return function () {
-//         console.log(a)
-//     }
-// }
+function create() {
+    const a = 100
+    return function () {
+        console.log(a)
+    }
+}
 
-// const fn = create()
-// const a = 200
-// fn() // 100
+const fn = create()
+const a = 200
+fn() // 100
 
 // 函数作为参数被传递
 function print (fn) {
@@ -291,7 +290,7 @@ Function.prototype.myApply = function (context) {
 
 ### 3、实际开发中闭包的应用场景
 - 闭包的最大用处有两个，一个是可以读取函数内部的变量，另一个就是让这些变量始终保持在内存中
-- 闭包的另一个用处，是封装对象的私有属性和私有方法
+- 另一个用处是封装对象的私有属性和私有方法
   
 **案例：隐藏数据**
 ```js
@@ -316,7 +315,7 @@ console.log(c.get('a'))
 - 如：节流防抖
 
 **使用闭包的注意点**
-- 由于闭包会使得函数中的变量都被保存在内存中，内存消耗很大，所以不能滥用闭包，否则会造成网页的性能问题，在IE中可能导致内存泄露
+- 闭包会使得函数中的变量都被保存在内存中，内存消耗很大，所以不能滥用闭包，否则会造成网页的性能问题，在IE中可能导致内存泄露
 - 解决方法是，在退出函数之前，将不使用的局部变量全部删除
 
 ---
@@ -335,7 +334,7 @@ console.log(c.get('a'))
 基于js是单线程本质，异步不会阻塞代码执行，同步会阻塞
 
 ### 2、手写promise加载一张图片
-```
+```js
 function loadImg (src) {
   const p = new Promise(
     (resolve, reject) => {
@@ -446,8 +445,7 @@ Promise.resolve().then(() => { // 返回 rejected 状态的 promise
 - for...of
 
 **有很多 async 的面试题，例如** 
-- async 直接返回，是什么
-- async 直接返回 promise
+- async 直接返回，是什么? promise
 - await 后面不加 promise
 
 ## 语法介绍
@@ -512,8 +510,8 @@ async function fn1() {
 console.log( fn1() ) // 相当于 Promise.resolve(100)
 ```
 
-- await 后面跟 Promise 对象：会阻断后续代码，等待状态变为 resolved ，才获取结果并继续执行
-- await 后续跟非 Promise 对象：会直接返回
+- await 后面跟 Promise 对象：会阻断后续代码，等待状态变为 resolved，才获取结果并继续执行
+- await 后续跟非 Promise 对象：会直接返回，不再继续执行后续代码
 
 ```js
 (async function () {

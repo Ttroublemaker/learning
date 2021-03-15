@@ -453,7 +453,9 @@ function observer (target) {
   }
   // 重新定义各个属性（for in 也可以遍历数组）
   for (let key in target) {
-    defineReactive(target, key, target[key])
+    if(target.hasOwnProperty(key)){
+      defineReactive(target, key, target[key])
+    }
   }
 }
 // 准备数据

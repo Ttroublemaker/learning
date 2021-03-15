@@ -3,18 +3,17 @@
 **知识总结**
 - [html及css](./html及css.md)
 - [JS基础](./JS基础.md)
-- [JS-Web-API](./JS-Web-api.md)
-- [ajax](./ajax.md)
+- [JS-Web-API](./JS-Web-API.md)
 - [事件](./事件.md)
 - [存储](./存储.md)
-- [http](./http.md)
+- [http及ajax](./http及ajax.md)
 - [vue](./Vue.md)
 - [React](./React.md)
 - [webpack](./Webpack.md)
-- [项目设计](./项目设计.md)
 - [运行环境](./运行环境.md)
-- [面试准备](./面试准备.md)
 - [面试真题](./面试真题.md)
+- [项目设计](./项目设计.md)
+- [面试准备](./面试准备.md)
 
 ## TypeScript学习：
   1：[TypeScript 入门教程](https://github.com/xcatliu/typescript-tutorial/blob/master/README.md)
