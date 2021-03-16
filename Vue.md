@@ -543,39 +543,329 @@ diff即对比，是一个广泛的概念，如linux diff命令、git diff等
 
 只比较同一层级，不跨级比较  
 tag不同，则直接删掉重建，不再深度比较  
-tag和key，两者都相同，则认为是相同节点，不再做深度比较  
+tag和key，两者都相同，则认为是相同节点，并继续比较下级节点  
 大大降低了复杂度   
 
-三个主要的diff 算法（不要纠结细节）  
-![patch](imgs/vue/patch.png)
-![patchVnode](imgs/vue/patchVnode.png)
-![updateChildren](imgs/vue/updateChildren.png)
-![updateChildren2](imgs/vue/updateChildren2.png)
- 
+三个主要的diff 算法（不要纠结细节）
+```js
+function patch(oldVnode: VNode | Element, vnode: VNode): VNode {
+    let i: number, elm: Node, parent: Node;
+    const insertedVnodeQueue: VNodeQueue = [];
+    // 执行 pre hook
+    for (i = 0; i < cbs.pre.length; ++i) cbs.pre[i]();
+
+    // 第一个参数不是 vnode
+    if (!isVnode(oldVnode)) {
+      // 创建一个空的 vnode ，关联到这个 DOM 元素
+      oldVnode = emptyNodeAt(oldVnode);
+    }
+
+    // 相同的 vnode（key 和 sel 都相等）
+    if (sameVnode(oldVnode, vnode)) {
+      // vnode 对比
+      patchVnode(oldVnode, vnode, insertedVnodeQueue);
+
+      // 不同的 vnode ，直接删掉重建
+    } else {
+      elm = oldVnode.elm;
+      parent = api.parentNode(elm);
+
+      // 重建
+      createElm(vnode, insertedVnodeQueue);
+
+      if (parent !== null) {
+        api.insertBefore(parent, vnode.elm, api.nextSibling(elm));
+        removeVnodes(parent, [oldVnode], 0, 0);
+      }
+    }
+
+    for (i = 0; i < insertedVnodeQueue.length; ++i) {
+      insertedVnodeQueue[i].data!.hook!.insert!(insertedVnodeQueue[i]);
+    }
+    for (i = 0; i < cbs.post.length; ++i) cbs.post[i]();
+    return vnode;
+  };
+```  
+
+```js
+function patchVnode(oldVnode: VNode, vnode: VNode, insertedVnodeQueue: VNodeQueue) {
+    // 执行 prepatch hook
+    const hook = vnode.data?.hook;
+    hook?.prepatch?.(oldVnode, vnode);
+
+    // 设置 vnode.elem
+    const elm = vnode.elm = oldVnode.elm;
+
+    // 旧 children
+    let oldCh = oldVnode.children as VNode[];
+    // 新 children
+    let ch = vnode.children as VNode[];
+
+    if (oldVnode === vnode) return;
+
+    // hook 相关
+    if (vnode.data !== undefined) {
+      for (let i = 0; i < cbs.update.length; ++i) cbs.update[i](oldVnode, vnode);
+      vnode.data.hook?.update?.(oldVnode, vnode);
+    }
+
+    // vnode.text === undefined （vnode.children 一般有值）
+    if (isUndef(vnode.text)) {
+      // 新旧都有 children
+      if (isDef(oldCh) && isDef(ch)) {
+        if (oldCh !== ch) updateChildren(elm, oldCh, ch, insertedVnodeQueue);
+        // 新 children 有，旧 children 无 （旧 text 有）
+      } else if (isDef(ch)) {
+        // 清空 text
+        if (isDef(oldVnode.text)) api.setTextContent(elm, '');
+        // 添加 children
+        addVnodes(elm, null, ch, 0, ch.length - 1, insertedVnodeQueue);
+        // 旧 child 有，新 child 无
+      } else if (isDef(oldCh)) {
+        // 移除 children
+        removeVnodes(elm, oldCh, 0, oldCh.length - 1);
+        // 旧 text 有
+      } else if (isDef(oldVnode.text)) {
+        api.setTextContent(elm, '');
+      }
+
+      // else : vnode.text !== undefined （vnode.children 无值）
+    } else if (oldVnode.text !== vnode.text) {
+      // 移除旧 children
+      if (isDef(oldCh)) {
+        removeVnodes(elm, oldCh, 0, oldCh.length - 1);
+      }
+      // 设置新 text
+      api.setTextContent(elm, vnode.text!);
+    }
+    hook?.postpatch?.(oldVnode, vnode);
+  }
+```
+
+```js
+function updateChildren(parentElm: Node,
+    oldCh: VNode[],
+    newCh: VNode[],
+    insertedVnodeQueue: VNodeQueue) {
+    let oldStartIdx = 0, newStartIdx = 0;
+    let oldEndIdx = oldCh.length - 1;
+    let oldStartVnode = oldCh[0];
+    let oldEndVnode = oldCh[oldEndIdx];
+    let newEndIdx = newCh.length - 1;
+    let newStartVnode = newCh[0];
+    let newEndVnode = newCh[newEndIdx];
+    let oldKeyToIdx: KeyToIndexMap | undefined;
+    let idxInOld: number;
+    let elmToMove: VNode;
+    let before: any;
+
+    while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
+      if (oldStartVnode == null) {
+        oldStartVnode = oldCh[++oldStartIdx]; // Vnode might have been moved left
+      } else if (oldEndVnode == null) {
+        oldEndVnode = oldCh[--oldEndIdx];
+      } else if (newStartVnode == null) {
+        newStartVnode = newCh[++newStartIdx];
+      } else if (newEndVnode == null) {
+        newEndVnode = newCh[--newEndIdx];
+
+        // 开始和开始对比
+      } else if (sameVnode(oldStartVnode, newStartVnode)) {
+        patchVnode(oldStartVnode, newStartVnode, insertedVnodeQueue);
+        oldStartVnode = oldCh[++oldStartIdx];
+        newStartVnode = newCh[++newStartIdx];
+
+        // 结束和结束对比
+      } else if (sameVnode(oldEndVnode, newEndVnode)) {
+        patchVnode(oldEndVnode, newEndVnode, insertedVnodeQueue);
+        oldEndVnode = oldCh[--oldEndIdx];
+        newEndVnode = newCh[--newEndIdx];
+
+        // 开始和结束对比
+      } else if (sameVnode(oldStartVnode, newEndVnode)) { // Vnode moved right
+        patchVnode(oldStartVnode, newEndVnode, insertedVnodeQueue);
+        api.insertBefore(parentElm, oldStartVnode.elm, api.nextSibling(oldEndVnode.elm));
+        oldStartVnode = oldCh[++oldStartIdx];
+        newEndVnode = newCh[--newEndIdx];
+
+        // 结束和开始对比
+      } else if (sameVnode(oldEndVnode, newStartVnode)) { // Vnode moved left
+        patchVnode(oldEndVnode, newStartVnode, insertedVnodeQueue);
+        api.insertBefore(parentElm, oldEndVnode.elm, oldStartVnode.elm);
+        oldEndVnode = oldCh[--oldEndIdx];
+        newStartVnode = newCh[++newStartIdx];
+
+        // 以上四个都未命中
+      } else {
+        if (oldKeyToIdx === undefined) {
+          oldKeyToIdx = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx);
+        }
+        // 拿新节点 key ，能否对应上 oldCh 中的某个节点的 key
+        idxInOld = oldKeyToIdx[newStartVnode.key as string];
+
+        // 没对应上
+        if (isUndef(idxInOld)) { // New element
+          api.insertBefore(parentElm, createElm(newStartVnode, insertedVnodeQueue), oldStartVnode.elm);
+          newStartVnode = newCh[++newStartIdx];
+
+          // 对应上了
+        } else {
+          // 对应上 key 的节点
+          elmToMove = oldCh[idxInOld];
+
+          // sel 是否相等（sameVnode 的条件）
+          if (elmToMove.sel !== newStartVnode.sel) {
+            // New element
+            api.insertBefore(parentElm, createElm(newStartVnode, insertedVnodeQueue), oldStartVnode.elm);
+
+            // sel 相等，key 相等
+          } else {
+            patchVnode(elmToMove, newStartVnode, insertedVnodeQueue);
+            oldCh[idxInOld] = undefined as any;
+            api.insertBefore(parentElm, elmToMove.elm, oldStartVnode.elm);
+          }
+          newStartVnode = newCh[++newStartIdx];
+        }
+      }
+    }
+    if (oldStartIdx <= oldEndIdx || newStartIdx <= newEndIdx) {
+      if (oldStartIdx > oldEndIdx) {
+        before = newCh[newEndIdx + 1] == null ? null : newCh[newEndIdx + 1].elm;
+        addVnodes(parentElm, before, newCh, newStartIdx, newEndIdx, insertedVnodeQueue);
+      } else {
+        removeVnodes(parentElm, oldCh, oldStartIdx, oldEndIdx);
+      }
+    }
+  }
+``` 
 细节不重要，updateChildren的过程也不重要，不要深究  
 vdom核心概念很重要：h、vnode、patch、diff、key等  
 vdom存在的价值更加重要：数据驱动视图，控制DOM操作等  
 
-![vnode](imgs/vue/vnode.png)
-![vnode2](imgs/vue/vnode2.png) 
+```js
+export interface VNode {
+  sel: string | undefined;
+  data: VNodeData | undefined;
+  children: Array<VNode | string> | undefined;
+  elm: Node | undefined;
+  text: string | undefined;
+  key: Key | undefined;
+}
+export interface VNodeData {
+  props?: Props;
+  attrs?: Attrs;
+  class?: Classes;
+  style?: VNodeStyle;
+  dataset?: Dataset;
+  on?: On;
+  hero?: Hero;
+  attachData?: AttachData;
+  hook?: Hooks;
+  key?: Key;
+  ns?: string; // for SVGs
+  fn?: () => VNode; // for thunks
+  args?: any[]; // for thunks
+  [key: string]: any; // for any other 3rd party module
+}
 
+export function vnode(sel: string | undefined,
+  data: any | undefined,
+  children: Array<VNode | string> | undefined,
+  text: string | undefined,
+  elm: Element | Text | undefined): VNode {
+  let key = data === undefined ? undefined : data.key;
+  return { sel, data, children, text, elm, key };
+}
+```
 
 #### 7：模板编译
 ![模板编译](imgs/vue/模板编译.png) 
-![模板编译2](imgs/vue/模板编译2.png) 
-![模板编译3](imgs/vue/模板编译3.png)  
+<!-- ![模板编译2](imgs/vue/模板编译2.png)  -->
+```js
+const compiler = require('vue-template-compiler')
+// render 函数
+// 返回 vnode
+// patch
+
+// 编译
+const res = compiler.compile(template)
+console.log(res.render)
+
+// 插值
+const template = `<p>{{message}}</p>`
+// with (this) { return createElement('p', [createTextVNode(toString(message))]) }
+// h -> vnode
+// createElement -> vnode
+
+// // 表达式
+const template = `<p>{{flag ? message : 'no message found'}}</p>`
+// with (this) { return _c('p', [_v(_s(flag ? message : 'no message found'))]) }
+
+// 属性和动态属性
+const template = `<div id="div1" class="container"><img :src="imgUrl"/></div>`
+// with (this) {
+//   return _c('div',
+//     { staticClass: "container", attrs: { "id": "div1" } },
+//     [
+//       _c('img', { attrs: { "src": imgUrl } })])
+// }
+
+// 条件
+const template = `<div><p v-if="flag === 'a'">A</p><p v-else>B</p></div>`
+// with (this) { return _c('div', [(flag === 'a') ? _c('p', [_v("A")]) : _c('p', [_v("B")])]) }
+
+// 循环
+const template = `<ul><li v-for="item in list" :key="item.id">{{item.title}}</li></ul>`
+// with (this) { return _c('ul', _l((list), function (item) { return _c('li', { key: item.id }, [_v(_s(item.title))]) }), 0) }
+
+// 事件
+const template = `<button @click="clickHandler">submit</button>`
+// with (this) { return _c('button', { on: { "click": clickHandler } }, [_v("submit")]) }
+
+// v-model
+const template = `<input type="text" v-model="name">`
+// 主要看 input 事件
+// with (this) { return _c('input', { directives: [{ name: "model", rawName: "v-model", value: (name), expression: "name" }], attrs: { "type": "text" }, domProps: { "value": (name) }, on: { "input": function ($event) { if ($event.target.composing) return; name = $event.target.value } } }) }
+
+
+// 从 vue 源码中找到缩写函数的含义
+function installRenderHelpers (target) {
+  target._o = markOnce;
+  target._n = toNumber;
+  target._s = toString;
+  target._l = renderList;
+  target._t = renderSlot;
+  target._q = looseEqual;
+  target._i = looseIndexOf;
+  target._m = renderStatic;
+  target._f = resolveFilter;
+  target._k = checkKeyCodes;
+  target._b = bindObjectProps;
+  target._v = createTextVNode;
+  target._e = createEmptyVNode;
+  target._u = resolveScopedSlots;
+  target._g = bindObjectListeners;
+  target._d = bindDynamicKeys;
+  target._p = prependModifier;
+}
+
+```
+
+- 模板编译为render函数，执行render函数返回vnode
+- 基于vnode再执行patch和diff
+- 使用webpack-vue-loader，会在开发环境下编译模板
 
 #### 8：组件渲染、更新过程
 1）初次渲染过程  
-1. 解析模板为render函数（或者在开发环境已完成，vue-loader）    
-2. 触发响应式，监听data属性getter setter  
+1. 触发响应式，监听data属性getter setter  
+2. 解析模板为render函数（或者在开发环境已完成，vue-loader）    
 3. 执行render函数。生成vnode，然后patch(elem,vnode)   
 执行render函数会触发getter（针对模板中使用到的数据），从而进行依赖收集
 
 2）更新过程  
- 1. 修改data，触发setter(此前在getter中已经被监听)  
+ 1. 修改data，触发setter(此前在getter中已经被监听，必需是初始渲染已经依赖过的)调用Dep.notify()，将通知它内部的所有的Watcher对象进行视图更新 
  2. 重新执行render函数，生成newVnode  
- 3. patch(vnode, newVnode)  
+ 3. 然后就是patch的过程(diff算法),patch(oldVnode, newVnode )  
 
 #### 9：异步渲染
 $nextTick 汇总data修改，一次性更新视图，减少DOM操作次数，提高性能  
@@ -786,10 +1076,66 @@ watch没有缓存性，更多的是观察的作用，可以监听某些数据执
 Proxy  
 
 #### Proxy 实现响应式  
-![proxy](imgs/vue/proxy.png)
-![reactive](imgs/vue/reactive.png)
+```js
+// 创建响应式
+function reactive (target = {}) {
+  if (typeof target !== 'object' || target == null) {
+    // 不是对象或数组，则返回
+    return target
+  }
+  // 代理配置
+  const proxyConf = {
+    get (target, key, receiver) {
+      // 只处理本身（非原型的）属性
+      const ownKeys = Reflect.ownKeys(target)
+      if (ownKeys.includes(key)) {
+        console.log('get', key) // 监听
+      }
+      const result = Reflect.get(target, key, receiver)
+      // 深度监听
+      // 性能如何提升的？
+      return reactive(result)
+    },
+    set (target, key, val, receiver) {
+      // 重复的数据，不处理
+      if (val === target[key]) {
+        return true
+      }
+      const ownKeys = Reflect.ownKeys(target)
+      if (ownKeys.includes(key)) {
+        console.log('已有的 key', key)
+      } else {
+        console.log('新增的 key', key)
+      }
+      const result = Reflect.set(target, key, val, receiver)
+      console.log('set', key, val)
+      // console.log('result', result) // true
+      return result // 是否设置成功
+    },
+    deleteProperty (target, key) {
+      const result = Reflect.deleteProperty(target, key)
+      console.log('delete property', key)
+      // console.log('result', result) // true
+      return result // 是否删除成功
+    }
+  }
+  // 生成代理对象
+  const observed = new Proxy(target, proxyConf)
+  return observed
+}
 
- 
+// 测试数据
+const data = {
+  name: 'zhangsan',
+  age: 20,
+  info: {
+    city: 'beijing'
+  }
+}
+
+const proxyData = reactive(data)
+
+```
 
 #### Reflect 作用
 和proxy能力一一对应  

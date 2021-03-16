@@ -73,7 +73,7 @@ React 事件的命名采用小驼峰式（camelCase），而不是纯小写。
 ![state合并](imgs/react/state合并.png)  
 
 #### 2：组件生命周期（重要、会画）
-参考：http://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/  
+[生命周期参考]('http://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/')  
 
 ![生命周期](imgs/react/生命周期.png)  
  
@@ -141,8 +141,6 @@ Memo：函数组件中的PureComponent
 3）不可变值immutable.js（了解）  
 彻底拥抱不可变值
 基于共享数据（不是深拷贝），速度快  
-
-![immutablejs](imgs/react/immutablejs.png)
 
 #### 7：关于组件公共逻辑的抽离
 1. Mixin，已被React弃用  
@@ -373,9 +371,34 @@ redux单向数据流以store为核心，我们把它看成数据存储中心，�
 ![单向数据流图](./imgs/react/单向数据流.jpg)
 
 #### 6：setState场景题
-
-![setState场景题](imgs/react/setState场景题.png)
-
+```js
+class ListDemo extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      count: 0
+    }
+  }
+  render () {
+    return <p>{this.state.count}</p>
+  }
+  componentDidMount () {
+    // count 初始值为 0
+    this.setState({ count: this.state.count + 1 })
+    console.log('1', this.state.count) // 0
+    this.setState({ count: this.state.count + 1 })
+    console.log('2', this.state.count) // 0
+    setTimeout(() => {
+      this.setState({ count: this.state.count + 1 })
+      console.log('3', this.state.count) // 2
+    })
+    setTimeout(() => {
+      this.setState({ count: this.state.count + 1 })
+      console.log('4', this.state.count) // 3
+    })
+  }
+}
+```
 #### 7：什么是纯函数
 返回一个新值，没有副作用（不会偷偷修改其他值）  
 重点是不可变值  
