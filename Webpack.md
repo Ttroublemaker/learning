@@ -13,11 +13,42 @@ webpack已是前端打包构建的不二选择，重在配置和使用，不在�
 #### 1：拆分配置和merge
 通常将公共配置、开发环境配置和生产环境配置分别进行设置，然后通过merge将公共配置和开发或生产配置进行合并，根据scripts命令启用合并后的配置，依此构建项目
 
-![config-merge](imgs/webpack/config-merge.png)
+```js
+// common Config
+const { merge } = require('webpack-merge');
+const common = require('./webpack.config.common.js');
+module.exports = merge(common, {
+  devtool: 'inline-source-map',
+  mode: 'development',
+  module: {
+    rules: [
+      {
+        test: /\.scss$/,
+        use: [
+          'style-loader',
+          'css-loader',
+          'postcss-loader',
+          'sass-loader'
+        ]
+      },
+    ]
+  },
+  devServer: {
+    overlay: true, // 编译出现错误时，将错误直接显示在页面上
+    // contentBase: './dist',
+    hot: true, // 启用 webpack 的模块热替换特性
+    hotOnly: true, // 热更新失败或不起作用时，不刷新页面
+    // compress: true,
+    host: "localhost",
+    open: true, // 自动打开浏览器
+    port: 8080,
+    historyApiFallback: true, // 解决H5路由模式访问页面404问题
+  }
+}
+```
 
 #### 2：启动本地服务
-webpack-dev-server插件   
-devServer 配置项
+webpack-dev-server插件，已内置，配置devServer 配置项即可开启
 ```js
 var path = require('path');
 module.exports = {
@@ -26,19 +57,103 @@ module.exports = {
     contentBase: path.join(__dirname, 'dist'),
     compress: true,
     port: 9000,
-  },
+    proxy: {
+      "/api": {
+        target: "https://other-server.example.com", // =>http://localhost:3000/api/XXX
+        pathRewrite: { "^/api": "" }, // =>http://localhost:3000/XXX
+        secure: false // 默认情况下，不接受运行在 HTTPS 上，且使用了无效证书的后端服务器。如果你想要接受，修改配置
+      }
+    }
+  }
 };
 ```
 
 #### 3：处理es6
-babel-loader .babelrc文件 polyfill
+babel-loader .babelrc文件
+```js
+// .babelrc
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "edge": "17",
+          "firefox": "60",
+          "chrome": "67",
+          "safari": "11.1"
+        },
+        "useBuiltIns": "usage", // 会自动引入polyfill
+        "corejs": "2"
+      }
+    ]
+  ]
+}
+
+// webpack.config.prod.js
+module: {
+  rules: [
+    {
+      test: /\.js$/,
+      exclude: /node_modules/,
+      use: {
+        loader: 'babel-loader',
+        options: {
+          cacheDirectory: true
+        }
+      }
+    }
+  ]
+}
+```
 
 #### 4：处理样式
 style-loader、css-loader、scss-loader等css预处理loader、postcss-loader(配合autoprefixer添加厂商前缀)
-
+```js
+const { merge } = require('webpack-merge');
+const common = require('./webpack.config.common.js');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+module.exports = merge(common, {
+  mode: "production",
+  devtool: 'source-map',
+  module: {
+    rules: [
+      {
+        test: /\.scss$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'postcss-loader',
+          'sass-loader'
+        ]
+      },
+    ]
+  },
+  plugins: [
+    new CleanWebpackPlugin(),
+    new MiniCssExtractPlugin({
+      filename: "./css/[name].css",
+      chunkFilename: "./css/[id].css"
+    })
+  ]
+});
+```
 #### 5：处理图片
 file-loader/url-loader(配合options limit 配置项可以控制是否按base64格式产出)
-
+```js
+module: {
+  rules: [
+    {
+      test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/,
+      loader: 'url-loader',
+      options: {
+        limit: 10000
+      }
+    }
+  ]
+}
+```
 ---
 
 ### 2）Webpack高级配置（必须掌握）  
@@ -190,9 +305,9 @@ DllReferencePlugin---使用dll文件
 再将react.dll.js文件引入html模板中即可（切勿忘记）
 
 #### 9：缩小文件的搜索范围(配置include exclude alias noParse extensions)
-alias: 当我们代码中出现 import 'vue'时， webpack会采用向上递归搜索的方式去node_modules 目录下找。为了减少搜索范围我们可以直接告诉webpack去哪个路径下查找。也就是别名(alias)的配置。  
-include exclude 同样。配置include exclude也可以减少webpack loader的搜索转换时间。  
-extensions：webpack会根据extensions定义的后缀查找文件(频率较高的文件类型优先写在前面) 
+- alias: 当我们代码中出现 import 'vue'时， webpack会采用向上递归搜索的方式去node_modules 目录下找。为了减少搜索范围我们可以直接告诉webpack去哪个路径下查找。也就是别名(alias)的配置。  
+- include exclude 同样。配置include exclude也可以减少webpack loader的搜索转换时间。  
+- extensions：webpack会根据extensions定义的后缀查找文件(频率较高的文件类型优先写在前面) 
 
 #### 10：尽量使用高版本的webpack 和node
 webpack4 发布时，官方也曾表示，其编译速度提升了 60% ~ 98%。  
@@ -216,6 +331,12 @@ CDN的全称是(Content Delivery Network)，即内容分发网络。其目的是
 为了学会使用 tree shaking，你必须:  
 - 使用 ES2015 模块语法（即 import 和 export）
 - 在项目 package.json 文件中，添加一个 "sideEffects" 入口(注意，任何导入的文件都会受到 tree shaking 的影响。这意味着，如果在项目中使用类似 css-loader 并导入 CSS 文件，则需要将其添加到 side effect 列表中，以免在生产模式中无意中将它删除)
+```js
+"sideEffects": [
+  "*.css",
+  "*.scss"
+]
+```
 - 引入一个能够删除未引用代码(dead code)的压缩工具(minifier)
 ```js
 // 开启 tree shaking
