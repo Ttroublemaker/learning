@@ -37,26 +37,31 @@
 
 ### 2. http常见的header有哪些
 - 常见的Request Headers
-  - Accept 浏览器可接收的数据格式
+  - Accept 浏览器可接收的数据格式，如：application/json, text/plain, */*
   - Accept-Encoding 浏览器可接收的压缩算法，如gzip
   - Accept-Languange 浏览器可接收的语言，如zh-CN
+  >// Multiple types, weighted with the quality value syntax:
+  >Accept-Language: fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5
   - Connection：keep-alive 一次TCP连接可重复使用
   - cookie 同域的cookie
   - host 域名
   - User-Agent（简称UA）浏览器信息
-  - Content-type 发送数据的格式，如application/json
+  - Content-type 发送数据的格式，如：application/json;charset=UTF-8
 
 - 常见的Response Headers
-  - Content-type 返回数据的格式，如application/json
+  - Content-type 返回数据的格式，如：application/json
   - Content-length 返回数据的大小，多少字节
   - Content-Encoding 返回数据的压缩算法，如gzip
   - Set-Cookie 服务器返回的响应头用来在浏览器种cookie，一旦被种下，当浏览器访问符合条件的url地址时，会自动带上这个cookie
+  - Connection:一次TCP连接是否可重复使用 keep-alive/close
+  
 - 自定义header
   - 如请求头 headers:{'X-Requested-With':'xxx'}，常用于权限控制
+  
 - 缓存相关的headers
-  - Cache-Control、Expires
-  - Last-Modified、IF-Modified-Since
-  - Etag、IF-None-Match
+  - Cache-Control、Expires 强缓存
+  - Last-Modified、IF-Modified-Since 协商缓存
+  - Etag、IF-None-Match 协商缓存
 
 
 ### 3. 什么是Restful API
@@ -91,11 +96,12 @@
   - 强制缓存 
     - cache-control
       - max-age 最大缓存时间，单位s
-      - no-cache 不用客户端强制缓存，让服务端处理
-      - no-store 不用客户端强制缓存，也不让服务器缓存
+      - no-cache 不用客户端强制缓存，让服务端处理（协商缓存）
+      - no-store 不用客户端强制缓存，也不让服务器缓存，不使用缓存
     - Expires
       - 同在响应头中，同为控制缓存过期
       - 已被Cache-Control代替
+      - Expires: Thu, 22 Apr 2021 01:17:22 GMT
   - 协商缓存（也叫对比缓存）
     - 服务端缓存策略（服务端决定是否可以使用缓存，但资源还是缓存在客户端）
     - 服务端判断客户端资源，是否和服务端资源一样
@@ -132,11 +138,6 @@
 - 书写一个简易的ajax
 - 跨域的常用实现方式
   
-### 知识点
-- XMLHttpRequest
-- 状态码
-- 跨域：同源策略，跨域解决方案
-
 ### 1. XMLHttpRequest
 ```js
 /** 1. 创建XMLHttpRequest对象 **/
@@ -165,7 +166,42 @@ xhr.onreadystatechange = function () {
 - 2－（载入完成）send()方法执行完成，已经接收到全部响应内容
 - 3－（交互）正在解析响应内容
 - 4－（完成）响应内容解析完成，可以在客户端调用了
-  
+
+### 2. websocket
+<table>
+  <tr><th>属性</th><th>描述</th></tr>
+  <tr>
+    <td>Socket.readyState</td>
+    <td>
+      只读属性 readyState 表示连接状态，可以是以下值
+      <table>
+        <tr><th>状态码</th><th>含义</th></tr>
+        <tr><td>0</td><td>表示连接尚未建立</td></tr>
+        <tr><td>1</td><td>表示连接已建立，可以进行通信</td></tr>
+        <tr><td>2</td><td>表示连接正在进行关闭</td></tr>
+        <tr><td>3</td><td>表示连接已经关闭或者连接不能打开</td></tr>
+      </table>
+    </td>
+  </tr>
+  <tr><td>Socket.bufferedAmount</td><td>只读属性 bufferedAmount 
+    已被 send() 放入正在队列中等待传输，但是还没有发出的 UTF-8 文本字节数。</td></tr>
+</table>
+
+WebSocket 事件
+|事件	|事件处理程序|	描述|
+|---|---|---|
+|open|	Socket.onopen|	连接建立时触发|
+|message|	Socket.onmessage|	客户端接收服务端数据时触发|
+|error	|Socket.onerror|	通信发生错误时触发|
+|close	|Socket.onclose|	连接关闭时触发|
+
+
+WebSocket 方法
+
+|方法|	描述|
+|---|---|
+|Socket.send()|	使用连接发送数据|
+|Socket.close()|	关闭连接|
 ### 2. 跨域
 
 #### 同源策略
