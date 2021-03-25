@@ -37,11 +37,9 @@
 
 ### 2. http常见的header有哪些
 - 常见的Request Headers
-  - Accept 浏览器可接收的数据格式，如：application/json, text/plain, */*
+  - Accept 浏览器可接收的数据格式，如：application/json, text/plain, \*/\*
   - Accept-Encoding 浏览器可接收的压缩算法，如gzip
-  - Accept-Languange 浏览器可接收的语言，如zh-CN
-  >// Multiple types, weighted with the quality value syntax:
-  >Accept-Language: fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5
+  - Accept-Languange 浏览器可接收的语言，如：Accept-Languange: zh-CN,zh;q=0.9,en;q=0.8
   - Connection：keep-alive 一次TCP连接可重复使用
   - cookie 同域的cookie
   - host 域名
