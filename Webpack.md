@@ -171,6 +171,20 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
   }
 }
+
+// 配置多页在线切换
+  devServer: {
+    ...
+    contentBase: path.resolve(__dirname, '../dist'),// 不配置contentBase，就404，很奇怪。
+    historyApiFallback: {
+      rewrites: [
+         { from: 'index', to: 'index.html' },
+         { from: /\/lib/, to: 'lib.html' },
+       ],
+    },
+    // historyApiFallback: true, // 解决H5路由模式访问页面404问题
+  }
+ // 如果服务在http://localhost:8080，访问http://localhost:8080/index或者http://localhost:8080/lib即可实现多页切换
 ```
 ![多入口](imgs/webpack/multi-entry.png)
 
