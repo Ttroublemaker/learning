@@ -400,7 +400,7 @@ VM：view-mode 连接M和V
 vue3：Proxy 兼容性不好，且无法polyfill  
 1）深度监听，需要递归到底，一次性计算量大（嵌套层数尽量少）  
 2）无法监听新增属性、删除属性（新增了Vue.set/ Vue.delete API）  
-3）无法原生监听数组，需要特殊处理   
+3）无法原生监听数组，需要特殊处理（需要修改数组原型）   
 
 监听对象、监听数组、复杂对象，深度监听  
 
@@ -543,7 +543,7 @@ diff即对比，是一个广泛的概念，如linux diff命令、git diff等
 
 只比较同一层级，不跨级比较  
 tag不同，则直接删掉重建，不再深度比较  
-tag和key，两者都相同，则认为是相同节点，并继续比较下级节点  
+tag和key，两者都相同，则认为是相同节点，并继续比较下级同级节点  
 大大降低了复杂度   
 
 三个主要的diff 算法（不要纠结细节）
@@ -857,8 +857,8 @@ function installRenderHelpers (target) {
 
 #### 8：组件渲染、更新过程
 1）初次渲染过程  
-1. 触发响应式，监听data属性getter setter  
-2. 解析模板为render函数（或者在开发环境已完成，vue-loader）    
+1. 解析模板为render函数（或者在开发环境已完成，vue-loader）    
+2. 触发响应式，监听data属性getter setter  
 3. 执行render函数。生成vnode，然后patch(elem,vnode)   
 执行render函数会触发getter（针对模板中使用到的数据），从而进行依赖收集
 

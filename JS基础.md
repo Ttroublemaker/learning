@@ -1,3 +1,8 @@
+<style>
+img{
+  border:1px solid #ccc!important;
+}
+</style>
 # js基础
 ### 变量类型
 #### 1、值类型
@@ -55,6 +60,18 @@ function deepClone (obj = {}) {
 
 # 原型和原型链（重点）
 
+创建对象常用方法：
+```js
+// 第一种方式：字面量
+var o1 = {name: 'o1'};
+// 第二种方式：构造函数
+var o2 = new Object({name: 'o2'});
+var M = function (name) { this.name = name; };
+var o3 = new M('o3');
+// 第三种方式：Object.create
+var p = {name: 'p'};
+var o4 = Object.create(p); // p是o4的原型
+```
 ### 1、class类
 参考es6
 
@@ -62,6 +79,146 @@ function deepClone (obj = {}) {
 - extends
 - super
 - 扩展或重写方法
+
+```js
+/**
+ * 类的声明
+ */
+var Animal = function () {
+  this.name = 'Animal';
+};
+
+/**
+ * es6中class的声明
+ */
+class Animal2 {
+  constructor() {
+    this.name = 'Animal2';
+  }
+}
+
+/**
+ * 实例化
+ */
+console.log(new Animal(), new Animal2());
+
+/**
+ * 1：借助构造函数实现继承
+ */
+function Parent1 () {
+  this.name = 'parent1';
+}
+Parent1.prototype.say = function () {
+
+};
+function Child1 () {
+  // 执行父类构造函数，父类this指向了子类
+  Parent1.call(this); // important
+  this.type = 'child1';
+}
+console.log(new Child1());
+// {
+//   name: "parent1"
+//   type: "child1"
+// }
+// 原理：执行父类构造函数，父类this指向了子类
+// 缺点：无法继承父类的原型链
+// new Child1().say() Uncaught TypeError: (intermediate value).say is not a function
+
+/**
+ * 2：借助原型链实现继承（可解决借助构造函数实现继承方式的缺点）
+ */
+function Parent2 () {
+  this.name = 'parent2';
+  this.play = [1, 2, 3];
+}
+Parent2.prototype.say = function () { }
+function Child2 () {
+  this.type = 'child2';
+}
+Child2.prototype = new Parent2();
+
+var s1 = new Child2();
+var s2 = new Child2();
+console.log(s1.play, s2.play);
+//  [1, 2, 3]  [1, 2, 3]
+s1.play.push(4);
+console.log(s1.play, s2.play);
+//  [1, 2, 3, 4]  [1, 2, 3, 4]
+
+// 原理：父类实例作为子类的原型对象
+// 缺点： 原型链属性共用，引用同一个父类实例对象，改变某个实例会影响其他实例
+
+
+/**
+ * 3：组合方式
+ */
+function Parent3 () {
+  this.name = 'parent3';
+  this.play = [1, 2, 3];
+}
+function Child3 () {
+  Parent3.call(this); // important 
+  this.type = 'child3';
+}
+Child3.prototype = new Parent3();
+var s3 = new Child3();
+var s4 = new Child3();
+console.log(s3.play, s4.play);
+//  [1, 2, 3]  [1, 2, 3]
+s3.play.push(4);
+console.log(s3.play, s4.play);
+//  [1, 2, 3, 4]  [1, 2, 3]
+
+// 原理：父类实例作为子类的原型对象，且在子类调用父类构造函数，将this指向子类
+// 缺点：父类构造函数执行了2次 Parent3.call(this)，new Parent3()
+// 特点：在子类中通过call 父类构造函数已经继承了父类属性，无需在原型链上再实例化多余的父类实例=>优化思路
+
+/**
+ * 4：组合继承的优化1
+ * @type {String}
+ */
+function Parent4 () {
+  this.name = 'parent4';
+  this.play = [1, 2, 3];
+}
+function Child4 () {
+  Parent4.call(this);
+  this.type = 'child4';
+}
+Child4.prototype = Parent4.prototype; // 解决组合方式的 父类构造函数两次调用问题
+var s5 = new Child4();
+var s6 = new Child4();
+console.log(s5, s6);
+
+console.log(s5 instanceof Child4, s5 instanceof Parent4);
+// true true
+console.log(s5.constructor);
+// ƒ Parent4 () {
+//  this.name = 'parent4';
+//  this.play = [1, 2, 3];
+// }
+
+// 缺点：constructor在prototype属性里，而Child4.prototype = Parent4.prototype，所以子类实例的constructor指向了Parent4父类
+// 无法区分父类、子类实例的构造函数
+// 如果参考方式5：Child5.prototype.constructor = Child5，那也无法区分父类实例的构造函数
+
+/**
+ * 5：组合继承的优化2
+ */
+function Parent5 () {
+  this.name = 'parent5';
+  this.play = [1, 2, 3];
+}
+function Child5 () {
+  Parent5.call(this);
+  this.type = 'child5';
+}
+Child5.prototype = Object.create(Parent5.prototype);
+Child5.prototype.constructor = Child5 // 确保constructor指向子类，不然还是指向父类
+// 隔离父类和子类的原型对象
+
+```
   
 ### 2、instanceof 类型判断
 内部机制是通过判断对象的原型链中是不是能找到类型的 prototype
@@ -89,7 +246,8 @@ function instanceof(left, right) {
 - 实例的__proto__指向对应class的prototype
   
 ### 4、原型链(能画)
-![原型链](./imgs/js/原型链.png)
+<img src="./imgs/js/原型.png" style="border:1px solid #ccc">
+<img src="./imgs/js/原型链.png" style="border:1px solid #ccc">
 
 ---
 
@@ -234,6 +392,20 @@ obj2.fn(); // obj
 
 **this取值是在函数执行时确认，而不是在定义时执行**
 
+#### 补充：new 运算符
+```js
+var new = function (func) {
+  var o = Object.create(func.prototype);
+  var k = func.call(o);
+  if (typeof k === 'object') {
+      return k;
+  } else {
+      return o;
+  }
+};
+```
+![](./imgs/js/new.png)
+
 ### 2、手写bind、call及apply函数
 ```js
 function fn (a, b) {
@@ -241,14 +413,17 @@ function fn (a, b) {
   console.log({ a, b });
 }
 // 模拟bind
-Function.prototype.myBind = function () {
-  // context 即为this
-  const [context, ...args] = Array.from(arguments)
-  // fn.bind(...)中的fn
-  const self = this
+Function.prototype.myBind = function (context, ...outerArgs) {
+  let self = this
   // 返回一个函数
-  return function () {
-    return self.apply(context, args)
+  return function F(...innerArgs) { //返回了一个函数，...innerArgs为实际调用时传入的参数
+    // 对于 new 的情况来说，不会被任何方式改变 this，所以对于这种情况我们需要忽略传入的 this
+    if(self instanceof F) {
+      return new self(...outerArgs, ...innerArgs)
+    }
+    // 把func执行，并且改变this即可
+    // bind 可以实现类似这样的代码 f.bind(obj, 1)(2)，所以我们需要将两边的参数拼接起来
+    return self.apply(context, [...outerArgs, ...innerArgs]) //返回改变了this的函数，参数合并
   }
 }
 
