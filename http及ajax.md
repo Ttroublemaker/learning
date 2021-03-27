@@ -1,10 +1,26 @@
 # http篇
 
-### 题目
+### 思考题
 - http常见的状态码有哪些
 - http常见的header有哪些
 - 什么是Restful API
 - 描述一下http的缓存机制（重要）
+
+#### HTTP协议特点：
+- 无连接：含义是限制每次连接只处理一个请求。服务器处理完客户的请求，并收到客户的应答后，即断开连接。采用这种方式可以节省传输时间。（非keep-alive时是短链接，1.1版本支持长连接，请求1->响应1->请求2->响应2...）
+- 无状态：HTTP协议是无状态协议。指协议对于事务处理没有记忆能力。缺少状态意味着如果后续处理需要前面的信息，则它必须重传，这样可能导致每次连接传送的数据量增大。另一方面，在服务器不需要先前信息时它的应答就较快。
+
+#### HTTP报文组成部分
+
+![http报文组成](./imgs/http/http报文组成.png)
+
+#### get和post的区别
+- get用来获取数据，post用来提交数据
+- get参数有长度限制（受限于url长度，具体的数值取决于浏览器和服务器的限制，最长2048字节），而post无限制。
+- get请求的数据会附加在url之 ，以 " ？ "分割url和传输数据，多个参数用 "&"连接，而post请求会把请求的数据放在http请求体中。
+- get是明文传输，post是放在请求体中，但是开发者可以通过抓包工具看到，也相当于是明文的。
+- get请求会保存在浏览器历史记录中，还可能保存在web服务器的日志中
+- get请求会被浏览器主动缓存，而post不会，除非手动设置（how？）
 
 ### 1. http常见的状态码有哪些
 - 状态码分类
@@ -15,6 +31,7 @@
   - 5xx服务端错误，如500
 - 常见状态码
   - 200 服务器已成功处理了请求
+  - 206 Parttial Content 客户端发送了一个发油Range头的Get请求，服务器完成了它，比如音视频加载
   - 301 永久重定向（配合location，浏览器自动处理），如旧域名迁移到新域名
   - 302 临时重定向（配合location，浏览器自动处理）  
     302是暂时的重定向，搜索引擎会抓取新的内容而保留旧的网址，搜索引擎认为新的网址只是暂时的。  
@@ -91,16 +108,16 @@
 良好的缓存策略可以降低资源的重复加载，提高网页的整体加载速度  
 哪些资源可以被缓存：静态资源（js、css、img、音视频资源等）
 - http缓存策略（强制缓存+协商缓存）
-  - 强制缓存 
+  - 强制缓存（不询问服务器）
     - cache-control
-      - max-age 最大缓存时间，单位s
+      - max-age 最大缓存时间（相对客户端时间），单位s
       - no-cache 不用客户端强制缓存，让服务端处理（协商缓存）
       - no-store 不用客户端强制缓存，也不让服务器缓存，不使用缓存
     - Expires
       - 同在响应头中，同为控制缓存过期
       - 已被Cache-Control代替
       - Expires: Thu, 22 Apr 2021 01:17:22 GMT
-  - 协商缓存（也叫对比缓存）
+  - 协商缓存（也叫对比缓存，询问服务器）
     - 服务端缓存策略（服务端决定是否可以使用缓存，但资源还是缓存在客户端）
     - 服务端判断客户端资源，是否和服务端资源一样
     - 一致则返回304，否则返回200和最新的资源
@@ -136,7 +153,7 @@
 - 书写一个简易的ajax
 - 跨域的常用实现方式
   
-### 1. XMLHttpRequest
+### 1. [XMLHttpRequest](https://juejin.cn/post/6844904052875067400#heading-29)
 ```js
 /** 1. 创建XMLHttpRequest对象 **/
 var xhr = null;
@@ -148,7 +165,7 @@ xhr.send(null);
 /** 4. 接受请求 **/
 xhr.onreadystatechange = function () {
   if (xhr.readyState == 4) {
-    if (xhr.status == 200) {
+    if((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304)
       success(xhr.responseText);
     } else {
       /** false **/
@@ -166,6 +183,7 @@ xhr.onreadystatechange = function () {
 - 4－（完成）响应内容解析完成，可以在客户端调用了
 
 ### 2. websocket
+是HTML5一种新的协议。它实现了浏览器与服务器全双工通信，同时允许跨域通讯，是server push技术的一种很好的实现
 <table>
   <tr><th>属性</th><th>描述</th></tr>
   <tr>
@@ -186,20 +204,20 @@ xhr.onreadystatechange = function () {
 </table>
 
 WebSocket 事件
-|事件	|事件处理程序|	描述|
-|---|---|---|
-|open|	Socket.onopen|	连接建立时触发|
-|message|	Socket.onmessage|	客户端接收服务端数据时触发|
-|error	|Socket.onerror|	通信发生错误时触发|
-|close	|Socket.onclose|	连接关闭时触发|
+| 事件    | 事件处理程序     | 描述                       |
+| ------- | ---------------- | -------------------------- |
+| open    | Socket.onopen    | 连接建立时触发             |
+| message | Socket.onmessage | 客户端接收服务端数据时触发 |
+| error   | Socket.onerror   | 通信发生错误时触发         |
+| close   | Socket.onclose   | 连接关闭时触发             |
 
 
 WebSocket 方法
 
-|方法|	描述|
-|---|---|
-|Socket.send()|	使用连接发送数据|
-|Socket.close()|	关闭连接|
+| 方法           | 描述             |
+| -------------- | ---------------- |
+| Socket.send()  | 使用连接发送数据 |
+| Socket.close() | 关闭连接         |
 ### 2. 跨域
 
 #### 同源策略
@@ -208,6 +226,10 @@ WebSocket 方法
 - 加载图片、css、js可无视同源策略
 - 所有跨域，都必须通过服务端允许和配合
 - 未经服务端允许就实现跨域，说明浏览器有漏洞，危险信号
+- 跨域现象
+  - Cookie、localStorage、indexDB无法读取
+  - AJAX请求无法发送
+  - 无法获取另一个源的DOM
 
 #### 跨域方案
 - JSONP
@@ -231,6 +253,11 @@ WebSocket 方法
 
 - nginx代理跨域
 - webpack-dev-server(仅适用于开发环境)
+- webSocket
+- hash
+- postMessage
+
+![跨域补充](./imgs/http/跨域补充.png)
 
 ### 题目
 - 书写一个简易的ajax
@@ -241,7 +268,7 @@ function ajax (url) {
     xhr.open('GET', url, true) // true表示异步请求
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {
-        if (xhr.status === 200) {
+        if((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304)
           resolve(JSON.parse(xhr.responseText))
         } else if (xhr.status === 404) {
           reject(new Error('404 not found'))
@@ -257,3 +284,5 @@ function ajax (url) {
 ```
 ### 3. fetch
 ### 4. axios
+
+[Ajax,jQuery ajax,axios和fetch介绍、区别以及优缺点](https://juejin.cn/post/6844903922021203975#heading-10)

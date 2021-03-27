@@ -31,8 +31,8 @@ getElementById()        //通过元素Id，唯一性
 ```
 - [attr和property的区别](https://www.cnblogs.com/elcarim5efil/p/4698980.html)
    - Attribute和Property分别为特性和属性，Attribute就是DOM节点自带属性，例如我们在HTML中常用的id,class,src,title,alt等。而Property则是这个DOM元素作为对象，其附加的属性或者内容，例如childNodes，firstChild等
-   - Property修改对象属性,不会体现到html结构中
-   - Attribute 修改html属性,会改变html 结构
+   - Property修改对象属性，不会体现到html结构中
+   - Attribute 修改html属性，会改变html 结构
    - 两者都可能引起重渲染
 ```js
 // // property 形式
