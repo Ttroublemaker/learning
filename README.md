@@ -27,7 +27,7 @@
   4：[vue中Axios的封装和API接口的管理](https://juejin.im/post/5b55c118f265da0f6f1aa354)
   
 ### 外部参考工具/网站集
-  1：[个人技术收藏集](https://gitee.com/panjiachen/awesome-bookmarks)@[花裤衩](https://github.com/PanJiaChen)
+  1：[个人技术收藏集](https://panjiachen.gitee.io/awesome-bookmarks/article/)@[花裤衩](https://github.com/PanJiaChen)
   
 ### Webpack配置类
   1：[Webpack 4 和单页应用入门](https://github.com/wallstreetcn/webpack-and-spa-guide)
