@@ -1,5 +1,7 @@
 # http篇
 
+[HTTP灵魂之问，巩固你的 HTTP 知识体系](https://juejin.cn/post/6844904100035821575)  
+[HTTP和HTTPS协议，看一篇就够了](https://blog.csdn.net/xiaoming100001/article/details/81109617?utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-2.control&dist_request_id=1328769.61120.16176364131335951&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-2.control)
 ### 思考题
 - http常见的状态码有哪些
 - http常见的header有哪些
@@ -8,19 +10,41 @@
 
 #### HTTP协议特点：
 - 无连接：含义是限制每次连接只处理一个请求。服务器处理完客户的请求，并收到客户的应答后，即断开连接。采用这种方式可以节省传输时间。（非keep-alive时是短链接，1.1版本支持长连接，请求1->响应1->请求2->响应2...）
-- 无状态：HTTP协议是无状态协议。指协议对于事务处理没有记忆能力。缺少状态意味着如果后续处理需要前面的信息，则它必须重传，这样可能导致每次连接传送的数据量增大。另一方面，在服务器不需要先前信息时它的应答就较快。
+- 无状态：HTTP协议是无状态协议，指协议对于事务处理没有记忆能力。缺少状态意味着如果后续处理需要前面的信息，则它必须重传，这样可能导致每次连接传送的数据量增大。另一方面，在服务器不需要先前信息时它的应答就较快。
+- 基于请求和响应：基本的特性，由客户端发起请求，服务端响应
+- 通信使用明文、请求和响应不会对通信方进行确认、无法保护数据的完整性
+
+#### HTTPS特点：
+基于HTTP协议，通过SSL或TLS提供加密处理数据、验证对方身份以及数据完整性保护
+
+数据不是明文传输，而且HTTPS有如下特点：
+
+- 内容加密：采用混合加密技术，中间者无法直接查看明文内容
+- 验证身份：通过证书认证客户端访问的是自己的服务器
+- 保护数据完整性：防止传输的内容被中间人冒充或者篡改
+
+**混合加密**结合非对称加密和对称加密技术。客户端使用对称加密生成密钥对传输数据进行加密，然后使用非对称加密的公钥再对秘钥进行加密，所以网络上传输的数据是被秘钥加密的密文和用公钥加密后的秘密秘钥，因此即使被黑客截取，由于没有私钥，无法获取到加密明文的秘钥，便无法获取到明文数据。
+
+
+**数字摘要**通过单向hash函数对原文进行哈希，将需加密的明文“摘要”成一串固定长度(如128bit)的密文，不同的明文摘要成的密文其结果总是不相同，同样的明文其摘要必定一致，并且即使知道了摘要也不能反推出明文。
+
+
+**数字签名技术**数字签名建立在公钥加密体制基础上，是公钥加密技术的另一类应用。它把公钥加密技术和数字摘要结合起来，形成了实用的数字签名技术。
+
+- 收方能够证实发送方的真实身份；
+- 发送方事后不能否认所发送过的报文；
+- 收方或非法者不能伪造、篡改报文。
 
 #### HTTP报文组成部分
 
 ![http报文组成](./imgs/http/http报文组成.png)
 
 #### get和post的区别
-- get用来获取数据，post用来提交数据
+- get常用来获取数据，post常用来提交数据
 - get参数有长度限制（受限于url长度，具体的数值取决于浏览器和服务器的限制，最长2048字节），而post无限制。
 - get请求的数据会附加在url之 ，以 " ？ "分割url和传输数据，多个参数用 "&"连接，而post请求会把请求的数据放在http请求体中。
 - get是明文传输，post是放在请求体中，但是开发者可以通过抓包工具看到，也相当于是明文的。
-- get请求会保存在浏览器历史记录中，还可能保存在web服务器的日志中
-- get请求会被浏览器主动缓存，而post不会，除非手动设置（how？）
+- get请求会被浏览器主动缓存（针对资源？），而post不会，除非手动设置（how？）
 
 ### 1. http常见的状态码有哪些
 - 状态码分类
@@ -31,11 +55,9 @@
   - 5xx服务端错误，如500
 - 常见状态码
   - 200 服务器已成功处理了请求
-  - 206 Parttial Content 客户端发送了一个发油Range头的Get请求，服务器完成了它，比如音视频加载
-  - 301 永久重定向（配合location，浏览器自动处理），如旧域名迁移到新域名
-  - 302 临时重定向（配合location，浏览器自动处理）  
-    302是暂时的重定向，搜索引擎会抓取新的内容而保留旧的网址，搜索引擎认为新的网址只是暂时的。  
-    301是永久的重定向，搜索引擎在抓取新内容的同时也将旧的网址替换为重定向之后的网址。
+  - 206 Parttial Content 客户端发送了一个带有Range头的Get请求，服务器完成了它，比如音视频加载
+  - 301 永久重定向（配合location，浏览器自动处理），如旧域名迁移到新域名，搜索引擎在抓取新内容的同时也将旧的网址替换为重定向之后的网址。
+  - 302 临时重定向（配合location，浏览器自动处理），搜索引擎会抓取新的内容而保留旧的网址，搜索引擎认为新的网址只是暂时的
   - 304 资源未被修改（可使用缓存）
   - 404 资源未找到
   - 403 没有权限
@@ -71,7 +93,7 @@
   - Connection:一次TCP连接是否可重复使用 keep-alive/close
   
 - 自定义header
-  - 如请求头 headers:{'X-Requested-With':'xxx'}，常用于权限控制
+  - 如请求头 headers: {'X-Requested-With':'xxx'}，常用于权限控制
   
 - 缓存相关的headers
   - Cache-Control、Expires 强缓存
@@ -83,8 +105,7 @@
 - 一种新的API设计方法（早已推广使用）
 - 传统的API设计：把每个url当做一个功能
 - Restful API设计：把每个url当做一个唯一的资源
-  - 如何设计成一个资源
-    - 不使用url参数
+  - 如何设计成一个资源 => 不使用url参数
   ```js
   传统的API设计：/api/list?pageIndex=2
 
@@ -156,8 +177,7 @@
 ### 1. [XMLHttpRequest](https://juejin.cn/post/6844904052875067400#heading-29)
 ```js
 /** 1. 创建XMLHttpRequest对象 **/
-var xhr = null;
-xhr = new XMLHttpRequest()
+var xhr = new XMLHttpRequest()
 /** 2. 连接服务器 **/
 xhr.open('get', url, true)
 /** 3. 发送请求 **/
@@ -166,9 +186,8 @@ xhr.send(null);
 xhr.onreadystatechange = function () {
   if (xhr.readyState == 4) {
     if((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304)
-      success(xhr.responseText);
+      success && success(xhr.responseText);
     } else {
-      /** false **/
       fail && fail(xhr.status);
     }
   }

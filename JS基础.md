@@ -1,17 +1,12 @@
-<style>
-img{
-  border:1px solid #ccc!important;
-}
-</style>
 # js基础
-### 变量类型
 #### 1、值类型
 - 基本类型：string、number、null、undefined、boolean、symbol。数据占用空间小，存储在栈中
-- 引用类型：object，数据存储在堆中，地址存储在栈中，指向这个对象
+- 引用类型：object，数据存储在堆中，地址存储在栈中，地址指向这个堆中的引用数据
 - JS基本数据类型的变量存放的是基本类型数据的实际值；而引用数据类型的变量保存对它的引用，即指针
+
 #### 2、typeof运算符
 - 识别所有值类型
-- 识别函数
+- 识别函数=>function
 - 识别是否是引用类型（但无法细分，需使用instanceof）
 
 #### 3、手写深拷贝
@@ -25,8 +20,6 @@ function deepClone (obj = {}) {
     // obj 是 null ，或者不是对象和数组，直接返回
     return obj
   }
-
-  // 初始化返回结果
   let result
   if (obj instanceof Array) {
     result = []
@@ -41,14 +34,12 @@ function deepClone (obj = {}) {
       result[key] = deepClone(obj[key])
     }
   }
-
-  // 返回结果
   return result
 }
 ```
 > 通常可以通过 JSON.parse(JSON.stringify(obj)) 来解决，但是该方法也有局限性：
 > - 会忽略 undefined
-> - 会忽略 symbol
+> - 会忽略 symbol (如：{ s: Symbol() } )
 > - 不能序列化函数
 > - 不能解决循环引用的对象
 
@@ -72,34 +63,25 @@ var o3 = new M('o3');
 var p = {name: 'p'};
 var o4 = Object.create(p); // p是o4的原型
 ```
-### 1、class类
-参考es6
+### class类（参考es6）
 
-#### 继承
-- extends
-- super
-- 扩展或重写方法
+### 1. 继承
+- extends(es6)
+- super(es6)
+- es5的继承
 
 ```js
-/**
- * 类的声明
- */
+// es5中类的声明
 var Animal = function () {
   this.name = 'Animal';
 };
-
-/**
- * es6中class的声明
- */
+// es6中class的声明
 class Animal2 {
   constructor() {
     this.name = 'Animal2';
   }
 }
-
-/**
- * 实例化
- */
+// 实例化
 console.log(new Animal(), new Animal2());
 
 /**
@@ -126,7 +108,7 @@ console.log(new Child1());
 // new Child1().say() Uncaught TypeError: (intermediate value).say is not a function
 
 /**
- * 2：借助原型链实现继承（可解决借助构造函数实现继承方式的缺点）
+ * 2：借助原型链实现继承（可解决借助构造函数实现继承方式无法继承父类的原型链的缺点）
  */
 function Parent2 () {
   this.name = 'parent2';
@@ -147,8 +129,7 @@ console.log(s1.play, s2.play);
 //  [1, 2, 3, 4]  [1, 2, 3, 4]
 
 // 原理：父类实例作为子类的原型对象
-// 缺点： 原型链属性共用，引用同一个父类实例对象，改变某个实例会影响其他实例
-
+// 缺点： 原型链属性共用，引用同一个父类实例对象，改变某个实例原型上的属性会影响其他实例
 
 /**
  * 3：组合方式
@@ -171,7 +152,7 @@ console.log(s3.play, s4.play);
 //  [1, 2, 3, 4]  [1, 2, 3]
 
 // 原理：父类实例作为子类的原型对象，且在子类调用父类构造函数，将this指向子类
-// 缺点：父类构造函数执行了2次 Parent3.call(this)，new Parent3()
+// 缺点：父类构造函数执行了2次: Parent3.call(this)，new Parent3()
 // 特点：在子类中通过call 父类构造函数已经继承了父类属性，无需在原型链上再实例化多余的父类实例=>优化思路
 
 /**
@@ -199,9 +180,10 @@ console.log(s5.constructor);
 //  this.play = [1, 2, 3];
 // }
 
-// 缺点：constructor在prototype属性里，而Child4.prototype = Parent4.prototype，所以子类实例的constructor指向了Parent4父类
+// 缺点：constructor在prototype属性里，而Child4.prototype = Parent4.prototype，所以子类
+// 实例的constructor指向了Parent4父类
 // 无法区分父类、子类实例的构造函数
-// 如果参考方式5：Child5.prototype.constructor = Child5，那也无法区分父类实例的构造函数
+// 如果参考方式5：Child5.prototype.constructor = Child5，那就无法区分父类实例的构造函数
 
 /**
  * 5：组合继承的优化2
@@ -216,25 +198,24 @@ function Child5 () {
 }
 Child5.prototype = Object.create(Parent5.prototype);
 Child5.prototype.constructor = Child5 // 确保constructor指向子类，不然还是指向父类
-// 隔离父类和子类的原型对象
+
+// 隔离父类和子类的原型对象，避免父类及子类的构造函数互相影响
 
 ```
   
 ### 2、instanceof 类型判断
-内部机制是通过判断对象的原型链中是不是能找到类型的 prototype
+内部机制是通过判断对象的原型链中是不是能找到类型的 prototype原型
 ```js
-function instanceof(left, right) {
+function myInstanceof(left, right) {
     // 获得类型的原型
-    let prototype = right.prototype
+    let prototype = right.prototype;
     // 获得对象的原型
-    left = left.__proto__
+    left = left.__proto__;
     // 判断对象的类型是否等于类型的原型
     while (true) {
-    	if (left === null)
-    		return false
-    	if (prototype === left)
-    		return true
-    	left = left.__proto__
+    	if (left === null) return false;
+    	if (prototype === left) return true;
+    	left = left.__proto__;
     }
 }
 ```
@@ -246,8 +227,8 @@ function instanceof(left, right) {
 - 实例的__proto__指向对应class的prototype
   
 ### 4、原型链(能画)
-<img src="./imgs/js/原型.png" style="border:1px solid #ccc">
-<img src="./imgs/js/原型链.png" style="border:1px solid #ccc">
+<img src="./imgs/js/原型.png" style="border:1px solid #ccc;width:600px">
+<img src="./imgs/js/原型链.png" style="border:1px solid #ccc;width:600px">
 
 ---
 
@@ -313,8 +294,6 @@ class myJQuery extends jQuery {
 // $p.get(1)
 // $p.each((elem) => console.log(elem.nodeName))
 // $p.on('click', () => alert('clicked'))
-
-
 ```
 
 # 作用域和闭包（重要）
@@ -324,7 +303,7 @@ class myJQuery extends jQuery {
 - 块级作用域
 
 作用域链: 
-- 变量的查找从当前作用域开始，如果找到即停止，没有找到则继续向上级作用域查找,直到全局作用域或找到为止
+- 变量的查找从当前作用域开始，如果找到即停止，没有找到则继续向上级作用域查找，直到全局作用域
 
 闭包
 - 有权访问另一个函数作用域中变量的函数，创建闭包的最常见的方式就是在一个函数内创建另一个函数，通过另一个函数访问这个函数的局部变量，利用闭包可以突破作用链域
@@ -337,6 +316,7 @@ class myJQuery extends jQuery {
 两种表现：
 - 函数作为参数被传递
 - 函数作为返回值被返回
+
 ```js
 // 函数作为返回值
 function create() {
@@ -349,6 +329,7 @@ function create() {
 const fn = create()
 const a = 200
 fn() // 100
+// fn 释放内存
 
 // 函数作为参数被传递
 function print (fn) {
@@ -388,6 +369,7 @@ let obj2 = {
 obj2.fn(); // obj
 ```
 - 在class方法中调用 => 实例
+- 构造函数调用 => 实例
 - 箭头函数 => 上级作用域中的this
 
 **this取值是在函数执行时确认，而不是在定义时执行**
@@ -395,9 +377,11 @@ obj2.fn(); // obj
 #### 补充：new 运算符
 ```js
 var new = function (func) {
+  // 创建新对象o且o__proto__== func.prototype
   var o = Object.create(func.prototype);
+  // 执行构造函数
   var k = func.call(o);
-  if (typeof k === 'object') {
+  if (typeof k === 'object'&& k !== null) {
       return k;
   } else {
       return o;
@@ -406,29 +390,31 @@ var new = function (func) {
 ```
 ![](./imgs/js/new.png)
 
+#### 普通函数和箭头函数的区别
+- 箭头函数是匿名函数，不能作为构造函数，不能使用new
+- 箭头函数不绑定arguments，取而代之用rest剩余参数解决
+- this的作用域不同，箭头函数不绑定this，会捕获其所在上下文的this值，作为自己的this值
+- 箭头函数没有原型属性
+- 箭头函数不能当做Generator函数,不能使用yield关键字
+
 ### 2、手写bind、call及apply函数
 ```js
-function fn (a, b) {
-  console.log(this);
-  console.log({ a, b });
-}
 // 模拟bind
 Function.prototype.myBind = function (context, ...outerArgs) {
   let self = this
-  // 返回一个函数
-  return function F(...innerArgs) { //返回了一个函数，...innerArgs为实际调用时传入的参数
+  //返回了一个函数，...innerArgs为实际调用时传入的参数
+  return function F(...innerArgs) { 
     // 对于 new 的情况来说，不会被任何方式改变 this，所以对于这种情况我们需要忽略传入的 this
-    if(self instanceof F) {
+    if(this instanceof F) {
       return new self(...outerArgs, ...innerArgs)
     }
-    // 把func执行，并且改变this即可
     // bind 可以实现类似这样的代码 f.bind(obj, 1)(2)，所以我们需要将两边的参数拼接起来
-    return self.apply(context, [...outerArgs, ...innerArgs]) //返回改变了this的函数，参数合并
+    //返回改变了this的函数，参数合并
+    return self.apply(context, [...outerArgs, ...innerArgs]) 
   }
 }
 
 const fn3 = fn.myBind({ x: 2 }, 3, 4)
-fn3() // {x:2} {a:3, b:4}
 ```
 ```js
 // 模拟call
@@ -447,12 +433,12 @@ Function.prototype.myCall = function (context) {
 }
 ```
 ```js
+// 模拟apply
 Function.prototype.myApply = function (context) {
   var context = context || window
   context.fn = this
   var result
-  // 需要判断是否存储第二个参数
-  // 如果存在，就将第二个参数展开
+  // 需要判断是否存储第二个参数，如果存在，就将第二个参数展开
   if (arguments[1]) {
     result = context.fn(...arguments[1])
   } else {
@@ -486,25 +472,23 @@ const c = createCache()
 c.set('a', 100)
 console.log(c.get('a'))
 ```
-**案例：做一个简单的cache工具**
-- 如：节流防抖
+**案例：做一个简单的cache工具**  
+- 如：节流防抖、数据缓存等
 
 **使用闭包的注意点**
 - 闭包会使得函数中的变量都被保存在内存中，内存消耗很大，所以不能滥用闭包，否则会造成网页的性能问题，在IE中可能导致内存泄露
 - 解决方法是，在退出函数之前，将不使用的局部变量全部删除
-
 ---
 
 # 异步与单线程（重要）
 - 单线程与异步
-   - js是单线程语言，只能同时做一件事
-   - 浏览器和nodejs已支持js启动进程，如Web Worker
-   - js和DOM渲染共用同一线程，因为js可以修改DOM结构
-   - 遇到等待，不能卡住，所以需要异步（不阻塞代码执行）
+  - js是单线程语言，只能同时做一件事
+  - 浏览器和nodejs已支持js启动进程，如Web Worker
+  - js和DOM渲染共用同一线程，因为js可以修改DOM结构
+  - 遇到等待，不能卡住，所以需要异步（不阻塞代码执行）
 - es6前：callback hell
 - es6+：promise、generator、async/await
 
-## 思考
 ### 1、同步与异步的区别
 基于js是单线程本质，异步不会阻塞代码执行，同步会阻塞
 
@@ -541,7 +525,7 @@ function loadImg (src) {
 - 微任务/宏任务
 
 ### 思考题:
-- 请描述event loop（事件循环/事件轮询）的机制，可画图
+- 请描述event loop（事件循环/事件轮询）的机制
 - 什么是宏任务和微任务，两者有什么区别
 - promise有哪三种状态，如何变化
 - 场景题：promise then 和catch的连接
@@ -551,8 +535,7 @@ function loadImg (src) {
 
 
 **event loop（事件循环/事件轮询）**
-- js是单线程运行的
-> 如果 JS 是门多线程的语言话，我们在多个线程中处理 DOM 就可能会发生问题（一个线程中新加节点，另一个线程中删除节点）。
+- js是单线程运行的，如果 JS 是门多线程的语言话，我们在多个线程中处理 DOM 就可能会发生问题（一个线程中新加节点，另一个线程中删除节点）
 - 异步是基于回调来实现的
 - DOM事件（不是异步，只是都基于事件循环）也是使用回调，也是基于event loop
 - event loop 就是异步回调的实现原理
@@ -576,7 +559,7 @@ function loadImg (src) {
 - pending=>resolved或者pending=>rejected，结果不可逆
 - pending状态，不会触发then和catch
 - resolved状态，触发后续then回调函数
-- rejected状态，触发后续catch回调函数
+- rejected状态，触发后续catch回调函数或者then回调函数（第二个参数）
 
 **then 和catch改变状态(重要)**
 - then正常返回resolved，里面有报错则返回rejected
@@ -592,20 +575,20 @@ Promise.resolve().then(() => {
 })
 
 // 第二题
-Promise.resolve().then(() => { // 返回 rejected 状态的 promise
+Promise.resolve().then(() => { // 返回 resolved 状态的 promise
     console.log(1) // 1
     throw new Error('erro1')
-}).catch(() => { // 返回 resolved 状态的 promise
+}).catch(() => { // 返回 rejected 状态的 promise
     console.log(2) // 2
 }).then(() => {
     console.log(3) // 3
 })
 
 // 第三题
-Promise.resolve().then(() => { // 返回 rejected 状态的 promise
+Promise.resolve().then(() => { // 返回 resolved 状态的 promise
     console.log(1) // 1
     throw new Error('erro1')
-}).catch(() => { // 返回 resolved 状态的 promise
+}).catch(() => { // 返回 rejected 状态的 promise
     console.log(2) // 2
 }).catch(() => {
     console.log(3)
@@ -620,8 +603,8 @@ Promise.resolve().then(() => { // 返回 rejected 状态的 promise
 - for...of
 
 **有很多 async 的面试题，例如** 
-- async 直接返回，是什么? promise
-- await 后面不加 promise
+- async 直接返回，是什么? => promise
+- await 后面不加 promise，会怎样
 
 ## 语法介绍
 
@@ -682,10 +665,11 @@ console.log( fn2() )
 async function fn1() {
     return 100
 }
-console.log( fn1() ) // 相当于 Promise.resolve(100)
+// 相当于 Promise.resolve(100)
+console.log( fn1() ) 
 ```
 
-- await 后面跟 Promise 对象：会阻断后续代码，等待状态变为 resolved，才获取结果并继续执行
+- await 后面跟 Promise 对象：**会阻断后续代码，等待状态变为 resolved，才获取结果并继续执行，不然就会阻断**
 - await 后续跟非 Promise 对象：会直接返回，不再继续执行后续代码
 
 ```js
@@ -730,7 +714,7 @@ console.log( fn1() ) // 相当于 Promise.resolve(100)
 总结来看：
 
 - async 封装 Promise
-- await 处理 Promise 成功（相当于Promise.then）
+- await 处理 Promise resolved（相当于Promise.then）
 - try...catch 处理 Promise 失败
 
 ## 异步本质
@@ -741,7 +725,7 @@ await 是同步写法，但本质还是异步调用。
 async function async1 () {
   console.log('async1 start')
   await async2()
-  // await 后面的代码都可以看做是回调中的内容，即异步
+  // await 后面的代码都可以看做是回调中的内容，即异步 important
   console.log('async1 end') // 关键在这一步，它相当于放在 callback 中，最后执行
 }
 
@@ -872,13 +856,13 @@ setTimeout(() => {
 
 再深入思考一下：为何两者会有以上区别，一个在渲染前，一个在渲染后？
 
-- 执行 ES6 语法规范的是 js 引擎，制定宏任务的是浏览器，这俩不一个模块。
+- 执行 ES6 语法规范的是 js 引擎，制定宏任务的是浏览器，不是一个模块。
 - 所以，微任务是 ES6 语法的一部分，那也就顺带让 js 引擎直接给执行了，这样效率最高。
 - 等 ES6 语法全部执行完（包括微任务）之后，再去执行浏览器该有的操作（如渲染、宏任务）
 
 # 异步 题目
 
-- 描述 event loop 运行机制（可画图）
+- 描述 event loop 运行机制
 - Promise 哪几种状态，如何变化？
 - 宏任务和微任务的区别
 - 场景题：Promise catch 连接 then
@@ -984,7 +968,8 @@ setTimeout(function () { // 异步，宏任务
 
 async1()
 
-new Promise (function (resolve) { // 返回 Promise 之后，即同步执行完成，then 是异步代码
+new Promise (function (resolve) { 
+  // 返回 Promise 之后，即同步执行完成，then 是异步代码
   console.log('promise1') // Promise 的函数体会立刻执行 // 4
   resolve()
 }).then (function () { // 异步，微任务
