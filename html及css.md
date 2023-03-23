@@ -55,20 +55,6 @@ margin-top 和 margin-left 负值，元素会向上、向左移动
 margin-right 负值，右侧元素左移，自身不受影响  
 margin-bottom 负值，下方元素上移，自身不受影响
 
-#### 4、BFC 理解与应用
-
-[Block Formatting Context](https://juejin.cn/post/6854573211737784333+&cd=4&hl=zh-CN&ct=clnk&gl=sg)，即块格式化上下文；一个独立的布局环境，内部元素布局不会影响边界以外的元素
-
-- 形成条件：
-  - 根元素
-  - 浮动元素（float 不是 none）
-  - 绝对定位元素（position 取值为 absolute 或 fixed）
-  - display 取值为 inline-block,table-cell, table-caption,flex, inline-flex 之一的元素
-  - overflow 不是 visible 的元素
-- 作用：
-  - 清除浮动
-  - 解决高度塌陷问题
-
 #### 5、float 布局
 
 如何实现圣杯布局和双飞翼布局

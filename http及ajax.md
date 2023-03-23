@@ -273,10 +273,10 @@ WebSocket 方法
   使用简单且兼容性不错，但是只限于 get 请求
 
   ```js
-  var script = document.createElement("script");
-  script.type = "text/javascript";
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
   // 传参并指定回调执行函数为onBack
-  script.src = "http://www.....:8080/login?user=admin&callback=onBack";
+  script.src = 'http://www.....:8080/login?user=admin&callback=onBack';
   document.head.appendChild(script);
   // 回调执行函数
   function onBack(res) {
@@ -294,44 +294,3 @@ WebSocket 方法
 - postMessage
 
 ![跨域补充](./imgs/http/跨域补充.png)
-
-# Ajax、fetch、Axios 三者的区别
-
-[Ajax,jQuery ajax,axios 和 fetch 介绍、区别以及优缺点](https://juejin.cn/post/6844903922021203975#heading-10)
-
-三者都用于网络请求，但是不同维度:
-
-ajax：一种技术统称，异步的 js 和 xml
-
-Fetch：一个浏览器原生 api，和 XMLHttpRequest 一个级别，fetch 语法更加简洁易用，支持 Promise
-
-Axios：一个第三方库，内部可以使用 XMLHttpRequest 和 fetch 实现
-
-扩展：Lib 和 api 区别 => 工具库和原生函数的区别
-
-```js
-// ajax
-function ajax (url) {
-  const p = new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest()
-    xhr.open('GET', url, true) // true表示异步请求
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4) {
-        if((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304)
-          resolve(JSON.parse(xhr.responseText))
-        } else if (xhr.status === 404) {
-          reject(new Error('404 not found'))
-        }else if ( xhr.status === 500) {
-          reject(new Error('500 server error'))
-        }
-      }
-    xhr.send(null)
-    }
-  return p
-  }
-
-// fetch
-function ajax2(url) {
-  return fetch(url).then((res) => res.json());
-}
-```

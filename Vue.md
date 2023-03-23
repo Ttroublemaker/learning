@@ -286,7 +286,7 @@ data，computed 都执行了。属性已经赋值，但没有动态创建 templa
 ```js
 const AsyncComponent = () => ({
   // 需要加载的组件 (应该是一个 `Promise` 对象)
-  component: import("./MyComponent.vue"),
+  component: import('./MyComponent.vue'),
   // 异步组件加载时使用的组件
   loading: LoadingComponent,
   // 加载失败时使用的组件
@@ -433,14 +433,14 @@ vue3：Proxy 兼容性不好，且无法 polyfill
 ```js
 // 触发更新视图
 function updateView() {
-  console.log("视图更新");
+  console.log('视图更新');
 }
 
 // 重新定义数组原型
 const oldArrayProperty = Array.prototype;
 // 创建新对象，原型指向 oldArrayProperty ，再扩展新的方法不会影响原型
 const arrProto = Object.create(oldArrayProperty);
-["push", "pop", "shift", "unshift", "splice", "sort", "reverse"].forEach(
+['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'].forEach(
   (methodName) => {
     arrProto[methodName] = function () {
       updateView(); // 触发视图更新
@@ -471,7 +471,7 @@ function defineReactive(target, key, value) {
 }
 // 监听对象属性
 function observer(target) {
-  if (typeof target !== "object" || target === null) {
+  if (typeof target !== 'object' || target === null) {
     // 不是对象或数组
     return target;
   }
@@ -487,10 +487,10 @@ function observer(target) {
 }
 // 准备数据
 const data = {
-  name: "zhangsan",
+  name: 'zhangsan',
   age: 20,
   info: {
-    address: "北京", // 需要深度监听
+    address: '北京', // 需要深度监听
   },
   nums: [10, 20, 30],
 };
@@ -533,18 +533,18 @@ Virtual DOM 是用 VNode 这么一个 Class 去描述
 </div>;
 
 const VitrualDom = {
-  tag: "div",
-  props: { className: "title" },
+  tag: 'div',
+  props: { className: 'title' },
   children: [
     {
-      tag: "span",
-      children: "Hello ConardLi",
+      tag: 'span',
+      children: 'Hello ConardLi',
     },
     {
-      tag: "ul",
+      tag: 'ul',
       children: [
-        { tag: "li", children: "苹果" },
-        { tag: "li", children: "橘子" },
+        { tag: 'li', children: '苹果' },
+        { tag: 'li', children: '橘子' },
       ],
     },
   ],
@@ -819,7 +819,7 @@ export function vnode(
 <!-- ![模板编译2](imgs/vue/模板编译2.png)  -->
 
 ```js
-const compiler = require("vue-template-compiler");
+const compiler = require('vue-template-compiler');
 // render 函数
 // 返回 vnode
 // patch
@@ -1060,7 +1060,7 @@ action 可以整合多个 mutation
 new Vue({
   //...
   components: {
-    "my-component": () => important("./my-async-component"),
+    'my-component': () => important('./my-async-component'),
   },
 });
 ```
@@ -1150,7 +1150,7 @@ Proxy
 ```js
 // 创建响应式
 function reactive(target = {}) {
-  if (typeof target !== "object" || target == null) {
+  if (typeof target !== 'object' || target == null) {
     // 不是对象或数组，则返回
     return target;
   }
@@ -1160,7 +1160,7 @@ function reactive(target = {}) {
       // 只处理本身（非原型的）属性
       const ownKeys = Reflect.ownKeys(target);
       if (ownKeys.includes(key)) {
-        console.log("get", key); // 监听
+        console.log('get', key); // 监听
       }
       const result = Reflect.get(target, key, receiver);
       // 深度监听
@@ -1174,18 +1174,18 @@ function reactive(target = {}) {
       }
       const ownKeys = Reflect.ownKeys(target);
       if (ownKeys.includes(key)) {
-        console.log("已有的 key", key);
+        console.log('已有的 key', key);
       } else {
-        console.log("新增的 key", key);
+        console.log('新增的 key', key);
       }
       const result = Reflect.set(target, key, val, receiver);
-      console.log("set", key, val);
+      console.log('set', key, val);
       // console.log('result', result) // true
       return result; // 是否设置成功
     },
     deleteProperty(target, key) {
       const result = Reflect.deleteProperty(target, key);
-      console.log("delete property", key);
+      console.log('delete property', key);
       // console.log('result', result) // true
       return result; // 是否删除成功
     },
@@ -1197,10 +1197,10 @@ function reactive(target = {}) {
 
 // 测试数据
 const data = {
-  name: "zhangsan",
+  name: 'zhangsan',
   age: 20,
   info: {
-    city: "beijing",
+    city: 'beijing',
   },
 };
 
